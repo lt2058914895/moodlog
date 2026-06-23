@@ -1,62 +1,26 @@
-# Xcode
-#
-# gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
+# #############################################################################
+# iOS 项目自动忽略文件（个人开发者标准模板）
+# #############################################################################
 
-## User settings
+# Xcode 缓存、用户配置（自动忽略 xcuserstate）
+*.xcuserstate
 xcuserdata/
+*.xcworkspace
+*.xccheckout
+*.perspectivev3
+*.mode1v3
+*.mode2v3
+.DS_Store
 
-## Obj-C/Swift specific
-*.hmap
+# 项目配置文件（只忽略个人修改，不忽略项目结构）
+*.pbxproj merge=union
+!project.pbxproj
 
-## App packaging
+# 构建产物
+build/
+DerivedData/
 *.ipa
-*.dSYM.zip
 *.dSYM
 
-## Playgrounds
-timeline.xctimeline
-playground.xcworkspace
-
-# Swift Package Manager
-#
-# Add this line if you want to avoid checking in source code from Swift Package Manager dependencies.
-# Packages/
-# Package.pins
-# Package.resolved
-# *.xcodeproj
-#
-# Xcode automatically generates this directory with a .xcworkspacedata file and xcuserdata
-# hence it is not needed unless you have added a package configuration file to your project
-# .swiftpm
-
-.build/
-
-# CocoaPods
-#
-# We recommend against adding the Pods directory to your .gitignore. However
-# you should judge for yourself, the pros and cons are mentioned at:
-# https://guides.cocoapods.org/using/using-cocoapods.html#should-i-check-the-pods-directory-into-source-control
-#
- Pods/
-
-# Add this line if you want to avoid checking in source code from the Xcode workspace
- *.xcworkspace
-
-# Carthage
-#
-# Add this line if you want to avoid checking in source code from Carthage dependencies.
-# Carthage/Checkouts
-
-Carthage/Build/
-
-# fastlane
-#
-# It is recommended to not store the screenshots in the git repo.
-# Instead, use fastlane to re-generate the screenshots whenever they are needed.
-# For more information about the recommended setup visit:
-# https://docs.fastlane.tools/best-practices/source-control/#source-control
-
-fastlane/report.xml
-fastlane/Preview.html
-fastlane/screenshots/**/*.png
-fastlane/test_output
+# Pods 第三方库（可选，建议忽略）
+Pods/
