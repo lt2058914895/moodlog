@@ -1,0 +1,6 @@
+framework module Pods_moodlog {
+  umbrella header "Pods-moodlog-umbrella.h"
+
+  export *
+  module * { export * }
+}
