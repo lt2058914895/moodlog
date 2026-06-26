@@ -13,15 +13,35 @@ struct PersistenceController {
     static var preview: PersistenceController = {
         let result = PersistenceController(inMemory: true)
         let viewContext = result.container.viewContext
-        for _ in 0..<10 {
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
+
+        // 创建示例情绪记录
+        let moodTypes: [(type: String, subType: String, intensity: Int16)] = [
+            ("happy", "joyful", 8),
+            ("sad", "lonely", 4),
+            ("anxious", "worried", 6),
+            ("happy", "excited", 9),
+            ("neutral", "bored", 3),
+            ("love", "warm", 7),
+            ("angry", "irritated", 5),
+            ("happy", "peaceful", 6),
+            ("anxious", "tense", 7),
+            ("thinking", "reflective", 4),
+        ]
+
+        for (index, mood) in moodTypes.enumerated() {
+            let record = MoodRecord(context: viewContext)
+            record.id = UUID()
+            record.moodType = mood.type
+            record.moodSubType = mood.subType
+            record.intensity = mood.intensity
+            record.createdAt = Calendar.current.date(byAdding: .hour, value: -index * 3, to: Date())
+            record.updatedAt = record.createdAt
+            record.isSynced = false
         }
+
         do {
             try viewContext.save()
         } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
             let nsError = error as NSError
             fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
         }
@@ -37,20 +57,10 @@ struct PersistenceController {
         }
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-
-                /*
-                 Typical reasons for an error here include:
-                 * The parent directory does not exist, cannot be created, or disallows writing.
-                 * The persistent store is not accessible, due to permissions or data protection when the device is locked.
-                 * The device is out of space.
-                 * The store could not be migrated to the current model version.
-                 Check the error message to determine what the actual problem was.
-                 */
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
         })
         container.viewContext.automaticallyMergesChangesFromParent = true
+        // merge policy handled automatically
     }
 }

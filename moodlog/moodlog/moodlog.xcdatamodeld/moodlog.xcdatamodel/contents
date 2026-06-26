@@ -1,9 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1" systemVersion="11A491" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="false" userDefinedModelVersionIdentifier="">
-    <entity name="Item" representedClassName="Item" syncable="YES" codeGenerationType="class">
-        <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22735" systemVersion="23A344" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="false" userDefinedModelVersionIdentifier="">
+    <entity name="MoodRecord" representedClassName="MoodRecord" syncable="YES" codeGenerationType="class">
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="moodType" optional="YES" attributeType="String" defaultValueString="happy" usesScalarValueType="NO"/>
+        <attribute name="moodSubType" optional="YES" attributeType="String" usesScalarValueType="NO"/>
+        <attribute name="intensity" attributeType="Integer 16" defaultValueString="5" usesScalarValueType="YES"/>
+        <attribute name="note" optional="YES" attributeType="String" usesScalarValueType="NO"/>
+        <attribute name="tagNames" optional="YES" attributeType="String" usesScalarValueType="NO"/>
+        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="isSynced" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+    </entity>
+    <entity name="ActivityTag" representedClassName="ActivityTag" syncable="YES" codeGenerationType="class">
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String" usesScalarValueType="NO"/>
+        <attribute name="category" optional="YES" attributeType="String" defaultValueString="other" usesScalarValueType="NO"/>
+        <attribute name="emoji" optional="YES" attributeType="String" defaultValueString="📋" usesScalarValueType="NO"/>
+        <attribute name="isCustom" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="usageCount" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
     </entity>
     <elements>
-        <element name="Item" positionX="-63" positionY="-18" width="128" height="44"/>
+        <element name="MoodRecord" positionX="-63" positionY="-18" width="128" height="148"/>
+        <element name="ActivityTag" positionX="160" positionY="-18" width="128" height="118"/>
     </elements>
 </model>

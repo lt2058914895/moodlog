@@ -9,12 +9,21 @@
 /* Begin PBXBuildFile section */
 		0FFE673B374860F7176F574A /* Pods_moodlog.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2EAEDB359DB04F35B882C78 /* Pods_moodlog.framework */; };
 		C22D1E9D2FED4D95001B6443 /* moodlogApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C22D1E9C2FED4D95001B6443 /* moodlogApp.swift */; };
-		C22D1E9F2FED4D95001B6443 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C22D1E9E2FED4D95001B6443 /* ContentView.swift */; };
+		
 		C22D1EA12FED4D98001B6443 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C22D1EA02FED4D98001B6443 /* Assets.xcassets */; };
 		C22D1EA42FED4D98001B6443 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C22D1EA32FED4D98001B6443 /* Preview Assets.xcassets */; };
 		C22D1EA62FED4D98001B6443 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = C22D1EA52FED4D98001B6443 /* Persistence.swift */; };
 		C22D1EA92FED4D98001B6443 /* moodlog.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = C22D1EA72FED4D98001B6443 /* moodlog.xcdatamodeld */; };
 		C22D1EB02FED4E1F001B6443 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C22D1EAF2FED4E1F001B6443 /* Launch Screen.storyboard */; };
+		AA0000012FED4D95001B6443 /* MoodModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000022FED4D95001B6443 /* MoodModels.swift */; };
+		AA0000032FED4D95001B6443 /* MoodDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000042FED4D95001B6443 /* MoodDataManager.swift */; };
+		AA0000052FED4D95001B6443 /* MoodCheckinViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000062FED4D95001B6443 /* MoodCheckinViewModel.swift */; };
+		AA0000072FED4D95001B6443 /* CalendarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000082FED4D95001B6443 /* CalendarViewModel.swift */; };
+		AA0000092FED4D95001B6443 /* InsightViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000A2FED4D95001B6443 /* InsightViewModel.swift */; };
+		AA00000B2FED4D95001B6443 /* MoodCheckinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000C2FED4D95001B6443 /* MoodCheckinView.swift */; };
+		AA00000D2FED4D95001B6443 /* MoodCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000E2FED4D95001B6443 /* MoodCalendarView.swift */; };
+		AA00000F2FED4D95001B6443 /* MoodInsightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000102FED4D95001B6443 /* MoodInsightView.swift */; };
+		AA0000112FED4D95001B6443 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000122FED4D95001B6443 /* MainTabView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,13 +31,22 @@
 		9281EDC77D1F253C2CFC0F4F /* Pods-moodlog.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-moodlog.release.xcconfig"; path = "Target Support Files/Pods-moodlog/Pods-moodlog.release.xcconfig"; sourceTree = "<group>"; };
 		C22D1E992FED4D95001B6443 /* moodlog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = moodlog.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C22D1E9C2FED4D95001B6443 /* moodlogApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = moodlogApp.swift; sourceTree = "<group>"; };
-		C22D1E9E2FED4D95001B6443 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		
 		C22D1EA02FED4D98001B6443 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C22D1EA32FED4D98001B6443 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		C22D1EA52FED4D98001B6443 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		C22D1EA82FED4D98001B6443 /* moodlog.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = moodlog.xcdatamodel; sourceTree = "<group>"; };
 		C22D1EAF2FED4E1F001B6443 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		E2EAEDB359DB04F35B882C78 /* Pods_moodlog.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_moodlog.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA0000022FED4D95001B6443 /* MoodModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodModels.swift; sourceTree = "<group>"; };
+		AA0000042FED4D95001B6443 /* MoodDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodDataManager.swift; sourceTree = "<group>"; };
+		AA0000062FED4D95001B6443 /* MoodCheckinViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodCheckinViewModel.swift; sourceTree = "<group>"; };
+		AA0000082FED4D95001B6443 /* CalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewModel.swift; sourceTree = "<group>"; };
+		AA00000A2FED4D95001B6443 /* InsightViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightViewModel.swift; sourceTree = "<group>"; };
+		AA00000C2FED4D95001B6443 /* MoodCheckinView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodCheckinView.swift; sourceTree = "<group>"; };
+		AA00000E2FED4D95001B6443 /* MoodCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodCalendarView.swift; sourceTree = "<group>"; };
+		AA0000102FED4D95001B6443 /* MoodInsightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodInsightView.swift; sourceTree = "<group>"; };
+		AA0000122FED4D95001B6443 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,13 +87,86 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		AA1000012FED4D95001B6443 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000022FED4D95001B6443 /* MoodModels.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		AA1000022FED4D95001B6443 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000042FED4D95001B6443 /* MoodDataManager.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		AA1000032FED4D95001B6443 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000062FED4D95001B6443 /* MoodCheckinViewModel.swift */,
+				AA0000082FED4D95001B6443 /* CalendarViewModel.swift */,
+				AA00000A2FED4D95001B6443 /* InsightViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		AA1000042FED4D95001B6443 /* Checkin */ = {
+			isa = PBXGroup;
+			children = (
+				AA00000C2FED4D95001B6443 /* MoodCheckinView.swift */,
+			);
+			path = Checkin;
+			sourceTree = "<group>";
+		};
+		AA1000052FED4D95001B6443 /* Calendar */ = {
+			isa = PBXGroup;
+			children = (
+				AA00000E2FED4D95001B6443 /* MoodCalendarView.swift */,
+			);
+			path = Calendar;
+			sourceTree = "<group>";
+		};
+		AA1000062FED4D95001B6443 /* Insight */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000102FED4D95001B6443 /* MoodInsightView.swift */,
+			);
+			path = Insight;
+			sourceTree = "<group>";
+		};
+		AA1000072FED4D95001B6443 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000122FED4D95001B6443 /* MainTabView.swift */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		AA1000082FED4D95001B6443 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				AA1000042FED4D95001B6443 /* Checkin */,
+				AA1000052FED4D95001B6443 /* Calendar */,
+				AA1000062FED4D95001B6443 /* Insight */,
+				AA1000072FED4D95001B6443 /* Main */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		C22D1E9B2FED4D95001B6443 /* moodlog */ = {
 			isa = PBXGroup;
 			children = (
 				C22D1E9C2FED4D95001B6443 /* moodlogApp.swift */,
-				C22D1E9E2FED4D95001B6443 /* ContentView.swift */,
-				C22D1EA02FED4D98001B6443 /* Assets.xcassets */,
+				
 				C22D1EA52FED4D98001B6443 /* Persistence.swift */,
+				AA1000012FED4D95001B6443 /* Models */,
+				AA1000022FED4D95001B6443 /* Services */,
+				AA1000032FED4D95001B6443 /* ViewModels */,
+				AA1000082FED4D95001B6443 /* Views */,
+				C22D1EA02FED4D98001B6443 /* Assets.xcassets */,
 				C22D1EA72FED4D98001B6443 /* moodlog.xcdatamodeld */,
 				C22D1EA22FED4D98001B6443 /* Preview Content */,
 				C22D1EAF2FED4E1F001B6443 /* Launch Screen.storyboard */,
@@ -218,8 +309,17 @@
 			files = (
 				C22D1EA62FED4D98001B6443 /* Persistence.swift in Sources */,
 				C22D1EA92FED4D98001B6443 /* moodlog.xcdatamodeld in Sources */,
-				C22D1E9F2FED4D95001B6443 /* ContentView.swift in Sources */,
+				
 				C22D1E9D2FED4D95001B6443 /* moodlogApp.swift in Sources */,
+				AA0000012FED4D95001B6443 /* MoodModels.swift in Sources */,
+				AA0000032FED4D95001B6443 /* MoodDataManager.swift in Sources */,
+				AA0000052FED4D95001B6443 /* MoodCheckinViewModel.swift in Sources */,
+				AA0000072FED4D95001B6443 /* CalendarViewModel.swift in Sources */,
+				AA0000092FED4D95001B6443 /* InsightViewModel.swift in Sources */,
+				AA00000B2FED4D95001B6443 /* MoodCheckinView.swift in Sources */,
+				AA00000D2FED4D95001B6443 /* MoodCalendarView.swift in Sources */,
+				AA00000F2FED4D95001B6443 /* MoodInsightView.swift in Sources */,
+				AA0000112FED4D95001B6443 /* MainTabView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -278,7 +378,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -335,7 +435,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
