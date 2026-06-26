@@ -45,6 +45,14 @@
 "mood.neutral" = "平淡";
 "mood.love" = "爱";
 "mood.thinking" = "思考";
+"mood.afraid" = "害怕";
+"mood.surprised" = "惊讶";
+"mood.tired" = "疲惫";
+"mood.relaxed" = "放松";
+"mood.calm" = "平静";
+"mood.bored" = "无聊";
+"mood.upset" = "烦恼";
+"mood.painful" = "痛苦";
 
 // MARK: - Mood Sub Types
 "moodsub.joyful" = "愉悦";
@@ -82,6 +90,46 @@
 "moodsub.hesitant" = "犹豫";
 "moodsub.insightful" = "领悟";
 "moodsub.doubtful" = "怀疑";
+"moodsub.fearful" = "恐惧";
+"moodsub.terrified" = "惊恐";
+"moodsub.insecure" = "不安";
+"moodsub.alarmed" = "惊慌";
+"moodsub.helpless" = "无助";
+"moodsub.amazed" = "惊奇";
+"moodsub.shocked" = "震惊";
+"moodsub.unexpected" = "意外";
+"moodsub.astonished" = "惊叹";
+"moodsub.awed" = "敬畏";
+"moodsub.sleepy" = "困倦";
+"moodsub.drained" = "精疲力竭";
+"moodsub.burntOut" = "倦怠";
+"moodsub.weary" = "疲劳";
+"moodsub.drowsy" = "昏沉";
+"moodsub.cozy" = "惬意";
+"moodsub.leisurely" = "闲适";
+"moodsub.chill" = "悠闲";
+"moodsub.content" = "满足";
+"moodsub.serene" = "宁静";
+"moodsub.tranquil" = "安详";
+"moodsub.centered" = "专注";
+"moodsub.mindful" = "正念";
+"moodsub.steady" = "稳定";
+"moodsub.composed" = "从容";
+"moodsub.dull" = "乏味";
+"moodsub.uninterested" = "无趣";
+"moodsub.listless" = "百无聊赖";
+"moodsub.indifferent" = "漠然";
+"moodsub.restless" = "烦闷";
+"moodsub.frustrated" = "挫败";
+"moodsub.annoyed" = "烦扰";
+"moodsub.agitated" = "焦躁";
+"moodsub.disturbed" = "不安";
+"moodsub.bothered" = "烦心";
+"moodsub.aching" = "隐痛";
+"moodsub.suffering" = "煎熬";
+"moodsub.hurt" = "受伤";
+"moodsub.sore" = "酸痛";
+"moodsub.agonizing" = "极痛";
 
 // MARK: - Tag Categories
 "tagcat.relationship" = "情感关系";

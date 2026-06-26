@@ -107,6 +107,7 @@ struct MoodSelectorView: View {
         GridItem(.flexible()),
         GridItem(.flexible()),
         GridItem(.flexible()),
+        GridItem(.flexible()),
     ]
 
     var body: some View {
@@ -276,6 +277,7 @@ struct IntensitySliderView: View {
 struct TagSelectorView: View {
     @ObservedObject var viewModel: MoodCheckinViewModel
     @ObservedObject var dataManager: MoodDataManager
+    @State private var selectedCategory: TagCategory = .relationship
 
     var body: some View {
         VStack(spacing: 12) {
@@ -291,8 +293,8 @@ struct TagSelectorView: View {
             }
 
             if viewModel.showAllTags {
-                // 全部分类标签
-                allTagsView
+                // 分类标签 - Tab切换
+                categoryTabView
             } else {
                 // 常用标签
                 frequentTagsView
@@ -322,26 +324,45 @@ struct TagSelectorView: View {
         }
     }
 
-    // MARK: - 全部分类标签
-    private var allTagsView: some View {
-        VStack(spacing: 16) {
-            ForEach(TagCategory.allCases, id: \.self) { category in
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("\(category.emoji) \(category.displayName)")
-                        .font(.caption.bold())
-                        .foregroundColor(.secondary)
-
-                    FlowLayout(spacing: 8) {
-                        ForEach(category.presetTags, id: \.name) { preset in
-                            TagChip(
-                                emoji: preset.emoji,
-                                name: preset.name,
-                                isSelected: viewModel.isTagSelected(preset.name),
-                                color: Color(hex: "6C5CE7"),
-                                onTap: { viewModel.toggleTag(preset.name) }
+    // MARK: - 分类标签Tab视图
+    private var categoryTabView: some View {
+        VStack(spacing: 12) {
+            // 分类Tab栏
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(TagCategory.allCases, id: \.self) { category in
+                        Button(action: { selectedCategory = category }) {
+                            HStack(spacing: 4) {
+                                Text(category.emoji)
+                                    .font(.caption2)
+                                Text(category.displayName)
+                                    .font(.caption)
+                            }
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
+                            .background(
+                                Capsule().fill(selectedCategory == category ? Color(hex: "6C5CE7").opacity(0.15) : Color(UIColor.tertiarySystemGroupedBackground))
                             )
+                            .overlay(
+                                Capsule().stroke(selectedCategory == category ? Color(hex: "6C5CE7") : Color.clear, lineWidth: 1)
+                            )
+                            .foregroundColor(selectedCategory == category ? Color(hex: "6C5CE7") : .secondary)
                         }
+                        .buttonStyle(.plain)
                     }
+                }
+            }
+
+            // 当前分类的标签
+            FlowLayout(spacing: 8) {
+                ForEach(selectedCategory.presetTags, id: \.name) { preset in
+                    TagChip(
+                        emoji: preset.emoji,
+                        name: preset.name,
+                        isSelected: viewModel.isTagSelected(preset.name),
+                        color: Color(hex: "6C5CE7"),
+                        onTap: { viewModel.toggleTag(preset.name) }
+                    )
                 }
             }
         }

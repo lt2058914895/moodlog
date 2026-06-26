@@ -45,6 +45,14 @@
 "mood.neutral" = "Neutral";
 "mood.love" = "Love";
 "mood.thinking" = "Thinking";
+"mood.afraid" = "Afraid";
+"mood.surprised" = "Surprised";
+"mood.tired" = "Tired";
+"mood.relaxed" = "Relaxed";
+"mood.calm" = "Calm";
+"mood.bored" = "Bored";
+"mood.upset" = "Upset";
+"mood.painful" = "Painful";
 
 // MARK: - Mood Sub Types
 "moodsub.joyful" = "Joyful";
@@ -82,6 +90,46 @@
 "moodsub.hesitant" = "Hesitant";
 "moodsub.insightful" = "Insightful";
 "moodsub.doubtful" = "Doubtful";
+"moodsub.fearful" = "Fearful";
+"moodsub.terrified" = "Terrified";
+"moodsub.insecure" = "Insecure";
+"moodsub.alarmed" = "Alarmed";
+"moodsub.helpless" = "Helpless";
+"moodsub.amazed" = "Amazed";
+"moodsub.shocked" = "Shocked";
+"moodsub.unexpected" = "Unexpected";
+"moodsub.astonished" = "Astonished";
+"moodsub.awed" = "Awed";
+"moodsub.sleepy" = "Sleepy";
+"moodsub.drained" = "Drained";
+"moodsub.burntOut" = "Burnt Out";
+"moodsub.weary" = "Weary";
+"moodsub.drowsy" = "Drowsy";
+"moodsub.cozy" = "Cozy";
+"moodsub.leisurely" = "Leisurely";
+"moodsub.chill" = "Chill";
+"moodsub.content" = "Content";
+"moodsub.serene" = "Serene";
+"moodsub.tranquil" = "Tranquil";
+"moodsub.centered" = "Centered";
+"moodsub.mindful" = "Mindful";
+"moodsub.steady" = "Steady";
+"moodsub.composed" = "Composed";
+"moodsub.dull" = "Dull";
+"moodsub.uninterested" = "Uninterested";
+"moodsub.listless" = "Listless";
+"moodsub.indifferent" = "Indifferent";
+"moodsub.restless" = "Restless";
+"moodsub.frustrated" = "Frustrated";
+"moodsub.annoyed" = "Annoyed";
+"moodsub.agitated" = "Agitated";
+"moodsub.disturbed" = "Disturbed";
+"moodsub.bothered" = "Bothered";
+"moodsub.aching" = "Aching";
+"moodsub.suffering" = "Suffering";
+"moodsub.hurt" = "Hurt";
+"moodsub.sore" = "Sore";
+"moodsub.agonizing" = "Agonizing";
 
 // MARK: - Tag Categories
 "tagcat.relationship" = "Relationship";

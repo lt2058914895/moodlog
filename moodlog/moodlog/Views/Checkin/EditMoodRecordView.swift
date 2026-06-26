@@ -90,6 +90,7 @@ struct EditMoodRecordView: View {
                 GridItem(.flexible()),
                 GridItem(.flexible()),
                 GridItem(.flexible()),
+                GridItem(.flexible()),
             ]
 
             LazyVGrid(columns: columns, spacing: 16) {
@@ -184,6 +185,8 @@ struct EditMoodRecordView: View {
     }
 
     // MARK: - 标签选择
+    @State private var editSelectedCategory: TagCategory = .relationship
+
     private var editTagSelector: some View {
         VStack(spacing: 12) {
             HStack {
@@ -198,24 +201,42 @@ struct EditMoodRecordView: View {
             }
 
             if showAllTags {
-                VStack(spacing: 16) {
-                    ForEach(TagCategory.allCases, id: \.self) { category in
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("\(category.emoji) \(category.displayName)")
-                                .font(.caption.bold())
-                                .foregroundColor(.secondary)
-
-                            FlowLayout(spacing: 8) {
-                                ForEach(category.presetTags, id: \.name) { preset in
-                                    TagChip(
-                                        emoji: preset.emoji,
-                                        name: preset.name,
-                                        isSelected: selectedTagNames.contains(preset.name),
-                                        color: Color(hex: "6C5CE7"),
-                                        onTap: { toggleTag(preset.name) }
+                // 分类Tab切换
+                VStack(spacing: 12) {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(TagCategory.allCases, id: \.self) { category in
+                                Button(action: { editSelectedCategory = category }) {
+                                    HStack(spacing: 4) {
+                                        Text(category.emoji)
+                                            .font(.caption2)
+                                        Text(category.displayName)
+                                            .font(.caption)
+                                    }
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 6)
+                                    .background(
+                                        Capsule().fill(editSelectedCategory == category ? Color(hex: "6C5CE7").opacity(0.15) : Color(UIColor.tertiarySystemGroupedBackground))
                                     )
+                                    .overlay(
+                                        Capsule().stroke(editSelectedCategory == category ? Color(hex: "6C5CE7") : Color.clear, lineWidth: 1)
+                                    )
+                                    .foregroundColor(editSelectedCategory == category ? Color(hex: "6C5CE7") : .secondary)
                                 }
+                                .buttonStyle(.plain)
                             }
+                        }
+                    }
+
+                    FlowLayout(spacing: 8) {
+                        ForEach(editSelectedCategory.presetTags, id: \.name) { preset in
+                            TagChip(
+                                emoji: preset.emoji,
+                                name: preset.name,
+                                isSelected: selectedTagNames.contains(preset.name),
+                                color: Color(hex: "6C5CE7"),
+                                onTap: { toggleTag(preset.name) }
+                            )
                         }
                     }
                 }
