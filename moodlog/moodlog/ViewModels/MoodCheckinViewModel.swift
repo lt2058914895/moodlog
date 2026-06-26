@@ -62,7 +62,7 @@ class MoodCheckinViewModel: ObservableObject {
     func submitRecord() {
         guard let moodType = selectedMoodType,
               let moodSubType = selectedMoodSubType else {
-            errorMessage = "请先选择情绪"
+            errorMessage = L.localized("checkin.select_mood_first")
             return
         }
 

@@ -1,0 +1,119 @@
+/* 
+  Localizable.strings (English)
+  MoodLog
+*/
+
+// MARK: - Tab Bar
+"tab.checkin" = "Check-in";
+"tab.calendar" = "Calendar";
+"tab.insight" = "Insights";
+
+// MARK: - Checkin
+"checkin.title" = "How are you feeling?";
+"checkin.subtitle" = "Record your mood, understand yourself";
+"checkin.describe_feeling" = "Describe your feeling in detail";
+"checkin.intensity" = "Intensity";
+"checkin.intensity.light" = "Light";
+"checkin.intensity.strong" = "Strong";
+"checkin.activity_tags" = "Activity Tags";
+"checkin.more" = "More";
+"checkin.collapse" = "Collapse";
+"checkin.selected_count" = "Selected %d/5";
+"checkin.submit" = "Record Mood";
+"checkin.success" = "Recorded!";
+"checkin.select_mood_first" = "Please select a mood first";
+"checkin.alert_title" = "Notice";
+"checkin.alert_ok" = "OK";
+
+// MARK: - Mood Types
+"mood.happy" = "Happy";
+"mood.sad" = "Sad";
+"mood.angry" = "Angry";
+"mood.anxious" = "Anxious";
+"mood.neutral" = "Neutral";
+"mood.love" = "Love";
+"mood.thinking" = "Thinking";
+
+// MARK: - Mood Sub Types
+"moodsub.joyful" = "Joyful";
+"moodsub.satisfied" = "Satisfied";
+"moodsub.grateful" = "Grateful";
+"moodsub.excited" = "Excited";
+"moodsub.peaceful" = "Peaceful";
+"moodsub.grief" = "Grief";
+"moodsub.lost" = "Lost";
+"moodsub.lonely" = "Lonely";
+"moodsub.missing" = "Missing";
+"moodsub.disappointed" = "Disappointed";
+"moodsub.furious" = "Furious";
+"moodsub.irritated" = "Irritated";
+"moodsub.dissatisfied" = "Dissatisfied";
+"moodsub.jealous" = "Jealous";
+"moodsub.wronged" = "Wronged";
+"moodsub.tense" = "Tense";
+"moodsub.worried" = "Worried";
+"moodsub.scared" = "Scared";
+"moodsub.uneasy" = "Uneasy";
+"moodsub.panicked" = "Panicked";
+"moodsub.numb" = "Numb";
+"moodsub.bored" = "Bored";
+"moodsub.exhausted" = "Exhausted";
+"moodsub.confused" = "Confused";
+"moodsub.apathetic" = "Apathetic";
+"moodsub.blissful" = "Blissful";
+"moodsub.crush" = "Crush";
+"moodsub.beloved" = "Beloved";
+"moodsub.warm" = "Warm";
+"moodsub.sweet" = "Sweet";
+"moodsub.reflective" = "Reflective";
+"moodsub.conflicted" = "Conflicted";
+"moodsub.hesitant" = "Hesitant";
+"moodsub.insightful" = "Insightful";
+"moodsub.doubtful" = "Doubtful";
+
+// MARK: - Tag Categories
+"tagcat.relationship" = "Relationship";
+"tagcat.work" = "Work";
+"tagcat.family" = "Family";
+"tagcat.study" = "Study";
+"tagcat.health" = "Health";
+"tagcat.social" = "Social";
+"tagcat.finance" = "Finance";
+"tagcat.lifeEvent" = "Life Events";
+"tagcat.selfCare" = "Self Care";
+
+// MARK: - Calendar
+"calendar.streak" = "%d Day Streak";
+"calendar.today" = "Today";
+"calendar.no_records" = "No records this day";
+"calendar.records_count" = "%d records";
+"calendar.intensity" = "Intensity %d";
+"calendar.weekday_mon" = "Mon";
+"calendar.weekday_tue" = "Tue";
+"calendar.weekday_wed" = "Wed";
+"calendar.weekday_thu" = "Thu";
+"calendar.weekday_fri" = "Fri";
+"calendar.weekday_sat" = "Sat";
+"calendar.weekday_sun" = "Sun";
+
+// MARK: - Insight
+"insight.title" = "Insights";
+"insight.week" = "Week";
+"insight.month" = "Month";
+"insight.last_7_days" = "Last 7 Days";
+"insight.last_30_days" = "Last 30 Days";
+"insight.record_count" = "Records";
+"insight.avg_intensity" = "Avg Intensity";
+"insight.most_mood" = "Top Mood";
+"insight.mood_trend" = "Mood Trend";
+"insight.mood_distribution" = "Mood Distribution";
+"insight.tag_frequency" = "Top 10 Activity Tags";
+"insight.no_trend_data" = "No trend data yet";
+"insight.no_distribution_data" = "No distribution data yet";
+"insight.no_tag_data" = "No tag data yet";
+"insight.no_data" = "No data yet";
+"insight.mood_times" = "%@ %d times";
+"insight.separator" = ", ";
+
+// MARK: - App Name
+"app.name" = "MoodLog";

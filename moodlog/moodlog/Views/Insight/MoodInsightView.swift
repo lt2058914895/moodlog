@@ -33,7 +33,7 @@ struct MoodInsightView: View {
             .padding(.bottom, 40)
         }
         .background(Color(UIColor.systemGroupedBackground))
-        .navigationTitle("数据洞察")
+        .navigationTitle(L.localized("insight.title"))
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -45,7 +45,7 @@ struct MoodInsightView: View {
                     viewModel.selectedPeriod = period
                     viewModel.loadData()
                 }) {
-                    Text(period.rawValue)
+                    Text(period.displayName)
                         .font(.subheadline.bold())
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
@@ -73,19 +73,19 @@ struct MoodInsightView: View {
     private var statsOverview: some View {
         HStack(spacing: 12) {
             StatCard(
-                title: "记录数",
+                title: L.localized("insight.record_count"),
                 value: "\(viewModel.totalRecords)",
                 icon: "pencil.circle.fill",
                 color: Color(hex: "6C5CE7")
             )
             StatCard(
-                title: "平均强度",
+                title: L.localized("insight.avg_intensity"),
                 value: String(format: "%.1f", viewModel.averageIntensity),
                 icon: "chart.bar.fill",
                 color: Color(hex: "00B894")
             )
             StatCard(
-                title: "最多情绪",
+                title: L.localized("insight.most_mood"),
                 value: viewModel.mostFrequentMood.emoji,
                 icon: "heart.fill",
                 color: viewModel.mostFrequentMood.color
@@ -97,7 +97,7 @@ struct MoodInsightView: View {
     private var trendChartCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("情绪趋势")
+                Text(L.localized("insight.mood_trend"))
                     .font(.subheadline.bold())
                 Spacer()
                 Text(viewModel.periodTitle)
@@ -106,7 +106,7 @@ struct MoodInsightView: View {
             }
 
             if viewModel.chartDataPoints.isEmpty {
-                emptyState(text: "暂无趋势数据")
+                emptyState(text: L.localized("insight.no_trend_data"))
             } else {
                 MoodTrendChart(dataPoints: viewModel.chartDataPoints)
                     .frame(height: 200)
@@ -120,11 +120,11 @@ struct MoodInsightView: View {
     // MARK: - 情绪分布卡片
     private var distributionCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("情绪分布")
+            Text(L.localized("insight.mood_distribution"))
                 .font(.subheadline.bold())
 
             if viewModel.pieChartData.isEmpty {
-                emptyState(text: "暂无分布数据")
+                emptyState(text: L.localized("insight.no_distribution_data"))
             } else {
                 HStack(spacing: 16) {
                     // 饼图
@@ -159,11 +159,11 @@ struct MoodInsightView: View {
     // MARK: - 标签频次卡片
     private var tagBarCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("活动标签频次 Top10")
+            Text(L.localized("insight.tag_frequency"))
                 .font(.subheadline.bold())
 
             if viewModel.tagBarData.isEmpty {
-                emptyState(text: "暂无标签数据")
+                emptyState(text: L.localized("insight.no_tag_data"))
             } else {
                 VStack(spacing: 8) {
                     ForEach(viewModel.tagBarData) { tag in

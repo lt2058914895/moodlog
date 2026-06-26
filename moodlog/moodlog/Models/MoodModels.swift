@@ -31,13 +31,13 @@ enum MoodType: String, CaseIterable, Codable {
 
     var displayName: String {
         switch self {
-        case .happy: return "开心"
-        case .sad: return "难过"
-        case .angry: return "生气"
-        case .anxious: return "焦虑"
-        case .neutral: return "平淡"
-        case .love: return "爱"
-        case .thinking: return "思考"
+        case .happy: return L.localized("mood.happy")
+        case .sad: return L.localized("mood.sad")
+        case .angry: return L.localized("mood.angry")
+        case .anxious: return L.localized("mood.anxious")
+        case .neutral: return L.localized("mood.neutral")
+        case .love: return L.localized("mood.love")
+        case .thinking: return L.localized("mood.thinking")
         }
     }
 
@@ -113,48 +113,41 @@ enum MoodSubType: String, CaseIterable, Codable {
 
     var displayName: String {
         switch self {
-        // 开心
-        case .joyful: return "愉悦"
-        case .satisfied: return "满足"
-        case .grateful: return "感恩"
-        case .excited: return "兴奋"
-        case .peaceful: return "平静"
-        // 难过
-        case .grief: return "悲伤"
-        case .lost: return "失落"
-        case .lonely: return "孤独"
-        case .missing: return "想念"
-        case .disappointed: return "失望"
-        // 生气
-        case .furious: return "愤怒"
-        case .irritated: return "烦躁"
-        case .dissatisfied: return "不满"
-        case .jealous: return "嫉妒"
-        case .wronged: return "委屈"
-        // 焦虑
-        case .tense: return "紧张"
-        case .worried: return "担忧"
-        case .scared: return "害怕"
-        case .uneasy: return "不安"
-        case .panicked: return "恐慌"
-        // 平淡
-        case .numb: return "无感"
-        case .bored: return "无聊"
-        case .exhausted: return "疲惫"
-        case .confused: return "迷茫"
-        case .apathetic: return "麻木"
-        // 爱
-        case .blissful: return "幸福"
-        case .crush: return "心动"
-        case .beloved: return "被爱"
-        case .warm: return "温暖"
-        case .sweet: return "甜蜜"
-        // 思考
-        case .reflective: return "反思"
-        case .conflicted: return "纠结"
-        case .hesitant: return "犹豫"
-        case .insightful: return "领悟"
-        case .doubtful: return "怀疑"
+        case .joyful: return L.localized("moodsub.joyful")
+        case .satisfied: return L.localized("moodsub.satisfied")
+        case .grateful: return L.localized("moodsub.grateful")
+        case .excited: return L.localized("moodsub.excited")
+        case .peaceful: return L.localized("moodsub.peaceful")
+        case .grief: return L.localized("moodsub.grief")
+        case .lost: return L.localized("moodsub.lost")
+        case .lonely: return L.localized("moodsub.lonely")
+        case .missing: return L.localized("moodsub.missing")
+        case .disappointed: return L.localized("moodsub.disappointed")
+        case .furious: return L.localized("moodsub.furious")
+        case .irritated: return L.localized("moodsub.irritated")
+        case .dissatisfied: return L.localized("moodsub.dissatisfied")
+        case .jealous: return L.localized("moodsub.jealous")
+        case .wronged: return L.localized("moodsub.wronged")
+        case .tense: return L.localized("moodsub.tense")
+        case .worried: return L.localized("moodsub.worried")
+        case .scared: return L.localized("moodsub.scared")
+        case .uneasy: return L.localized("moodsub.uneasy")
+        case .panicked: return L.localized("moodsub.panicked")
+        case .numb: return L.localized("moodsub.numb")
+        case .bored: return L.localized("moodsub.bored")
+        case .exhausted: return L.localized("moodsub.exhausted")
+        case .confused: return L.localized("moodsub.confused")
+        case .apathetic: return L.localized("moodsub.apathetic")
+        case .blissful: return L.localized("moodsub.blissful")
+        case .crush: return L.localized("moodsub.crush")
+        case .beloved: return L.localized("moodsub.beloved")
+        case .warm: return L.localized("moodsub.warm")
+        case .sweet: return L.localized("moodsub.sweet")
+        case .reflective: return L.localized("moodsub.reflective")
+        case .conflicted: return L.localized("moodsub.conflicted")
+        case .hesitant: return L.localized("moodsub.hesitant")
+        case .insightful: return L.localized("moodsub.insightful")
+        case .doubtful: return L.localized("moodsub.doubtful")
         }
     }
 
@@ -199,15 +192,15 @@ enum TagCategory: String, CaseIterable, Codable {
 
     var displayName: String {
         switch self {
-        case .relationship: return "情感关系"
-        case .work: return "工作职场"
-        case .family: return "家庭关系"
-        case .study: return "学业成长"
-        case .health: return "身体健康"
-        case .social: return "社交生活"
-        case .finance: return "财务状况"
-        case .lifeEvent: return "生活事件"
-        case .selfCare: return "自我关怀"
+        case .relationship: return L.localized("tagcat.relationship")
+        case .work: return L.localized("tagcat.work")
+        case .family: return L.localized("tagcat.family")
+        case .study: return L.localized("tagcat.study")
+        case .health: return L.localized("tagcat.health")
+        case .social: return L.localized("tagcat.social")
+        case .finance: return L.localized("tagcat.finance")
+        case .lifeEvent: return L.localized("tagcat.lifeEvent")
+        case .selfCare: return L.localized("tagcat.selfCare")
         }
     }
 

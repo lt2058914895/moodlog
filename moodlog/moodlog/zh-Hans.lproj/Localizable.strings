@@ -1,0 +1,119 @@
+/* 
+  Localizable.strings (Simplified Chinese)
+  MoodLog
+*/
+
+// MARK: - Tab Bar
+"tab.checkin" = "打卡";
+"tab.calendar" = "日历";
+"tab.insight" = "洞察";
+
+// MARK: - Checkin
+"checkin.title" = "你现在感觉怎么样？";
+"checkin.subtitle" = "记录此刻的情绪，了解自己";
+"checkin.describe_feeling" = "更具体地描述你的感受";
+"checkin.intensity" = "情绪强度";
+"checkin.intensity.light" = "轻微";
+"checkin.intensity.strong" = "强烈";
+"checkin.activity_tags" = "活动标签";
+"checkin.more" = "更多";
+"checkin.collapse" = "收起";
+"checkin.selected_count" = "已选 %d/5";
+"checkin.submit" = "记录情绪";
+"checkin.success" = "记录成功！";
+"checkin.select_mood_first" = "请先选择情绪";
+"checkin.alert_title" = "提示";
+"checkin.alert_ok" = "确定";
+
+// MARK: - Mood Types
+"mood.happy" = "开心";
+"mood.sad" = "难过";
+"mood.angry" = "生气";
+"mood.anxious" = "焦虑";
+"mood.neutral" = "平淡";
+"mood.love" = "爱";
+"mood.thinking" = "思考";
+
+// MARK: - Mood Sub Types
+"moodsub.joyful" = "愉悦";
+"moodsub.satisfied" = "满足";
+"moodsub.grateful" = "感恩";
+"moodsub.excited" = "兴奋";
+"moodsub.peaceful" = "平静";
+"moodsub.grief" = "悲伤";
+"moodsub.lost" = "失落";
+"moodsub.lonely" = "孤独";
+"moodsub.missing" = "想念";
+"moodsub.disappointed" = "失望";
+"moodsub.furious" = "愤怒";
+"moodsub.irritated" = "烦躁";
+"moodsub.dissatisfied" = "不满";
+"moodsub.jealous" = "嫉妒";
+"moodsub.wronged" = "委屈";
+"moodsub.tense" = "紧张";
+"moodsub.worried" = "担忧";
+"moodsub.scared" = "害怕";
+"moodsub.uneasy" = "不安";
+"moodsub.panicked" = "恐慌";
+"moodsub.numb" = "无感";
+"moodsub.bored" = "无聊";
+"moodsub.exhausted" = "疲惫";
+"moodsub.confused" = "迷茫";
+"moodsub.apathetic" = "麻木";
+"moodsub.blissful" = "幸福";
+"moodsub.crush" = "心动";
+"moodsub.beloved" = "被爱";
+"moodsub.warm" = "温暖";
+"moodsub.sweet" = "甜蜜";
+"moodsub.reflective" = "反思";
+"moodsub.conflicted" = "纠结";
+"moodsub.hesitant" = "犹豫";
+"moodsub.insightful" = "领悟";
+"moodsub.doubtful" = "怀疑";
+
+// MARK: - Tag Categories
+"tagcat.relationship" = "情感关系";
+"tagcat.work" = "工作职场";
+"tagcat.family" = "家庭关系";
+"tagcat.study" = "学业成长";
+"tagcat.health" = "身体健康";
+"tagcat.social" = "社交生活";
+"tagcat.finance" = "财务状况";
+"tagcat.lifeEvent" = "生活事件";
+"tagcat.selfCare" = "自我关怀";
+
+// MARK: - Calendar
+"calendar.streak" = "连续打卡 %d 天";
+"calendar.today" = "今天";
+"calendar.no_records" = "这一天还没有记录";
+"calendar.records_count" = "%d条记录";
+"calendar.intensity" = "强度%d";
+"calendar.weekday_mon" = "一";
+"calendar.weekday_tue" = "二";
+"calendar.weekday_wed" = "三";
+"calendar.weekday_thu" = "四";
+"calendar.weekday_fri" = "五";
+"calendar.weekday_sat" = "六";
+"calendar.weekday_sun" = "日";
+
+// MARK: - Insight
+"insight.title" = "数据洞察";
+"insight.week" = "周";
+"insight.month" = "月";
+"insight.last_7_days" = "最近7天";
+"insight.last_30_days" = "最近30天";
+"insight.record_count" = "记录数";
+"insight.avg_intensity" = "平均强度";
+"insight.most_mood" = "最多情绪";
+"insight.mood_trend" = "情绪趋势";
+"insight.mood_distribution" = "情绪分布";
+"insight.tag_frequency" = "活动标签频次 Top10";
+"insight.no_trend_data" = "暂无趋势数据";
+"insight.no_distribution_data" = "暂无分布数据";
+"insight.no_tag_data" = "暂无标签数据";
+"insight.no_data" = "暂无数据";
+"insight.mood_times" = "%@ %d次";
+"insight.separator" = "、";
+
+// MARK: - App Name
+"app.name" = "心迹";

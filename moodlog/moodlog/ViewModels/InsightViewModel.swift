@@ -113,17 +113,19 @@ class InsightViewModel: ObservableObject {
 
     /// 情绪分布摘要文字
     var distributionSummary: String {
-        guard !moodDistribution.isEmpty else { return "暂无数据" }
+        guard !moodDistribution.isEmpty else { return L.localized("insight.no_data") }
         let sorted = moodDistribution.sorted { $0.value > $1.value }
-        let top = sorted.prefix(3).map { "\($0.key.emoji)\($0.key.displayName)\($0.value)次" }
-        return top.joined(separator: "、")
+        let top = sorted.prefix(3).map { mood, count in
+            String(format: L.localized("insight.mood_times"), "\(mood.emoji)\(mood.displayName)", count)
+        }
+        return top.joined(separator: L.localized("insight.separator"))
     }
 
     /// 时间范围标题
     var periodTitle: String {
         switch selectedPeriod {
-        case .week: return "最近7天"
-        case .month: return "最近30天"
+        case .week: return L.localized("insight.last_7_days")
+        case .month: return L.localized("insight.last_30_days")
         }
     }
 }
@@ -131,8 +133,12 @@ class InsightViewModel: ObservableObject {
 // MARK: - 枚举与数据模型
 
 enum InsightPeriod: String, CaseIterable {
-    case week = "周"
-    case month = "月"
+    case week = "insight.week"
+    case month = "insight.month"
+    
+    var displayName: String {
+        L.localized(rawValue)
+    }
 }
 
 struct ChartDataPoint: Identifiable {

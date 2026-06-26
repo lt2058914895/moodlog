@@ -19,9 +19,9 @@ struct MainTabView: View {
 
         var title: String {
             switch self {
-            case .checkin: return "打卡"
-            case .calendar: return "日历"
-            case .insight: return "洞察"
+            case .checkin: return L.localized("tab.checkin")
+            case .calendar: return L.localized("tab.calendar")
+            case .insight: return L.localized("tab.insight")
             }
         }
 
@@ -47,7 +47,7 @@ struct MainTabView: View {
             // 情绪打卡
             NavigationView {
                 MoodCheckinView()
-                    .navigationTitle("心迹")
+                    .navigationTitle(L.localized("app.name"))
                     .navigationBarTitleDisplayMode(.inline)
             }
             .tabItem {
@@ -59,7 +59,7 @@ struct MainTabView: View {
             // 日历视图
             NavigationView {
                 MoodCalendarView()
-                    .navigationTitle("日历")
+                    .navigationTitle(L.localized("tab.calendar"))
                     .navigationBarTitleDisplayMode(.inline)
             }
             .tabItem {

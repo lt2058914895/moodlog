@@ -158,7 +158,7 @@ class CalendarViewModel: ObservableObject {
     /// 月份标题
     var monthTitle: String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy年M月"
+        formatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "yyyyMMMM", options: 0, locale: Locale.current)
         return formatter.string(from: currentMonth)
     }
 

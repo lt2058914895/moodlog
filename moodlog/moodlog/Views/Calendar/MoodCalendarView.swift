@@ -50,7 +50,7 @@ struct MoodCalendarView: View {
             Spacer()
 
             Button(action: viewModel.goToToday) {
-                Text("今天")
+                Text(L.localized("calendar.today"))
                     .font(.caption.bold())
                     .foregroundColor(Color(hex: "6C5CE7"))
                     .padding(.horizontal, 12)
@@ -75,7 +75,7 @@ struct MoodCalendarView: View {
         HStack(spacing: 6) {
             Text("🔥")
                 .font(.title3)
-            Text("连续打卡 \(viewModel.streakDays) 天")
+            Text(L.localizedInt("calendar.streak", value: viewModel.streakDays))
                 .font(.subheadline.bold())
                 .foregroundColor(Color(hex: "FF6B6B"))
         }
@@ -107,7 +107,7 @@ struct MoodCalendarView: View {
     // MARK: - 星期标题
     private var weekdayHeader: some View {
         HStack(spacing: 0) {
-            ForEach(["一", "二", "三", "四", "五", "六", "日"], id: \.self) { weekday in
+            ForEach([L.localized("calendar.weekday_mon"), L.localized("calendar.weekday_tue"), L.localized("calendar.weekday_wed"), L.localized("calendar.weekday_thu"), L.localized("calendar.weekday_fri"), L.localized("calendar.weekday_sat"), L.localized("calendar.weekday_sun")], id: \.self) { weekday in
                 Text(weekday)
                     .font(.caption2)
                     .foregroundColor(.secondary)
@@ -176,7 +176,7 @@ struct MoodCalendarView: View {
                 Text(dateTitle)
                     .font(.subheadline.bold())
                 Spacer()
-                Text("\(viewModel.recordsForSelectedDate.count)条记录")
+                Text(L.localizedInt("calendar.records_count", value: viewModel.recordsForSelectedDate.count))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -188,7 +188,7 @@ struct MoodCalendarView: View {
                 VStack(spacing: 8) {
                     Text("📝")
                         .font(.title)
-                    Text("这一天还没有记录")
+                    Text(L.localized("calendar.no_records"))
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
@@ -212,7 +212,8 @@ struct MoodCalendarView: View {
 
     private var dateTitle: String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "M月d日 EEEE"
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
         return formatter.string(from: viewModel.selectedDate)
     }
 }
@@ -264,7 +265,7 @@ struct MoodRecordRow: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
                     Spacer()
-                    Text("强度\(record.intensity)")
+                    Text(L.localizedInt("calendar.intensity", value: Int(record.intensity)))
                         .font(.caption2)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)

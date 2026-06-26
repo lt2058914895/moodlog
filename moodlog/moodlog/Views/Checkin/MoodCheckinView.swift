@@ -51,8 +51,8 @@ struct MoodCheckinView: View {
                 }
             }
         }
-        .alert("提示", isPresented: .constant(viewModel.errorMessage != nil)) {
-            Button("确定") {
+        .alert(L.localized("checkin.alert_title"), isPresented: .constant(viewModel.errorMessage != nil)) {
+            Button(L.localized("checkin.alert_ok")) {
                 viewModel.errorMessage = nil
             }
         } message: {
@@ -63,11 +63,11 @@ struct MoodCheckinView: View {
     // MARK: - 标题区域
     private var headerSection: some View {
         VStack(spacing: 8) {
-            Text("你现在感觉怎么样？")
+            Text(L.localized("checkin.title"))
                 .font(.title2.bold())
                 .foregroundColor(.primary)
 
-            Text("记录此刻的情绪，了解自己")
+            Text(L.localized("checkin.subtitle"))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
         }
@@ -79,7 +79,7 @@ struct MoodCheckinView: View {
         Button(action: viewModel.submitRecord) {
             HStack(spacing: 8) {
                 Image(systemName: "checkmark.circle.fill")
-                Text("记录情绪")
+                Text(L.localized("checkin.submit"))
                     .font(.headline)
             }
             .frame(maxWidth: .infinity)
@@ -176,7 +176,7 @@ struct SubMoodSelectorView: View {
 
     var body: some View {
         VStack(spacing: 8) {
-            Text("更具体地描述你的感受")
+            Text(L.localized("checkin.describe_feeling"))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
 
@@ -231,7 +231,7 @@ struct IntensitySliderView: View {
     var body: some View {
         VStack(spacing: 12) {
             HStack {
-                Text("情绪强度")
+                Text(L.localized("checkin.intensity"))
                     .font(.subheadline.bold())
                 Spacer()
                 Text("\(viewModel.intensity)")
@@ -246,11 +246,11 @@ struct IntensitySliderView: View {
             .tint(intensityGradientColor)
 
             HStack {
-                Text("轻微")
+                Text(L.localized("checkin.intensity.light"))
                     .font(.caption2)
                     .foregroundColor(.secondary)
                 Spacer()
-                Text("强烈")
+                Text(L.localized("checkin.intensity.strong"))
                     .font(.caption2)
                     .foregroundColor(.secondary)
             }
@@ -280,11 +280,11 @@ struct TagSelectorView: View {
     var body: some View {
         VStack(spacing: 12) {
             HStack {
-                Text("活动标签")
+                Text(L.localized("checkin.activity_tags"))
                     .font(.subheadline.bold())
                 Spacer()
                 Button(action: { viewModel.showAllTags.toggle() }) {
-                    Text(viewModel.showAllTags ? "收起" : "更多")
+                    Text(viewModel.showAllTags ? L.localized("checkin.collapse") : L.localized("checkin.more"))
                         .font(.caption)
                         .foregroundColor(Color(hex: "6C5CE7"))
                 }
@@ -350,7 +350,7 @@ struct TagSelectorView: View {
     // MARK: - 已选标签预览
     private var selectedTagsPreview: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text("已选 \(viewModel.selectedTagNames.count)/5")
+            Text(L.localizedInt("checkin.selected_count", value: viewModel.selectedTagNames.count))
                 .font(.caption2)
                 .foregroundColor(.secondary)
 
@@ -454,7 +454,7 @@ struct SuccessOverlayView: View {
                     .scaleEffect(showCheckmark ? 1.0 : 0.1)
                     .opacity(showCheckmark ? 1 : 0)
 
-                Text("记录成功！")
+                Text(L.localized("checkin.success"))
                     .font(.title3.bold())
                     .foregroundColor(.white)
                     .opacity(showText ? 1 : 0)
