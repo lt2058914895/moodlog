@@ -17,9 +17,21 @@ class CalendarViewModel: ObservableObject {
     private let dataManager: MoodDataManager
     private let calendar = Calendar.current
 
+    private var cancellable: Any?
+
     init(dataManager: MoodDataManager = .shared) {
         self.dataManager = dataManager
         loadMonthlyData()
+        // 监听数据变更通知
+        cancellable = NotificationCenter.default.addObserver(forName: .moodDataDidChange, object: nil, queue: .main) { [weak self] _ in
+            self?.loadMonthlyData()
+        }
+    }
+
+    deinit {
+        if let cancellable = cancellable {
+            NotificationCenter.default.removeObserver(cancellable)
+        }
     }
 
     // MARK: - 月份导航

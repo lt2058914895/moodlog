@@ -25,6 +25,7 @@
 		C22D1EB02FED4E1F001B6443 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C22D1EAF2FED4E1F001B6443 /* Launch Screen.storyboard */; };
 		C2C65F312FEE4B2F006AD954 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C2C65F332FEE4B2F006AD954 /* Localizable.strings */; };
 		AA0000132FED4D95001B6443 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000142FED4D95001B6443 /* LocalizationManager.swift */; };
+		AA0000152FED4D95001B6443 /* EditMoodRecordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000162FED4D95001B6443 /* EditMoodRecordView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +50,7 @@
 		C2C65F322FEE4B2F006AD954 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		C2C65F342FEE4B31006AD954 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		AA0000142FED4D95001B6443 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
+		AA0000162FED4D95001B6443 /* EditMoodRecordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMoodRecordView.swift; sourceTree = "<group>"; };
 		E2EAEDB359DB04F35B882C78 /* Pods_moodlog.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_moodlog.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -95,6 +97,7 @@
 			isa = PBXGroup;
 			children = (
 				AA00000C2FED4D95001B6443 /* MoodCheckinView.swift */,
+				AA0000162FED4D95001B6443 /* EditMoodRecordView.swift */,
 			);
 			path = Checkin;
 			sourceTree = "<group>";
@@ -325,6 +328,7 @@
 				AA00000F2FED4D95001B6443 /* MoodInsightView.swift in Sources */,
 				AA0000112FED4D95001B6443 /* MainTabView.swift in Sources */,
 				AA0000132FED4D95001B6443 /* LocalizationManager.swift in Sources */,
+				AA0000152FED4D95001B6443 /* EditMoodRecordView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

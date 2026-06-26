@@ -10,6 +10,9 @@ import SwiftUI
 /// 日历视图主页面
 struct MoodCalendarView: View {
     @StateObject private var viewModel = CalendarViewModel()
+    @State private var recordToEdit: MoodRecord?
+    @State private var recordToDelete: MoodRecord?
+    @State private var showDeleteConfirmation = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -30,6 +33,24 @@ struct MoodCalendarView: View {
             dayTimeline
         }
         .background(Color(UIColor.systemGroupedBackground))
+        .sheet(item: $recordToEdit) { record in
+            EditMoodRecordView(record: record)
+        }
+        .alert(L.localized("checkin.delete_confirm"), isPresented: $showDeleteConfirmation, presenting: recordToDelete) { record in
+            Button(L.localized("checkin.delete"), role: .destructive) {
+                deleteRecord(record)
+            }
+            Button(L.localized("checkin.cancel"), role: .cancel) {}
+        }
+    }
+
+    private func deleteRecord(_ record: MoodRecord) {
+        do {
+            try MoodDataManager.shared.deleteRecord(record)
+            viewModel.loadMonthlyData()
+        } catch {
+            // silently fail
+        }
     }
 
     // MARK: - 月份导航
@@ -199,7 +220,12 @@ struct MoodCalendarView: View {
                 ScrollView {
                     VStack(spacing: 12) {
                         ForEach(viewModel.recordsForSelectedDate, id: \.id) { record in
-                            MoodRecordRow(record: record)
+                            MoodRecordRow(record: record, onEdit: {
+                                recordToEdit = record
+                            }, onDelete: {
+                                recordToDelete = record
+                                showDeleteConfirmation = true
+                            })
                         }
                     }
                     .padding(.horizontal, 16)
@@ -221,6 +247,8 @@ struct MoodCalendarView: View {
 // MARK: - 情绪记录行
 struct MoodRecordRow: View {
     let record: MoodRecord
+    var onEdit: (() -> Void)?
+    var onDelete: (() -> Void)?
 
     private var moodType: MoodType? {
         MoodType(rawValue: record.moodType ?? "happy")
@@ -296,6 +324,18 @@ struct MoodRecordRow: View {
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color(UIColor.secondarySystemGroupedBackground))
         )
+        .contextMenu {
+            Button {
+                onEdit?()
+            } label: {
+                Label(L.localized("checkin.edit"), systemImage: "pencil")
+            }
+            Button(role: .destructive) {
+                onDelete?()
+            } label: {
+                Label(L.localized("checkin.delete"), systemImage: "trash")
+            }
+        }
     }
 }
 

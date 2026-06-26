@@ -82,7 +82,7 @@ class MoodCheckinViewModel: ObservableObject {
             // 重置表单
             resetForm()
         } catch {
-            errorMessage = "记录保存失败：\(error.localizedDescription)"
+            errorMessage = String(format: L.localized("checkin.save_failed"), error.localizedDescription)
         }
     }
 
@@ -98,7 +98,7 @@ class MoodCheckinViewModel: ObservableObject {
             )
             showSuccessAnimation = true
         } catch {
-            errorMessage = "快捷打卡失败：\(error.localizedDescription)"
+            errorMessage = String(format: L.localized("checkin.quick_failed"), error.localizedDescription)
         }
     }
 

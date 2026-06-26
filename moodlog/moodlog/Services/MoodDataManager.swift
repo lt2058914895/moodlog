@@ -8,9 +8,15 @@
 import CoreData
 import Foundation
 
+/// 数据变更通知
+extension Notification.Name {
+    static let moodDataDidChange = Notification.Name("moodDataDidChange")
+}
+
 /// Core Data CRUD管理器
 class MoodDataManager: ObservableObject {
     static let shared = MoodDataManager()
+    @Published var dataVersion: Int = 0
 
     let container: NSPersistentContainer
     let viewContext: NSManagedObjectContext
@@ -47,6 +53,7 @@ class MoodDataManager: ObservableObject {
         }
 
         try viewContext.save()
+        notifyDataChange()
         return record
     }
 
@@ -88,6 +95,7 @@ class MoodDataManager: ObservableObject {
     func deleteRecord(_ record: MoodRecord) throws {
         viewContext.delete(record)
         try viewContext.save()
+        notifyDataChange()
     }
 
     /// 批量删除记录
@@ -96,6 +104,7 @@ class MoodDataManager: ObservableObject {
             viewContext.delete(record)
         }
         try viewContext.save()
+        notifyDataChange()
     }
 
     // MARK: - ActivityTag CRUD
@@ -275,11 +284,40 @@ class MoodDataManager: ObservableObject {
         try? viewContext.save()
     }
 
+    // MARK: - 更新记录
+
+    /// 更新情绪记录
+    func updateMoodRecord(
+        _ record: MoodRecord,
+        moodType: MoodType,
+        moodSubType: MoodSubType,
+        intensity: Int,
+        tagNames: [String],
+        note: String?
+    ) throws {
+        record.moodType = moodType.rawValue
+        record.moodSubType = moodSubType.rawValue
+        record.intensity = Int16(intensity)
+        record.tagNames = tagNames.joined(separator: ",")
+        record.note = note
+        record.updatedAt = Date()
+        try viewContext.save()
+        notifyDataChange()
+    }
+
     // MARK: - 辅助方法
 
     /// 从MoodRecord获取标签名列表
     static func tagNamesFromRecord(_ record: MoodRecord) -> [String] {
         guard let tagNamesStr = record.tagNames else { return [] }
         return tagNamesStr.components(separatedBy: ",").filter { !$0.isEmpty }
+    }
+
+    /// 发送数据变更通知
+    private func notifyDataChange() {
+        DispatchQueue.main.async { [weak self] in
+            self?.dataVersion += 1
+            NotificationCenter.default.post(name: .moodDataDidChange, object: nil)
+        }
     }
 }

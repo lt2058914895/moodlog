@@ -19,11 +19,22 @@
 "checkin.more" = "更多";
 "checkin.collapse" = "收起";
 "checkin.selected_count" = "已选 %d/5";
+"checkin.note_placeholder" = "添加备注（可选）";
 "checkin.submit" = "记录情绪";
 "checkin.success" = "记录成功！";
 "checkin.select_mood_first" = "请先选择情绪";
 "checkin.alert_title" = "提示";
 "checkin.alert_ok" = "确定";
+"checkin.save_failed" = "记录保存失败：%@";
+"checkin.quick_failed" = "快捷打卡失败：%@";
+"checkin.delete_confirm" = "确定删除这条记录吗？";
+"checkin.delete" = "删除";
+"checkin.edit" = "编辑";
+"checkin.cancel" = "取消";
+"checkin.edit_title" = "编辑记录";
+"checkin.update" = "更新记录";
+"checkin.update_success" = "更新成功！";
+"checkin.delete_success" = "已删除";
 
 // MARK: - Mood Types
 "mood.happy" = "开心";

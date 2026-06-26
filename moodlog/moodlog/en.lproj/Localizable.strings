@@ -19,11 +19,22 @@
 "checkin.more" = "More";
 "checkin.collapse" = "Collapse";
 "checkin.selected_count" = "Selected %d/5";
+"checkin.note_placeholder" = "Add a note (optional)";
 "checkin.submit" = "Record Mood";
 "checkin.success" = "Recorded!";
 "checkin.select_mood_first" = "Please select a mood first";
 "checkin.alert_title" = "Notice";
 "checkin.alert_ok" = "OK";
+"checkin.save_failed" = "Save failed: %@";
+"checkin.quick_failed" = "Quick check-in failed: %@";
+"checkin.delete_confirm" = "Are you sure you want to delete this record?";
+"checkin.delete" = "Delete";
+"checkin.edit" = "Edit";
+"checkin.cancel" = "Cancel";
+"checkin.edit_title" = "Edit Record";
+"checkin.update" = "Update Record";
+"checkin.update_success" = "Updated!";
+"checkin.delete_success" = "Deleted";
 
 // MARK: - Mood Types
 "mood.happy" = "Happy";
