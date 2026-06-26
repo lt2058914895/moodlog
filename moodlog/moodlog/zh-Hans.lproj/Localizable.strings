@@ -35,6 +35,7 @@
 "checkin.update" = "更新记录";
 "checkin.update_success" = "更新成功！";
 "checkin.delete_success" = "已删除";
+"calendar.long_press_hint" = "长按记录可编辑或删除";
 
 // MARK: - Mood Types
 "mood.happy" = "开心";

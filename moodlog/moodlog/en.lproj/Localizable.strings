@@ -35,6 +35,7 @@
 "checkin.update" = "Update Record";
 "checkin.update_success" = "Updated!";
 "checkin.delete_success" = "Deleted";
+"calendar.long_press_hint" = "Long press a record to edit or delete";
 
 // MARK: - Mood Types
 "mood.happy" = "Happy";
