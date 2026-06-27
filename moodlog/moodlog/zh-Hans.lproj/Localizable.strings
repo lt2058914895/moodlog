@@ -158,9 +158,9 @@
 
 // MARK: - Insight
 "insight.title" = "数据洞察";
-"insight.week" = "周";
 "insight.month" = "月";
-"insight.last_7_days" = "最近7天";
+"insight.year" = "年";
+"insight.year_unit" = "年";
 "insight.last_30_days" = "最近30天";
 "insight.record_count" = "记录数";
 "insight.avg_intensity" = "平均强度";

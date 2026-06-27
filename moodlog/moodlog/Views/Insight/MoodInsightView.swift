@@ -39,34 +39,81 @@ struct MoodInsightView: View {
 
     // MARK: - 时间段选择
     private var periodPicker: some View {
-        HStack(spacing: 0) {
-            ForEach(InsightPeriod.allCases, id: \.self) { period in
-                Button(action: {
-                    viewModel.selectedPeriod = period
-                    viewModel.loadData()
-                }) {
-                    Text(period.displayName)
-                        .font(.subheadline.bold())
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 10)
-                        .background(
-                            viewModel.selectedPeriod == period
-                                ? Color(hex: "6C5CE7")
-                                : Color.clear
-                        )
-                        .foregroundColor(
-                            viewModel.selectedPeriod == period
-                                ? .white
-                                : Color(hex: "6C5CE7")
-                        )
-                        .cornerRadius(10)
+        VStack(spacing: 8) {
+            HStack(spacing: 0) {
+                ForEach(InsightPeriod.allCases, id: \.self) { period in
+                    Button(action: {
+                        viewModel.selectedPeriod = period
+                        viewModel.loadData()
+                    }) {
+                        Text(period.displayName)
+                            .font(.subheadline.bold())
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                            .background(
+                                viewModel.selectedPeriod == period
+                                    ? Color(hex: "6C5CE7")
+                                    : Color.clear
+                            )
+                            .foregroundColor(
+                                viewModel.selectedPeriod == period
+                                    ? .white
+                                    : Color(hex: "6C5CE7")
+                            )
+                            .cornerRadius(10)
+                    }
                 }
             }
+            .padding(4)
+            .background(Color(UIColor.secondarySystemGroupedBackground))
+            .cornerRadius(12)
+
+            // 年份选择器（仅在选择"年"时显示）
+            if viewModel.selectedPeriod == .year {
+                yearPicker
+            }
         }
-        .padding(4)
-        .background(Color(UIColor.secondarySystemGroupedBackground))
-        .cornerRadius(12)
         .padding(.top, 12)
+    }
+
+    // MARK: - 年份选择器
+    private var yearPicker: some View {
+        HStack(spacing: 12) {
+            // 左箭头（切换到更早的年份）
+            Button(action: {
+                viewModel.selectedYear -= 1
+                viewModel.loadData()
+            }) {
+                Image(systemName: "chevron.left")
+                    .font(.body.weight(.semibold))
+                    .foregroundColor(viewModel.canGoPreviousYear ? Color(hex: "6C5CE7") : Color.gray.opacity(0.3))
+            }
+            .disabled(!viewModel.canGoPreviousYear)
+
+            Spacer()
+
+            // 年份显示
+            Text("\(viewModel.selectedYear)\(L.localized("insight.year_unit"))")
+                .font(.headline)
+                .foregroundColor(.primary)
+
+            Spacer()
+
+            // 右箭头（切换到更近的年份）
+            Button(action: {
+                viewModel.selectedYear += 1
+                viewModel.loadData()
+            }) {
+                Image(systemName: "chevron.right")
+                    .font(.body.weight(.semibold))
+                    .foregroundColor(viewModel.canGoNextYear ? Color(hex: "6C5CE7") : Color.gray.opacity(0.3))
+            }
+            .disabled(!viewModel.canGoNextYear)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(Color(UIColor.secondarySystemGroupedBackground))
+        .cornerRadius(10)
     }
 
     // MARK: - 统计概览

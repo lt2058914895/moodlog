@@ -228,6 +228,48 @@ class MoodDataManager: ObservableObject {
             .sorted { $0.date < $1.date }
     }
 
+    /// 获取指定年份的月均情绪强度
+    func fetchMonthlyAverageIntensity(for year: Int) -> [(month: Int, intensity: Double)] {
+        let calendar = Calendar.current
+        var components = DateComponents()
+        components.year = year
+        components.month = 1
+        components.day = 1
+        guard let yearStart = calendar.date(from: components) else { return [] }
+        components.year = year + 1
+        guard let yearEnd = calendar.date(from: components) else { return [] }
+
+        let records = fetchRecords(from: yearStart, to: yearEnd)
+
+        var monthlyData: [Int: [Int]] = [:]
+        for record in records {
+            if let createdAt = record.createdAt {
+                let month = calendar.component(.month, from: createdAt)
+                monthlyData[month, default: []].append(Int(record.intensity))
+            }
+        }
+
+        return monthlyData.map { (month: $0.key, intensity: Double($0.value.reduce(0, +)) / Double($0.value.count)) }
+            .sorted { $0.month < $1.month }
+    }
+
+    /// 获取有数据的年份列表（降序）
+    func fetchAvailableYears() -> [Int] {
+        let records = fetchAllRecords()
+        let calendar = Calendar.current
+        let currentYear = calendar.component(.year, from: Date())
+
+        var years = Set<Int>()
+        years.insert(currentYear)
+        for record in records {
+            if let createdAt = record.createdAt {
+                let year = calendar.component(.year, from: createdAt)
+                years.insert(year)
+            }
+        }
+        return years.sorted(by: >)
+    }
+
     /// 获取连续打卡天数
     func fetchStreakDays() -> Int {
         let records = fetchAllRecords()

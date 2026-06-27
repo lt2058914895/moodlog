@@ -158,9 +158,9 @@
 
 // MARK: - Insight
 "insight.title" = "Insights";
-"insight.week" = "Week";
 "insight.month" = "Month";
-"insight.last_7_days" = "Last 7 Days";
+"insight.year" = "Year";
+"insight.year_unit" = "";
 "insight.last_30_days" = "Last 30 Days";
 "insight.record_count" = "Records";
 "insight.avg_intensity" = "Avg Intensity";
