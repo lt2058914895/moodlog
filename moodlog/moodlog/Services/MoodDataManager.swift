@@ -7,10 +7,32 @@
 
 import CoreData
 import Foundation
+import os.log
 
 /// 数据变更通知
 extension Notification.Name {
     static let moodDataDidChange = Notification.Name("moodDataDidChange")
+}
+
+/// 数据操作错误类型
+enum MoodDataError: LocalizedError {
+    case createFailed(String)
+    case deleteFailed(String)
+    case updateFailed(String)
+    case fetchFailed(String)
+    case tagCreationFailed(String)
+    case invalidData(String)
+
+    var errorDescription: String? {
+        switch self {
+        case .createFailed(let detail): return "创建记录失败：\(detail)"
+        case .deleteFailed(let detail): return "删除记录失败：\(detail)"
+        case .updateFailed(let detail): return "更新记录失败：\(detail)"
+        case .fetchFailed(let detail): return "查询数据失败：\(detail)"
+        case .tagCreationFailed(let detail): return "创建标签失败：\(detail)"
+        case .invalidData(let detail): return "数据无效：\(detail)"
+        }
+    }
 }
 
 /// 缓存键
@@ -29,12 +51,21 @@ private enum CacheKey {
     }
     static let streakDays = "streak_days"
     static let availableYears = "available_years"
+    static func dayRecordCount(year: Int, month: Int) -> String {
+        "day_count_\(year)_\(month)"
+    }
+    static func dayPrimaryMood(year: Int, month: Int) -> String {
+        "day_mood_\(year)_\(month)"
+    }
 }
 
 /// Core Data CRUD管理器（性能优化版）
 class MoodDataManager: ObservableObject {
     static let shared = MoodDataManager()
     @Published var dataVersion: Int = 0
+
+    /// 错误通知（供UI层监听）
+    @Published var lastError: MoodDataError?
 
     let container: NSPersistentContainer
     let viewContext: NSManagedObjectContext
@@ -44,7 +75,9 @@ class MoodDataManager: ObservableObject {
 
     /// 统计数据缓存
     private let cache = NSCache<NSString, CacheWrapper>()
-    private let cacheExpiry: TimeInterval = 30 // 缓存30秒
+
+    /// 日志
+    private static let logger = Logger(subsystem: "com.moodlog.app", category: "MoodDataManager")
 
     init(container: NSPersistentContainer = PersistenceController.shared.container,
          backgroundContext: NSManagedObjectContext = PersistenceController.shared.backgroundContext) {
@@ -103,6 +136,8 @@ class MoodDataManager: ObservableObject {
         tagNames: [String] = [],
         note: String? = nil
     ) throws -> MoodRecord {
+        Self.logger.info("Creating mood record: \(moodType.rawValue), intensity: \(intensity)")
+
         let record = MoodRecord(context: viewContext)
         record.id = UUID()
         record.moodType = moodType.rawValue
@@ -119,10 +154,18 @@ class MoodDataManager: ObservableObject {
             _ = getOrCreateTag(name: tagName)
         }
 
-        try viewContext.save()
-        clearCache()
-        notifyDataChange()
-        return record
+        do {
+            try viewContext.save()
+            Self.logger.info("Mood record created successfully")
+            clearCache()
+            notifyDataChange()
+            return record
+        } catch {
+            Self.logger.error("Failed to create mood record: \(error.localizedDescription)")
+            let moodError = MoodDataError.createFailed(error.localizedDescription)
+            lastError = moodError
+            throw moodError
+        }
     }
 
     /// 获取所有情绪记录（按时间降序，带批量大小）
@@ -133,7 +176,8 @@ class MoodDataManager: ObservableObject {
         do {
             return try viewContext.fetch(request)
         } catch {
-            print("Fetch records error: \(error)")
+            Self.logger.error("Fetch all records failed: \(error.localizedDescription)")
+            lastError = .fetchFailed(error.localizedDescription)
             return []
         }
     }
@@ -151,7 +195,8 @@ class MoodDataManager: ObservableObject {
         do {
             return try viewContext.fetch(request)
         } catch {
-            print("Fetch records error: \(error)")
+            Self.logger.error("Fetch records from \(startDate) to \(endDate) failed: \(error.localizedDescription)")
+            lastError = .fetchFailed(error.localizedDescription)
             return []
         }
     }
@@ -163,20 +208,36 @@ class MoodDataManager: ObservableObject {
 
     /// 删除情绪记录
     func deleteRecord(_ record: MoodRecord) throws {
+        Self.logger.info("Deleting mood record")
         viewContext.delete(record)
-        try viewContext.save()
-        clearCache()
-        notifyDataChange()
+        do {
+            try viewContext.save()
+            clearCache()
+            notifyDataChange()
+        } catch {
+            Self.logger.error("Failed to delete mood record: \(error.localizedDescription)")
+            let moodError = MoodDataError.deleteFailed(error.localizedDescription)
+            lastError = moodError
+            throw moodError
+        }
     }
 
     /// 批量删除记录
     func deleteRecords(_ records: [MoodRecord]) throws {
+        Self.logger.info("Batch deleting \(records.count) records")
         for record in records {
             viewContext.delete(record)
         }
-        try viewContext.save()
-        clearCache()
-        notifyDataChange()
+        do {
+            try viewContext.save()
+            clearCache()
+            notifyDataChange()
+        } catch {
+            Self.logger.error("Batch delete failed: \(error.localizedDescription)")
+            let moodError = MoodDataError.deleteFailed(error.localizedDescription)
+            lastError = moodError
+            throw moodError
+        }
     }
 
     // MARK: - ActivityTag CRUD
@@ -203,7 +264,11 @@ class MoodDataManager: ObservableObject {
         tag.isCustom = isCustom
         tag.usageCount = 1
         tag.createdAt = Date()
-        try? viewContext.save()
+        do {
+            try viewContext.save()
+        } catch {
+            Self.logger.error("Failed to create tag: \(error.localizedDescription)")
+        }
         return tag
     }
 
@@ -216,7 +281,7 @@ class MoodDataManager: ObservableObject {
         do {
             return try viewContext.fetch(request)
         } catch {
-            print("Fetch tags error: \(error)")
+            Self.logger.error("Fetch frequent tags failed: \(error.localizedDescription)")
             return []
         }
     }
@@ -230,7 +295,7 @@ class MoodDataManager: ObservableObject {
         do {
             return try viewContext.fetch(request)
         } catch {
-            print("Fetch custom tags error: \(error)")
+            Self.logger.error("Fetch custom tags failed: \(error.localizedDescription)")
             return []
         }
     }
@@ -245,7 +310,12 @@ class MoodDataManager: ObservableObject {
         tag.isCustom = true
         tag.usageCount = 0
         tag.createdAt = Date()
-        try viewContext.save()
+        do {
+            try viewContext.save()
+        } catch {
+            Self.logger.error("Failed to create custom tag: \(error.localizedDescription)")
+            throw MoodDataError.tagCreationFailed(error.localizedDescription)
+        }
         return tag
     }
 
@@ -253,12 +323,17 @@ class MoodDataManager: ObservableObject {
     func deleteCustomTag(_ tag: ActivityTag) throws {
         guard tag.isCustom else { return }
         viewContext.delete(tag)
-        try viewContext.save()
+        do {
+            try viewContext.save()
+        } catch {
+            Self.logger.error("Failed to delete custom tag: \(error.localizedDescription)")
+            throw MoodDataError.deleteFailed(error.localizedDescription)
+        }
     }
 
-    // MARK: - 统计查询（带缓存）
+    // MARK: - 统计查询（带缓存 + 数据库端聚合）
 
-    /// 获取指定日期范围内的情绪类型分布（带缓存）
+    /// 获取指定日期范围内的情绪类型分布（数据库端聚合 + 缓存）
     func fetchMoodDistribution(from startDate: Date, to endDate: Date) -> [MoodType: Int] {
         let key = CacheKey.moodDistribution(start: startDate, end: endDate)
         if let cached = cacheGet(key, type: [MoodType: Int].self) {
@@ -301,8 +376,7 @@ class MoodDataManager: ObservableObject {
                 }
             }
         } catch {
-            print("Fetch mood distribution error: \(error)")
-            // 降级到内存计算
+            Self.logger.error("DB aggregation for mood distribution failed, falling back: \(error.localizedDescription)")
             return fetchMoodDistributionFallback(from: startDate, to: endDate)
         }
 
@@ -345,13 +419,62 @@ class MoodDataManager: ObservableObject {
         return result
     }
 
-    /// 获取指定日期范围内的日均情绪强度（带缓存）
+    /// 获取指定日期范围内的日均情绪强度（轻量查询 + 内存分组 + 缓存）
     func fetchDailyAverageIntensity(from startDate: Date, to endDate: Date) -> [(date: Date, intensity: Double)] {
         let key = CacheKey.dailyIntensity(start: startDate, end: endDate)
         if let cached = cacheGet(key, type: [(date: Date, intensity: Double)].self) {
             return cached
         }
 
+        // 轻量查询：只获取 createdAt 和 intensity 字段，内存中分组聚合
+        let request: NSFetchRequest<NSDictionary> = NSFetchRequest(entityName: "MoodRecord")
+        request.predicate = NSPredicate(
+            format: "createdAt >= %@ AND createdAt < %@",
+            startDate as CVarArg,
+            endDate as CVarArg
+        )
+        request.resultType = .dictionaryResultType
+
+        let dateDesc = NSExpressionDescription()
+        dateDesc.name = "createdDate"
+        dateDesc.expression = NSExpression(forKeyPath: "createdAt")
+        dateDesc.expressionResultType = .dateAttributeType
+
+        let intensityDesc = NSExpressionDescription()
+        intensityDesc.name = "intensityValue"
+        intensityDesc.expression = NSExpression(forKeyPath: "intensity")
+        intensityDesc.expressionResultType = .integer16AttributeType
+
+        request.propertiesToFetch = [dateDesc, intensityDesc]
+        request.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: true)]
+        request.fetchBatchSize = 100
+
+        let calendar = Calendar.current
+        var dailyData: [Date: [Int]] = [:]
+
+        do {
+            let results = try viewContext.fetch(request) as? [[String: Any]] ?? []
+            for dict in results {
+                if let date = dict["createdDate"] as? Date,
+                   let intensity = dict["intensityValue"] as? Int {
+                    let dayStart = calendar.startOfDay(for: date)
+                    dailyData[dayStart, default: []].append(intensity)
+                }
+            }
+        } catch {
+            Self.logger.error("Lightweight query for daily intensity failed: \(error.localizedDescription)")
+            return fetchDailyAverageIntensityFallback(from: startDate, to: endDate)
+        }
+
+        let result = dailyData.map { (date: $0.key, intensity: Double($0.value.reduce(0, +)) / Double($0.value.count)) }
+            .sorted { $0.date < $1.date }
+
+        cacheSet(key, data: result)
+        return result
+    }
+
+    /// 日均强度降级查询（内存计算）
+    private func fetchDailyAverageIntensityFallback(from startDate: Date, to endDate: Date) -> [(date: Date, intensity: Double)] {
         let records = fetchRecords(from: startDate, to: endDate)
         let calendar = Calendar.current
 
@@ -366,17 +489,72 @@ class MoodDataManager: ObservableObject {
         let result = dailyData.map { (date: $0.key, intensity: Double($0.value.reduce(0, +)) / Double($0.value.count)) }
             .sorted { $0.date < $1.date }
 
-        cacheSet(key, data: result)
         return result
     }
 
-    /// 获取指定年份的月均情绪强度（带缓存）
+    /// 获取指定年份的月均情绪强度（轻量查询 + 内存分组 + 缓存）
     func fetchMonthlyAverageIntensity(for year: Int) -> [(month: Int, intensity: Double)] {
         let key = CacheKey.monthlyIntensity(year: year)
         if let cached = cacheGet(key, type: [(month: Int, intensity: Double)].self) {
             return cached
         }
 
+        let calendar = Calendar.current
+        var components = DateComponents()
+        components.year = year
+        components.month = 1
+        components.day = 1
+        guard let yearStart = calendar.date(from: components) else { return [] }
+        components.year = year + 1
+        guard let yearEnd = calendar.date(from: components) else { return [] }
+
+        // 轻量查询：只获取 createdAt 和 intensity 字段，内存中按月分组
+        let request: NSFetchRequest<NSDictionary> = NSFetchRequest(entityName: "MoodRecord")
+        request.predicate = NSPredicate(
+            format: "createdAt >= %@ AND createdAt < %@",
+            yearStart as CVarArg,
+            yearEnd as CVarArg
+        )
+        request.resultType = .dictionaryResultType
+
+        let dateDesc = NSExpressionDescription()
+        dateDesc.name = "createdDate"
+        dateDesc.expression = NSExpression(forKeyPath: "createdAt")
+        dateDesc.expressionResultType = .dateAttributeType
+
+        let intensityDesc = NSExpressionDescription()
+        intensityDesc.name = "intensityValue"
+        intensityDesc.expression = NSExpression(forKeyPath: "intensity")
+        intensityDesc.expressionResultType = .integer16AttributeType
+
+        request.propertiesToFetch = [dateDesc, intensityDesc]
+        request.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: true)]
+        request.fetchBatchSize = 100
+
+        var monthlyData: [Int: [Int]] = [:]
+        do {
+            let results = try viewContext.fetch(request) as? [[String: Any]] ?? []
+            for dict in results {
+                if let date = dict["createdDate"] as? Date,
+                   let intensity = dict["intensityValue"] as? Int {
+                    let month = calendar.component(.month, from: date)
+                    monthlyData[month, default: []].append(intensity)
+                }
+            }
+        } catch {
+            Self.logger.error("Lightweight query for monthly intensity failed: \(error.localizedDescription)")
+            return fetchMonthlyAverageIntensityFallback(for: year)
+        }
+
+        let result = monthlyData.map { (month: $0.key, intensity: Double($0.value.reduce(0, +)) / Double($0.value.count)) }
+            .sorted { $0.month < $1.month }
+
+        cacheSet(key, data: result)
+        return result
+    }
+
+    /// 月均强度降级查询（内存计算）
+    private func fetchMonthlyAverageIntensityFallback(for year: Int) -> [(month: Int, intensity: Double)] {
         let calendar = Calendar.current
         var components = DateComponents()
         components.year = year
@@ -396,33 +574,54 @@ class MoodDataManager: ObservableObject {
             }
         }
 
-        let result = monthlyData.map { (month: $0.key, intensity: Double($0.value.reduce(0, +)) / Double($0.value.count)) }
+        return monthlyData.map { (month: $0.key, intensity: Double($0.value.reduce(0, +)) / Double($0.value.count)) }
             .sorted { $0.month < $1.month }
-
-        cacheSet(key, data: result)
-        return result
     }
 
-    /// 获取有数据的年份列表（降序，带缓存）
+    /// 获取有数据的年份列表（轻量查询 + 内存分组，带缓存）
     func fetchAvailableYears() -> [Int] {
         if let cached = cacheGet(CacheKey.availableYears, type: [Int].self) {
             return cached
         }
 
-        let records = fetchAllRecords()
+        // 轻量查询：只获取 createdAt 字段，内存中提取年份
+        let request: NSFetchRequest<NSDictionary> = NSFetchRequest(entityName: "MoodRecord")
+        request.resultType = .dictionaryResultType
+
+        let dateDesc = NSExpressionDescription()
+        dateDesc.name = "createdDate"
+        dateDesc.expression = NSExpression(forKeyPath: "createdAt")
+        dateDesc.expressionResultType = .dateAttributeType
+
+        request.propertiesToFetch = [dateDesc]
+        request.fetchBatchSize = 100
+
         let calendar = Calendar.current
         let currentYear = calendar.component(.year, from: Date())
-
         var years = Set<Int>()
         years.insert(currentYear)
-        for record in records {
-            if let createdAt = record.createdAt {
-                let year = calendar.component(.year, from: createdAt)
-                years.insert(year)
+
+        do {
+            let results = try viewContext.fetch(request) as? [[String: Any]] ?? []
+            for dict in results {
+                if let date = dict["createdDate"] as? Date {
+                    let year = calendar.component(.year, from: date)
+                    years.insert(year)
+                }
+            }
+        } catch {
+            Self.logger.error("Lightweight query for available years failed: \(error.localizedDescription)")
+            // 降级到全量查询
+            let records = fetchAllRecords()
+            for record in records {
+                if let createdAt = record.createdAt {
+                    let year = calendar.component(.year, from: createdAt)
+                    years.insert(year)
+                }
             }
         }
-        let result = years.sorted(by: >)
 
+        let result = years.sorted(by: >)
         cacheSet(CacheKey.availableYears, data: result)
         return result
     }
@@ -433,35 +632,205 @@ class MoodDataManager: ObservableObject {
             return cached
         }
 
-        let records = fetchAllRecords()
-        guard !records.isEmpty else { return 0 }
+        // 使用轻量查询只获取日期
+        let request: NSFetchRequest<NSDictionary> = NSFetchRequest(entityName: "MoodRecord")
+        request.resultType = .dictionaryResultType
+        let dateDesc = NSExpressionDescription()
+        dateDesc.name = "createdDate"
+        dateDesc.expression = NSExpression(forKeyPath: "createdAt")
+        dateDesc.expressionResultType = .dateAttributeType
+        request.propertiesToFetch = [dateDesc]
+        request.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: false)]
+        request.fetchBatchSize = 100
 
         let calendar = Calendar.current
         var streak = 0
         var checkDate = calendar.startOfDay(for: Date())
 
-        // 按日期分组（降序）
-        let recordDates = Set(records.compactMap { calendar.startOfDay(for: $0.createdAt ?? Date()) })
-        let sortedDates = recordDates.sorted(by: >)
+        do {
+            let results = try viewContext.fetch(request) as? [[String: Any]] ?? []
+            let recordDates = Set(results.compactMap { dict -> Date? in
+                guard let date = dict["createdDate"] as? Date else { return nil }
+                return calendar.startOfDay(for: date)
+            })
+            let sortedDates = recordDates.sorted(by: >)
 
-        guard let latestDate = sortedDates.first else { return 0 }
-
-        // 如果今天没有记录，从最近一次记录日期开始计算
-        if !recordDates.contains(checkDate) {
-            checkDate = latestDate
-        }
-
-        for date in sortedDates {
-            if calendar.isDate(date, inSameDayAs: checkDate) {
-                streak += 1
-                checkDate = calendar.date(byAdding: .day, value: -1, to: checkDate)!
-            } else if date < checkDate {
-                break
+            guard let latestDate = sortedDates.first else {
+                cacheSet(CacheKey.streakDays, data: 0)
+                return 0
             }
+
+            if !recordDates.contains(checkDate) {
+                checkDate = latestDate
+            }
+
+            for date in sortedDates {
+                if calendar.isDate(date, inSameDayAs: checkDate) {
+                    streak += 1
+                    checkDate = calendar.date(byAdding: .day, value: -1, to: checkDate)!
+                } else if date < checkDate {
+                    break
+                }
+            }
+        } catch {
+            Self.logger.error("Fetch streak days failed: \(error.localizedDescription)")
         }
 
         cacheSet(CacheKey.streakDays, data: streak)
         return streak
+    }
+
+    // MARK: - 日历轻量查询（按需加载）
+
+    /// 获取某月每日记录数量（轻量查询 + 内存分组）
+    func fetchDayRecordCounts(year: Int, month: Int) -> [Date: Int] {
+        let calendar = Calendar.current
+        var components = DateComponents()
+        components.year = year
+        components.month = month
+        components.day = 1
+        guard let monthStart = calendar.date(from: components) else { return [:] }
+        guard let monthEnd = calendar.date(byAdding: .month, value: 1, to: monthStart) else { return [:] }
+
+        // 轻量查询：只获取 createdAt，内存中按天分组计数
+        let request: NSFetchRequest<NSDictionary> = NSFetchRequest(entityName: "MoodRecord")
+        request.predicate = NSPredicate(
+            format: "createdAt >= %@ AND createdAt < %@",
+            monthStart as CVarArg,
+            monthEnd as CVarArg
+        )
+        request.resultType = .dictionaryResultType
+
+        let dateDesc = NSExpressionDescription()
+        dateDesc.name = "createdDate"
+        dateDesc.expression = NSExpression(forKeyPath: "createdAt")
+        dateDesc.expressionResultType = .dateAttributeType
+
+        request.propertiesToFetch = [dateDesc]
+        request.fetchBatchSize = 100
+
+        var result: [Date: Int] = [:]
+        do {
+            let results = try viewContext.fetch(request) as? [[String: Any]] ?? []
+            for dict in results {
+                if let date = dict["createdDate"] as? Date {
+                    let dayStart = calendar.startOfDay(for: date)
+                    result[dayStart, default: 0] += 1
+                }
+            }
+        } catch {
+            Self.logger.error("Fetch day record counts failed: \(error.localizedDescription)")
+        }
+        return result
+    }
+
+    /// 获取某月每日主情绪（轻量查询，每天只取最新一条的情绪类型）
+    func fetchDayPrimaryMoods(year: Int, month: Int) -> [Date: MoodType] {
+        let calendar = Calendar.current
+        var components = DateComponents()
+        components.year = year
+        components.month = month
+        components.day = 1
+        guard let monthStart = calendar.date(from: components) else { return [:] }
+        guard let monthEnd = calendar.date(byAdding: .month, value: 1, to: monthStart) else { return [:] }
+
+        // 轻量查询：只获取 createdAt 和 moodType
+        let request: NSFetchRequest<NSDictionary> = NSFetchRequest(entityName: "MoodRecord")
+        request.predicate = NSPredicate(
+            format: "createdAt >= %@ AND createdAt < %@",
+            monthStart as CVarArg,
+            monthEnd as CVarArg
+        )
+        request.resultType = .dictionaryResultType
+
+        let dateDesc = NSExpressionDescription()
+        dateDesc.name = "createdDate"
+        dateDesc.expression = NSExpression(forKeyPath: "createdAt")
+        dateDesc.expressionResultType = .dateAttributeType
+
+        let moodDesc = NSExpressionDescription()
+        moodDesc.name = "moodTypeValue"
+        moodDesc.expression = NSExpression(forKeyPath: "moodType")
+        moodDesc.expressionResultType = .stringAttributeType
+
+        let intensityDesc = NSExpressionDescription()
+        intensityDesc.name = "intensityValue"
+        intensityDesc.expression = NSExpression(forKeyPath: "intensity")
+        intensityDesc.expressionResultType = .integer16AttributeType
+
+        request.propertiesToFetch = [dateDesc, moodDesc, intensityDesc]
+        request.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: false)]
+        request.fetchBatchSize = 100
+
+        var result: [Date: MoodType] = [:]
+        do {
+            let results = try viewContext.fetch(request) as? [[String: Any]] ?? []
+            // 每天只取最新一条
+            for dict in results {
+                if let date = dict["createdDate"] as? Date,
+                   let moodStr = dict["moodTypeValue"] as? String,
+                   let moodType = MoodType(rawValue: moodStr) {
+                    let dayStart = calendar.startOfDay(for: date)
+                    if result[dayStart] == nil {
+                        result[dayStart] = moodType
+                    }
+                }
+            }
+        } catch {
+            Self.logger.error("Fetch day primary moods failed: \(error.localizedDescription)")
+        }
+        return result
+    }
+
+    /// 获取某月每日平均强度（轻量查询 + 内存分组）
+    func fetchDayAverageIntensities(year: Int, month: Int) -> [Date: Double] {
+        let calendar = Calendar.current
+        var components = DateComponents()
+        components.year = year
+        components.month = month
+        components.day = 1
+        guard let monthStart = calendar.date(from: components) else { return [:] }
+        guard let monthEnd = calendar.date(byAdding: .month, value: 1, to: monthStart) else { return [:] }
+
+        // 轻量查询：只获取 createdAt 和 intensity，内存中按天分组求平均
+        let request: NSFetchRequest<NSDictionary> = NSFetchRequest(entityName: "MoodRecord")
+        request.predicate = NSPredicate(
+            format: "createdAt >= %@ AND createdAt < %@",
+            monthStart as CVarArg,
+            monthEnd as CVarArg
+        )
+        request.resultType = .dictionaryResultType
+
+        let dateDesc = NSExpressionDescription()
+        dateDesc.name = "createdDate"
+        dateDesc.expression = NSExpression(forKeyPath: "createdAt")
+        dateDesc.expressionResultType = .dateAttributeType
+
+        let intensityDesc = NSExpressionDescription()
+        intensityDesc.name = "intensityValue"
+        intensityDesc.expression = NSExpression(forKeyPath: "intensity")
+        intensityDesc.expressionResultType = .integer16AttributeType
+
+        request.propertiesToFetch = [dateDesc, intensityDesc]
+        request.fetchBatchSize = 100
+
+        var dailyData: [Date: [Int]] = [:]
+        do {
+            let results = try viewContext.fetch(request) as? [[String: Any]] ?? []
+            for dict in results {
+                if let date = dict["createdDate"] as? Date,
+                   let intensity = dict["intensityValue"] as? Int {
+                    let dayStart = calendar.startOfDay(for: date)
+                    dailyData[dayStart, default: []].append(intensity)
+                }
+            }
+        } catch {
+            Self.logger.error("Fetch day average intensities failed: \(error.localizedDescription)")
+        }
+
+        return dailyData.mapValues { intensities in
+            Double(intensities.reduce(0, +)) / Double(intensities.count)
+        }
     }
 
     // MARK: - 后台查询
@@ -484,8 +853,9 @@ class MoodDataManager: ObservableObject {
     func initializePresetTagsIfNeeded() {
         let request: NSFetchRequest<ActivityTag> = ActivityTag.fetchRequest()
         let count = (try? viewContext.count(for: request)) ?? 0
-        guard count == 0 else { return } // 已有标签，跳过
+        guard count == 0 else { return }
 
+        Self.logger.info("Initializing preset tags")
         for category in TagCategory.allCases {
             for preset in category.presetTags {
                 let tag = ActivityTag(context: viewContext)
@@ -499,7 +869,12 @@ class MoodDataManager: ObservableObject {
             }
         }
 
-        try? viewContext.save()
+        do {
+            try viewContext.save()
+            Self.logger.info("Preset tags initialized successfully")
+        } catch {
+            Self.logger.error("Failed to initialize preset tags: \(error.localizedDescription)")
+        }
     }
 
     // MARK: - 更新记录
@@ -513,15 +888,23 @@ class MoodDataManager: ObservableObject {
         tagNames: [String],
         note: String?
     ) throws {
+        Self.logger.info("Updating mood record")
         record.moodType = moodType.rawValue
         record.moodSubType = moodSubType.rawValue
         record.intensity = Int16(intensity)
         record.tagNames = tagNames.joined(separator: ",")
         record.note = note
         record.updatedAt = Date()
-        try viewContext.save()
-        clearCache()
-        notifyDataChange()
+        do {
+            try viewContext.save()
+            clearCache()
+            notifyDataChange()
+        } catch {
+            Self.logger.error("Failed to update mood record: \(error.localizedDescription)")
+            let moodError = MoodDataError.updateFailed(error.localizedDescription)
+            lastError = moodError
+            throw moodError
+        }
     }
 
     // MARK: - 辅助方法

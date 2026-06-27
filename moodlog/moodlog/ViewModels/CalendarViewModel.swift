@@ -7,12 +7,17 @@
 
 import Foundation
 
-/// 日历视图ViewModel
+/// 日历视图ViewModel（按需加载优化版）
 class CalendarViewModel: ObservableObject {
     @Published var currentMonth: Date = Date()
     @Published var selectedDate: Date = Date()
     @Published var recordsForSelectedDate: [MoodRecord] = []
     @Published var monthlyRecords: [Date: [MoodRecord]] = [:]
+
+    /// 轻量查询数据（日历网格展示用）
+    @Published var dayRecordCounts: [Date: Int] = [:]
+    @Published var dayPrimaryMoods: [Date: MoodType] = [:]
+    @Published var dayAverageIntensities: [Date: Double] = [:]
 
     private let dataManager: MoodDataManager
     private let calendar = Calendar.current
@@ -78,22 +83,15 @@ class CalendarViewModel: ObservableObject {
     // MARK: - 数据加载
 
     func loadMonthlyData() {
-        let startOfMonth = currentMonth.startOfMonth
-        guard let endOfMonth = calendar.date(byAdding: .month, value: 1, to: startOfMonth) else { return }
+        let year = calendar.component(.year, from: currentMonth)
+        let month = calendar.component(.month, from: currentMonth)
 
-        let records = dataManager.fetchRecords(from: startOfMonth, to: endOfMonth)
+        // 使用轻量查询获取日历网格数据（不加载完整记录）
+        dayRecordCounts = dataManager.fetchDayRecordCounts(year: year, month: month)
+        dayPrimaryMoods = dataManager.fetchDayPrimaryMoods(year: year, month: month)
+        dayAverageIntensities = dataManager.fetchDayAverageIntensities(year: year, month: month)
 
-        // 按日期分组
-        var grouped: [Date: [MoodRecord]] = [:]
-        for record in records {
-            if let createdAt = record.createdAt {
-                let dayStart = calendar.startOfDay(for: createdAt)
-                grouped[dayStart, default: []].append(record)
-            }
-        }
-        monthlyRecords = grouped
-
-        // 同时加载选中日期的记录
+        // 仅在需要时加载完整记录（选中日期的记录）
         loadRecordsForSelectedDate()
     }
 
@@ -142,31 +140,24 @@ class CalendarViewModel: ObservableObject {
         return days
     }
 
-    // MARK: - 日期情绪信息
+    // MARK: - 日期情绪信息（使用轻量查询数据）
 
     /// 获取某日的主情绪
     func primaryMoodForDate(_ date: Date) -> MoodType? {
         let dayStart = calendar.startOfDay(for: date)
-        guard let records = monthlyRecords[dayStart], !records.isEmpty else { return nil }
-        // 返回最新一条记录的情绪
-        if let latestRecord = records.sorted(by: { ($0.createdAt ?? Date.distantPast) > ($1.createdAt ?? Date.distantPast) }).first {
-            return MoodType(rawValue: latestRecord.moodType ?? "happy")
-        }
-        return nil
+        return dayPrimaryMoods[dayStart]
     }
 
     /// 获取某日情绪强度均值
     func averageIntensityForDate(_ date: Date) -> Double {
         let dayStart = calendar.startOfDay(for: date)
-        guard let records = monthlyRecords[dayStart], !records.isEmpty else { return 0 }
-        let total = records.reduce(0.0) { $0 + Double($1.intensity) }
-        return total / Double(records.count)
+        return dayAverageIntensities[dayStart] ?? 0
     }
 
     /// 获取某日记录数量
     func recordCountForDate(_ date: Date) -> Int {
         let dayStart = calendar.startOfDay(for: date)
-        return monthlyRecords[dayStart]?.count ?? 0
+        return dayRecordCounts[dayStart] ?? 0
     }
 
     /// 是否是今天

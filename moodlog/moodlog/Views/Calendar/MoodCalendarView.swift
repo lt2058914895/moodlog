@@ -13,6 +13,7 @@ struct MoodCalendarView: View {
     @State private var recordToEdit: MoodRecord?
     @State private var recordToDelete: MoodRecord?
     @State private var showDeleteConfirmation = false
+    @State private var errorMessage: String?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -42,6 +43,13 @@ struct MoodCalendarView: View {
             }
             Button(L.localized("checkin.cancel"), role: .cancel) {}
         }
+        .alert(L.localized("checkin.alert_title"), isPresented: .constant(errorMessage != nil), presenting: errorMessage) { _ in
+            Button(L.localized("checkin.alert_ok"), role: .cancel) {
+                errorMessage = nil
+            }
+        } message: { msg in
+            Text(msg)
+        }
     }
 
     private func deleteRecord(_ record: MoodRecord) {
@@ -49,7 +57,7 @@ struct MoodCalendarView: View {
             try MoodDataManager.shared.deleteRecord(record)
             viewModel.loadMonthlyData()
         } catch {
-            // silently fail
+            errorMessage = error.localizedDescription
         }
     }
 
