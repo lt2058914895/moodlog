@@ -120,35 +120,22 @@ struct MoodInsightView: View {
     // MARK: - 情绪分布卡片
     private var distributionCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(L.localized("insight.mood_distribution"))
-                .font(.subheadline.bold())
+            HStack {
+                Text(L.localized("insight.mood_distribution"))
+                    .font(.subheadline.bold())
+                Spacer()
+                Text(viewModel.periodTitle)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
 
             if viewModel.pieChartData.isEmpty {
                 emptyState(text: L.localized("insight.no_distribution_data"))
             } else {
-                HStack(spacing: 16) {
-                    // 饼图
-                    MoodPieChart(data: viewModel.pieChartData)
-                        .frame(width: 150, height: 150)
-
-                    // 图例
-                    VStack(alignment: .leading, spacing: 6) {
-                        ForEach(viewModel.pieChartData) { item in
-                            HStack(spacing: 6) {
-                                Circle()
-                                    .fill(item.moodType.color)
-                                    .frame(width: 10, height: 10)
-                                Text("\(item.moodType.emoji) \(item.moodType.displayName)")
-                                    .font(.caption2)
-                                Spacer()
-                                Text(String(format: "%.0f%%", item.percentage))
-                                    .font(.caption2)
-                                    .foregroundColor(.secondary)
-                            }
-                        }
-                    }
+                // 情绪轮（普拉奇克风格）
+                MoodEmotionWheel(data: viewModel.pieChartData, totalRecords: viewModel.totalRecords)
+                    .frame(height: 300)
                     .frame(maxWidth: .infinity)
-                }
             }
         }
         .padding(16)
@@ -159,8 +146,14 @@ struct MoodInsightView: View {
     // MARK: - 标签频次卡片
     private var tagBarCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(L.localized("insight.tag_frequency"))
-                .font(.subheadline.bold())
+            HStack {
+                Text(L.localized("insight.tag_frequency"))
+                    .font(.subheadline.bold())
+                Spacer()
+                Text(viewModel.periodTitle)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
 
             if viewModel.tagBarData.isEmpty {
                 emptyState(text: L.localized("insight.no_tag_data"))
@@ -302,38 +295,143 @@ struct MoodTrendChart: View {
     }
 }
 
-// MARK: - 情绪分布饼图
-struct MoodPieChart: View {
+// MARK: - 情绪轮（普拉奇克风格）
+struct MoodEmotionWheel: View {
     let data: [PieChartData]
+    let totalRecords: Int
+    @State private var animatedProgress: Double = 0
+
+    private let gapAngle: Double = 0.04
+    private let innerRatio: CGFloat = 0.35
+    private let shadowOffset: CGFloat = 3
 
     var body: some View {
-        Canvas { context, size in
-            let center = CGPoint(x: size.width / 2, y: size.height / 2)
-            let radius = min(size.width, size.height) / 2 - 4
+        GeometryReader { geometry in
+            let center = CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 2)
+            let outerRadius = min(geometry.size.width, geometry.size.height) / 2 - 36
+            let innerRadius = outerRadius * innerRatio
             let total = data.reduce(0) { $0 + $1.value }
 
-            var startAngle: Double = -Double.pi / 2
+            ZStack {
+                // 阴影层
+                Canvas { context, size in
+                    let c = CGPoint(x: size.width / 2, y: size.height / 2)
+                    let r = min(size.width, size.height) / 2 - 36
+                    let ir = r * innerRatio
+                    var startAngle: Double = -Double.pi / 2
 
-            for item in data {
-                let angle = Double(item.value) / Double(total) * 2 * Double.pi
-                let endAngle = startAngle + angle
+                    for item in data {
+                        let angle = Double(item.value) / Double(total) * 2 * Double.pi * animatedProgress
+                        let endAngle = startAngle + angle
+                        let sliceStart = startAngle + gapAngle / 2
+                        let sliceEnd = endAngle - gapAngle / 2
+                        guard sliceEnd > sliceStart else { startAngle = endAngle; continue }
 
-                let path = Path { p in
-                    p.move(to: center)
-                    p.addArc(center: center, radius: radius, startAngle: Angle(radians: startAngle), endAngle: Angle(radians: endAngle), clockwise: false)
-                    p.closeSubpath()
+                        let path = Path { p in
+                            p.addArc(center: c, radius: r, startAngle: Angle(radians: sliceStart), endAngle: Angle(radians: sliceEnd), clockwise: false)
+                            p.addArc(center: c, radius: ir, startAngle: Angle(radians: sliceEnd), endAngle: Angle(radians: sliceStart), clockwise: true)
+                            p.closeSubpath()
+                        }
+                        context.fill(path, with: .color(item.moodType.color.opacity(0.12)))
+                        startAngle = endAngle
+                    }
+                }
+                .blur(radius: 8)
+                .offset(y: shadowOffset)
+                .opacity(0.5)
+
+                // 主环形扇区
+                Canvas { context, size in
+                    let c = CGPoint(x: size.width / 2, y: size.height / 2)
+                    let r = min(size.width, size.height) / 2 - 36
+                    let ir = r * innerRatio
+                    var startAngle: Double = -Double.pi / 2
+
+                    for item in data {
+                        let angle = Double(item.value) / Double(total) * 2 * Double.pi * animatedProgress
+                        let endAngle = startAngle + angle
+                        let sliceStart = startAngle + gapAngle / 2
+                        let sliceEnd = endAngle - gapAngle / 2
+                        guard sliceEnd > sliceStart else { startAngle = endAngle; continue }
+
+                        let path = Path { p in
+                            p.addArc(center: c, radius: r, startAngle: Angle(radians: sliceStart), endAngle: Angle(radians: sliceEnd), clockwise: false)
+                            p.addArc(center: c, radius: ir, startAngle: Angle(radians: sliceEnd), endAngle: Angle(radians: sliceStart), clockwise: true)
+                            p.closeSubpath()
+                        }
+                        context.fill(path, with: .color(item.moodType.color))
+                        startAngle = endAngle
+                    }
                 }
 
-                context.fill(path, with: .color(item.moodType.color))
-                startAngle = endAngle
-            }
+                // 扇区标签（emoji + 百分比）
+                ForEach(Array(data.enumerated()), id: \.element.id) { i, item in
+                    let angle = sectorAngle(for: i, total: total)
+                    let midRadius = (outerRadius + innerRadius) / 2
+                    let labelX = center.x + midRadius * CGFloat(cos(angle))
+                    let labelY = center.y + midRadius * CGFloat(sin(angle))
 
-            // 中心圆（甜甜圈效果）
-            let innerPath = Path { p in
-                p.addArc(center: center, radius: radius * 0.4, startAngle: .zero, endAngle: Angle(radians: 2 * Double.pi), clockwise: false)
+                    VStack(spacing: 0) {
+                        Text(item.moodType.emoji)
+                            .font(.system(size: 16))
+                        Text(String(format: "%.0f%%", item.percentage))
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundColor(.white)
+                    }
+                    .opacity(animatedProgress > 0.5 ? 1 : 0)
+                    .position(x: labelX, y: labelY)
+                }
+
+                // 中心圆
+                Circle()
+                    .fill(Color(UIColor.secondarySystemGroupedBackground))
+                    .frame(width: innerRadius * 2 - 4, height: innerRadius * 2 - 4)
+                    .shadow(color: Color.black.opacity(0.08), radius: 4, x: 0, y: 2)
+
+                // 中心文字
+                VStack(spacing: 2) {
+                    Text("\(totalRecords)")
+                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .foregroundColor(.primary)
+                    Text(L.localized("insight.record_count"))
+                        .font(.system(size: 10))
+                        .foregroundColor(.secondary)
+                }
+
+                // 外圈标签（情绪名称）
+                ForEach(Array(data.enumerated()), id: \.element.id) { i, item in
+                    let angle = sectorAngle(for: i, total: total)
+                    let labelR = outerRadius + 22
+                    let labelX = center.x + labelR * CGFloat(cos(angle))
+                    let labelY = center.y + labelR * CGFloat(sin(angle))
+
+                    Text(item.moodType.displayName)
+                        .font(.system(size: 10, weight: .medium))
+                        .foregroundColor(item.moodType.color)
+                        .lineLimit(1)
+                        .fixedSize()
+                        .position(x: labelX, y: labelY)
+                }
             }
-            context.fill(innerPath, with: .color(Color(UIColor.secondarySystemGroupedBackground)))
+            .onAppear {
+                withAnimation(.easeOut(duration: 0.8)) {
+                    animatedProgress = 1.0
+                }
+            }
         }
+    }
+
+    private func sectorAngle(for index: Int, total: Int) -> Double {
+        var angle = -Double.pi / 2
+        for i in 0...index {
+            let sliceAngle = Double(data[i].value) / Double(total) * 2 * Double.pi
+            if i < index {
+                angle += sliceAngle
+            } else {
+                angle += sliceAngle / 2
+            }
+        }
+        return angle
     }
 }
 
