@@ -13,7 +13,25 @@ extension Notification.Name {
     static let moodDataDidChange = Notification.Name("moodDataDidChange")
 }
 
-/// Core Data CRUD管理器
+/// 缓存键
+private enum CacheKey {
+    static func dailyIntensity(start: Date, end: Date) -> String {
+        "daily_intensity_\(Int(start.timeIntervalSince1970))_\(Int(end.timeIntervalSince1970))"
+    }
+    static func monthlyIntensity(year: Int) -> String {
+        "monthly_intensity_\(year)"
+    }
+    static func moodDistribution(start: Date, end: Date) -> String {
+        "mood_dist_\(Int(start.timeIntervalSince1970))_\(Int(end.timeIntervalSince1970))"
+    }
+    static func topTags(start: Date, end: Date, limit: Int) -> String {
+        "top_tags_\(Int(start.timeIntervalSince1970))_\(Int(end.timeIntervalSince1970))_\(limit)"
+    }
+    static let streakDays = "streak_days"
+    static let availableYears = "available_years"
+}
+
+/// Core Data CRUD管理器（性能优化版）
 class MoodDataManager: ObservableObject {
     static let shared = MoodDataManager()
     @Published var dataVersion: Int = 0
@@ -21,14 +39,63 @@ class MoodDataManager: ObservableObject {
     let container: NSPersistentContainer
     let viewContext: NSManagedObjectContext
 
-    init(container: NSPersistentContainer = PersistenceController.shared.container) {
+    /// 后台上下文用于耗时查询
+    private let backgroundContext: NSManagedObjectContext
+
+    /// 统计数据缓存
+    private let cache = NSCache<NSString, CacheWrapper>()
+    private let cacheExpiry: TimeInterval = 30 // 缓存30秒
+
+    init(container: NSPersistentContainer = PersistenceController.shared.container,
+         backgroundContext: NSManagedObjectContext = PersistenceController.shared.backgroundContext) {
         self.container = container
         self.viewContext = container.viewContext
+        self.backgroundContext = backgroundContext
+
+        // 配置缓存
+        cache.countLimit = 50
+    }
+
+    // MARK: - 缓存管理
+
+    /// 缓存包装器
+    private class CacheWrapper {
+        let data: Any
+        let expiry: Date
+
+        init(data: Any) {
+            self.data = data
+            self.expiry = Date().addingTimeInterval(30)
+        }
+
+        var isExpired: Bool {
+            Date() > expiry
+        }
+    }
+
+    /// 存入缓存
+    private func cacheSet(_ key: String, data: Any) {
+        cache.setObject(CacheWrapper(data: data), forKey: key as NSString)
+    }
+
+    /// 读取缓存
+    private func cacheGet<T>(_ key: String, type: T.Type) -> T? {
+        guard let wrapper = cache.object(forKey: key as NSString),
+              !wrapper.isExpired,
+              let data = wrapper.data as? T else {
+            return nil
+        }
+        return data
+    }
+
+    /// 清除所有缓存
+    private func clearCache() {
+        cache.removeAllObjects()
     }
 
     // MARK: - MoodRecord CRUD
 
-    /// 创建情绪记录
+    /// 创建情绪记录（主线程写入）
     func createMoodRecord(
         moodType: MoodType,
         moodSubType: MoodSubType,
@@ -53,14 +120,16 @@ class MoodDataManager: ObservableObject {
         }
 
         try viewContext.save()
+        clearCache()
         notifyDataChange()
         return record
     }
 
-    /// 获取所有情绪记录（按时间降序）
+    /// 获取所有情绪记录（按时间降序，带批量大小）
     func fetchAllRecords() -> [MoodRecord] {
         let request: NSFetchRequest<MoodRecord> = MoodRecord.fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: false)]
+        request.fetchBatchSize = 20
         do {
             return try viewContext.fetch(request)
         } catch {
@@ -69,7 +138,7 @@ class MoodDataManager: ObservableObject {
         }
     }
 
-    /// 获取指定日期范围内的记录
+    /// 获取指定日期范围内的记录（带批量大小）
     func fetchRecords(from startDate: Date, to endDate: Date) -> [MoodRecord] {
         let request: NSFetchRequest<MoodRecord> = MoodRecord.fetchRequest()
         request.predicate = NSPredicate(
@@ -78,6 +147,7 @@ class MoodDataManager: ObservableObject {
             endDate as CVarArg
         )
         request.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: true)]
+        request.fetchBatchSize = 50
         do {
             return try viewContext.fetch(request)
         } catch {
@@ -95,6 +165,7 @@ class MoodDataManager: ObservableObject {
     func deleteRecord(_ record: MoodRecord) throws {
         viewContext.delete(record)
         try viewContext.save()
+        clearCache()
         notifyDataChange()
     }
 
@@ -104,6 +175,7 @@ class MoodDataManager: ObservableObject {
             viewContext.delete(record)
         }
         try viewContext.save()
+        clearCache()
         notifyDataChange()
     }
 
@@ -140,6 +212,7 @@ class MoodDataManager: ObservableObject {
         let request: NSFetchRequest<ActivityTag> = ActivityTag.fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(key: "usageCount", ascending: false)]
         request.fetchLimit = limit
+        request.fetchBatchSize = limit
         do {
             return try viewContext.fetch(request)
         } catch {
@@ -153,6 +226,7 @@ class MoodDataManager: ObservableObject {
         let request: NSFetchRequest<ActivityTag> = ActivityTag.fetchRequest()
         request.predicate = NSPredicate(format: "isCustom == YES")
         request.sortDescriptors = [NSSortDescriptor(key: "usageCount", ascending: false)]
+        request.fetchBatchSize = 20
         do {
             return try viewContext.fetch(request)
         } catch {
@@ -182,10 +256,62 @@ class MoodDataManager: ObservableObject {
         try viewContext.save()
     }
 
-    // MARK: - 统计查询
+    // MARK: - 统计查询（带缓存）
 
-    /// 获取指定日期范围内的情绪类型分布
+    /// 获取指定日期范围内的情绪类型分布（带缓存）
     func fetchMoodDistribution(from startDate: Date, to endDate: Date) -> [MoodType: Int] {
+        let key = CacheKey.moodDistribution(start: startDate, end: endDate)
+        if let cached = cacheGet(key, type: [MoodType: Int].self) {
+            return cached
+        }
+
+        // 使用数据库端聚合
+        let request = NSFetchRequest<NSDictionary>(entityName: "MoodRecord")
+        request.predicate = NSPredicate(
+            format: "createdAt >= %@ AND createdAt < %@",
+            startDate as CVarArg,
+            endDate as CVarArg
+        )
+        request.resultType = .dictionaryResultType
+
+        let moodTypeExpr = NSExpression(forKeyPath: "moodType")
+        let countExpr = NSExpression(forFunction: "count:", arguments: [NSExpression(forKeyPath: "moodType")])
+
+        let moodTypeDesc = NSExpressionDescription()
+        moodTypeDesc.name = "moodType"
+        moodTypeDesc.expression = moodTypeExpr
+        moodTypeDesc.expressionResultType = .stringAttributeType
+
+        let countDesc = NSExpressionDescription()
+        countDesc.name = "count"
+        countDesc.expression = countExpr
+        countDesc.expressionResultType = .integer16AttributeType
+
+        request.propertiesToGroupBy = ["moodType"]
+        request.propertiesToFetch = [moodTypeDesc, countDesc]
+
+        var result: [MoodType: Int] = [:]
+        do {
+            let results = try viewContext.fetch(request) as? [[String: Any]] ?? []
+            for dict in results {
+                if let moodStr = dict["moodType"] as? String,
+                   let moodType = MoodType(rawValue: moodStr),
+                   let count = dict["count"] as? Int {
+                    result[moodType] = count
+                }
+            }
+        } catch {
+            print("Fetch mood distribution error: \(error)")
+            // 降级到内存计算
+            return fetchMoodDistributionFallback(from: startDate, to: endDate)
+        }
+
+        cacheSet(key, data: result)
+        return result
+    }
+
+    /// 情绪分布降级查询（内存计算）
+    private func fetchMoodDistributionFallback(from startDate: Date, to endDate: Date) -> [MoodType: Int] {
         let records = fetchRecords(from: startDate, to: endDate)
         var distribution: [MoodType: Int] = [:]
         for record in records {
@@ -196,8 +322,13 @@ class MoodDataManager: ObservableObject {
         return distribution
     }
 
-    /// 获取指定日期范围内的标签频次Top N
+    /// 获取指定日期范围内的标签频次Top N（带缓存）
     func fetchTopTags(from startDate: Date, to endDate: Date, limit: Int = 10) -> [(name: String, count: Int)] {
+        let key = CacheKey.topTags(start: startDate, end: endDate, limit: limit)
+        if let cached = cacheGet(key, type: [(name: String, count: Int)].self) {
+            return cached
+        }
+
         let records = fetchRecords(from: startDate, to: endDate)
         var tagCount: [String: Int] = [:]
         for record in records {
@@ -208,11 +339,19 @@ class MoodDataManager: ObservableObject {
                 }
             }
         }
-        return tagCount.sorted { $0.value > $1.value }.prefix(limit).map { (name: $0.key, count: $0.value) }
+        let result = tagCount.sorted { $0.value > $1.value }.prefix(limit).map { (name: $0.key, count: $0.value) }
+
+        cacheSet(key, data: result)
+        return result
     }
 
-    /// 获取指定日期范围内的日均情绪强度
+    /// 获取指定日期范围内的日均情绪强度（带缓存）
     func fetchDailyAverageIntensity(from startDate: Date, to endDate: Date) -> [(date: Date, intensity: Double)] {
+        let key = CacheKey.dailyIntensity(start: startDate, end: endDate)
+        if let cached = cacheGet(key, type: [(date: Date, intensity: Double)].self) {
+            return cached
+        }
+
         let records = fetchRecords(from: startDate, to: endDate)
         let calendar = Calendar.current
 
@@ -224,12 +363,20 @@ class MoodDataManager: ObservableObject {
             }
         }
 
-        return dailyData.map { (date: $0.key, intensity: Double($0.value.reduce(0, +)) / Double($0.value.count)) }
+        let result = dailyData.map { (date: $0.key, intensity: Double($0.value.reduce(0, +)) / Double($0.value.count)) }
             .sorted { $0.date < $1.date }
+
+        cacheSet(key, data: result)
+        return result
     }
 
-    /// 获取指定年份的月均情绪强度
+    /// 获取指定年份的月均情绪强度（带缓存）
     func fetchMonthlyAverageIntensity(for year: Int) -> [(month: Int, intensity: Double)] {
+        let key = CacheKey.monthlyIntensity(year: year)
+        if let cached = cacheGet(key, type: [(month: Int, intensity: Double)].self) {
+            return cached
+        }
+
         let calendar = Calendar.current
         var components = DateComponents()
         components.year = year
@@ -249,12 +396,19 @@ class MoodDataManager: ObservableObject {
             }
         }
 
-        return monthlyData.map { (month: $0.key, intensity: Double($0.value.reduce(0, +)) / Double($0.value.count)) }
+        let result = monthlyData.map { (month: $0.key, intensity: Double($0.value.reduce(0, +)) / Double($0.value.count)) }
             .sorted { $0.month < $1.month }
+
+        cacheSet(key, data: result)
+        return result
     }
 
-    /// 获取有数据的年份列表（降序）
+    /// 获取有数据的年份列表（降序，带缓存）
     func fetchAvailableYears() -> [Int] {
+        if let cached = cacheGet(CacheKey.availableYears, type: [Int].self) {
+            return cached
+        }
+
         let records = fetchAllRecords()
         let calendar = Calendar.current
         let currentYear = calendar.component(.year, from: Date())
@@ -267,11 +421,18 @@ class MoodDataManager: ObservableObject {
                 years.insert(year)
             }
         }
-        return years.sorted(by: >)
+        let result = years.sorted(by: >)
+
+        cacheSet(CacheKey.availableYears, data: result)
+        return result
     }
 
-    /// 获取连续打卡天数
+    /// 获取连续打卡天数（带缓存）
     func fetchStreakDays() -> Int {
+        if let cached = cacheGet(CacheKey.streakDays, type: Int.self) {
+            return cached
+        }
+
         let records = fetchAllRecords()
         guard !records.isEmpty else { return 0 }
 
@@ -299,7 +460,22 @@ class MoodDataManager: ObservableObject {
             }
         }
 
+        cacheSet(CacheKey.streakDays, data: streak)
         return streak
+    }
+
+    // MARK: - 后台查询
+
+    /// 在后台线程执行查询，结果回调到主线程
+    func performQuery<T>(on backgroundQueue: DispatchQueue = .global(qos: .userInitiated),
+                         query: @escaping (NSManagedObjectContext) -> T,
+                         completion: @escaping (T) -> Void) {
+        backgroundQueue.async {
+            let result = query(self.backgroundContext)
+            DispatchQueue.main.async {
+                completion(result)
+            }
+        }
     }
 
     // MARK: - 预设标签初始化
@@ -344,6 +520,7 @@ class MoodDataManager: ObservableObject {
         record.note = note
         record.updatedAt = Date()
         try viewContext.save()
+        clearCache()
         notifyDataChange()
     }
 

@@ -10,6 +10,23 @@
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="isSynced" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraintValue attribute="id"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+        <indexes>
+            <index name="byCreatedAt">
+                <indexProperty name="createdAt"/>
+            </index>
+            <index name="byMoodType">
+                <indexProperty name="moodType"/>
+            </index>
+            <index name="byMoodTypeAndCreatedAt">
+                <indexProperty name="moodType"/>
+                <indexProperty name="createdAt"/>
+            </index>
+        </indexes>
     </entity>
     <entity name="ActivityTag" representedClassName="ActivityTag" syncable="YES" codeGenerationType="class">
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
@@ -19,6 +36,14 @@
         <attribute name="isCustom" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="usageCount" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <indexes>
+            <index name="byName">
+                <indexProperty name="name"/>
+            </index>
+            <index name="byUsageCount">
+                <indexProperty name="usageCount"/>
+            </index>
+        </indexes>
     </entity>
     <elements>
         <element name="MoodRecord" positionX="-63" positionY="-18" width="128" height="148"/>

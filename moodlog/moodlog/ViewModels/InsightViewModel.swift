@@ -25,6 +25,9 @@ class InsightViewModel: ObservableObject {
 
     private var cancellable: Any?
 
+    /// 防抖定时器
+    private var loadDebounceTimer: Timer?
+
     init(dataManager: MoodDataManager = .shared) {
         self.dataManager = dataManager
         loadAvailableYears()
@@ -32,13 +35,22 @@ class InsightViewModel: ObservableObject {
         // 监听数据变更通知
         cancellable = NotificationCenter.default.addObserver(forName: .moodDataDidChange, object: nil, queue: .main) { [weak self] _ in
             self?.loadAvailableYears()
-            self?.loadData()
+            self?.debouncedLoadData()
         }
     }
 
     deinit {
+        loadDebounceTimer?.invalidate()
         if let cancellable = cancellable {
             NotificationCenter.default.removeObserver(cancellable)
+        }
+    }
+
+    /// 防抖加载数据（300ms内多次调用只执行最后一次）
+    private func debouncedLoadData() {
+        loadDebounceTimer?.invalidate()
+        loadDebounceTimer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: false) { [weak self] _ in
+            self?.loadData()
         }
     }
 

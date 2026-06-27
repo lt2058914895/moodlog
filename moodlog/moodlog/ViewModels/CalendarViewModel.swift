@@ -19,18 +19,30 @@ class CalendarViewModel: ObservableObject {
 
     private var cancellable: Any?
 
+    /// 防抖定时器
+    private var loadDebounceTimer: Timer?
+
     init(dataManager: MoodDataManager = .shared) {
         self.dataManager = dataManager
         loadMonthlyData()
-        // 监听数据变更通知
+        // 监听数据变更通知（防抖）
         cancellable = NotificationCenter.default.addObserver(forName: .moodDataDidChange, object: nil, queue: .main) { [weak self] _ in
-            self?.loadMonthlyData()
+            self?.debouncedLoadMonthlyData()
         }
     }
 
     deinit {
+        loadDebounceTimer?.invalidate()
         if let cancellable = cancellable {
             NotificationCenter.default.removeObserver(cancellable)
+        }
+    }
+
+    /// 防抖加载月度数据（300ms内多次调用只执行最后一次）
+    private func debouncedLoadMonthlyData() {
+        loadDebounceTimer?.invalidate()
+        loadDebounceTimer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: false) { [weak self] _ in
+            self?.loadMonthlyData()
         }
     }
 
