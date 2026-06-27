@@ -305,21 +305,6 @@ struct MoodRecordRow: View {
                         .padding(.vertical, 2)
                         .background(Capsule().fill(moodType?.color.opacity(0.15) ?? Color.gray.opacity(0.15)))
                         .foregroundColor(moodType?.color ?? .gray)
-                    // 编辑和删除按钮
-                    Button {
-                        onEdit?()
-                    } label: {
-                        Image(systemName: "pencil.circle")
-                            .font(.caption)
-                            .foregroundColor(Color(hex: "6C5CE7"))
-                    }
-                    Button {
-                        onDelete?()
-                    } label: {
-                        Image(systemName: "trash.circle")
-                            .font(.caption)
-                            .foregroundColor(.red.opacity(0.7))
-                    }
                 }
 
                 if !tagNames.isEmpty {
