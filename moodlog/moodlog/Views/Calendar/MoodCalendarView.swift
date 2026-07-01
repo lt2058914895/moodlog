@@ -269,7 +269,7 @@ struct MoodRecordRow: View {
     }
 
     private var moodSubType: MoodSubType? {
-        MoodSubType(rawValue: record.moodSubType ?? "joyful")
+        MoodSubType.from(rawValue: record.moodSubType ?? "joyful")
     }
 
     private var timeString: String {

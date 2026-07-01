@@ -26,7 +26,7 @@ struct EditMoodRecordView: View {
     init(record: MoodRecord) {
         self.record = record
         _selectedMoodType = State(initialValue: MoodType(rawValue: record.moodType ?? "happy") ?? .happy)
-        _selectedMoodSubType = State(initialValue: MoodSubType(rawValue: record.moodSubType ?? "joyful") ?? .joyful)
+        _selectedMoodSubType = State(initialValue: MoodSubType.from(rawValue: record.moodSubType ?? "joyful") ?? .joyful)
         _intensity = State(initialValue: Int(record.intensity))
         _selectedTagNames = State(initialValue: MoodDataManager.tagNamesFromRecord(record))
         _note = State(initialValue: record.note ?? "")
@@ -123,30 +123,25 @@ struct EditMoodRecordView: View {
             }
 
             // 二级情绪选择
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 10) {
-                    ForEach(selectedMoodType.subTypes, id: \.self) { subType in
-                        Button(action: {
-                            selectedMoodSubType = subType
-                        }) {
-                            Text(subType.displayName)
-                                .font(.subheadline)
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 8)
-                                .background(
-                                    Capsule()
-                                        .fill(selectedMoodSubType == subType ? selectedMoodType.color.opacity(0.2) : Color(UIColor.secondarySystemGroupedBackground))
-                                )
-                                .overlay(
-                                    Capsule()
-                                        .stroke(selectedMoodSubType == subType ? selectedMoodType.color : Color.clear, lineWidth: 1.5)
-                                )
-                                .foregroundColor(selectedMoodSubType == subType ? selectedMoodType.color : .primary)
-                        }
-                        .buttonStyle(.plain)
-                    }
+            FlowLayout(data: selectedMoodType.subTypes, spacing: 8) { subType in
+                Button(action: {
+                    selectedMoodSubType = subType
+                }) {
+                    Text(subType.displayName)
+                        .font(.subheadline)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(
+                            Capsule()
+                                .fill(selectedMoodSubType == subType ? selectedMoodType.color.opacity(0.2) : Color(UIColor.secondarySystemGroupedBackground))
+                        )
+                        .overlay(
+                            Capsule()
+                                .stroke(selectedMoodSubType == subType ? selectedMoodType.color : Color.clear, lineWidth: 1.5)
+                        )
+                        .foregroundColor(selectedMoodSubType == subType ? selectedMoodType.color : .primary)
                 }
-                .padding(.horizontal, 4)
+                .buttonStyle(.plain)
             }
         }
     }
@@ -186,6 +181,7 @@ struct EditMoodRecordView: View {
 
     // MARK: - 标签选择
     @State private var editSelectedCategory: TagCategory = .relationship
+    @State private var frequentTags: [ActivityTag] = []
 
     private var editTagSelector: some View {
         VStack(spacing: 12) {
@@ -202,34 +198,41 @@ struct EditMoodRecordView: View {
 
             if showAllTags {
                 // 分类Tab切换
-                VStack(spacing: 12) {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 8) {
-                            ForEach(TagCategory.allCases, id: \.self) { category in
-                                Button(action: { editSelectedCategory = category }) {
-                                    HStack(spacing: 4) {
-                                        Text(category.emoji)
-                                            .font(.caption2)
-                                        Text(category.displayName)
-                                            .font(.caption)
-                                    }
-                                    .padding(.horizontal, 10)
-                                    .padding(.vertical, 6)
-                                    .background(
-                                        Capsule().fill(editSelectedCategory == category ? Color(hex: "6C5CE7").opacity(0.15) : Color(UIColor.tertiarySystemGroupedBackground))
-                                    )
-                                    .overlay(
-                                        Capsule().stroke(editSelectedCategory == category ? Color(hex: "6C5CE7") : Color.clear, lineWidth: 1)
-                                    )
-                                    .foregroundColor(editSelectedCategory == category ? Color(hex: "6C5CE7") : .secondary)
-                                }
-                                .buttonStyle(.plain)
-                            }
+                VStack(spacing: 0) {
+                    // 一级分类
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(L.localized("checkin.category_title"))
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+
+                        FlowLayout(data: Array(TagCategory.allCases), spacing: 8) { category in
+                            CategoryPill(
+                                emoji: category.emoji,
+                                name: category.displayName,
+                                isSelected: editSelectedCategory == category,
+                                onTap: { editSelectedCategory = category }
+                            )
                         }
                     }
+                    .padding(.bottom, 12)
 
-                    FlowLayout(spacing: 8) {
-                        ForEach(editSelectedCategory.presetTags, id: \.name) { preset in
+                    // 分隔线
+                    Rectangle()
+                        .fill(Color(UIColor.separator).opacity(0.5))
+                        .frame(height: 0.5)
+                        .padding(.horizontal, -4)
+
+                    // 二级标签
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack(spacing: 4) {
+                            Text(editSelectedCategory.emoji)
+                                .font(.caption2)
+                            Text(editSelectedCategory.displayName)
+                                .font(.caption2)
+                                .foregroundColor(Color(hex: "6C5CE7"))
+                        }
+
+                        FlowLayout(data: editSelectedCategory.presetTags, spacing: 8) { preset in
                             TagChip(
                                 emoji: preset.emoji,
                                 name: preset.name,
@@ -239,18 +242,18 @@ struct EditMoodRecordView: View {
                             )
                         }
                     }
+                    .padding(.top, 12)
                 }
+                .animation(.easeInOut(duration: 0.2), value: editSelectedCategory)
             } else {
-                FlowLayout(spacing: 8) {
-                    ForEach(dataManager.fetchFrequentTags(), id: \.name) { tag in
-                        TagChip(
-                            emoji: tag.emoji ?? "📋",
-                            name: tag.name ?? "",
-                            isSelected: selectedTagNames.contains(tag.name ?? ""),
-                            color: Color(hex: "6C5CE7"),
-                            onTap: { toggleTag(tag.name ?? "") }
-                        )
-                    }
+                FlowLayout(data: frequentTags, spacing: 8) { tag in
+                    TagChip(
+                        emoji: tag.emoji ?? "📋",
+                        name: tag.name ?? "",
+                        isSelected: selectedTagNames.contains(tag.name ?? ""),
+                        color: Color(hex: "6C5CE7"),
+                        onTap: { toggleTag(tag.name ?? "") }
+                    )
                 }
             }
 
@@ -260,11 +263,9 @@ struct EditMoodRecordView: View {
                         .font(.caption2)
                         .foregroundColor(.secondary)
 
-                    FlowLayout(spacing: 6) {
-                        ForEach(selectedTagNames, id: \.self) { name in
-                            SelectedTagChip(name: name) {
-                                toggleTag(name)
-                            }
+                    FlowLayout(data: selectedTagNames, spacing: 6) { name in
+                        SelectedTagChip(name: name) {
+                            toggleTag(name)
                         }
                     }
                 }
@@ -274,6 +275,9 @@ struct EditMoodRecordView: View {
         .padding(16)
         .background(Color(UIColor.secondarySystemGroupedBackground))
         .cornerRadius(16)
+        .task {
+            frequentTags = dataManager.fetchFrequentTags()
+        }
     }
 
     // MARK: - 备注

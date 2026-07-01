@@ -16,6 +16,7 @@
 "checkin.intensity.light" = "轻微";
 "checkin.intensity.strong" = "强烈";
 "checkin.activity_tags" = "活动标签";
+"checkin.category_title" = "选择分类";
 "checkin.more" = "更多";
 "checkin.collapse" = "收起";
 "checkin.selected_count" = "已选 %d/5";

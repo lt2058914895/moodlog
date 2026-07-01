@@ -134,7 +134,7 @@ enum MoodSubType: String, CaseIterable, Codable {
     case panicked = "panicked"       // 恐慌
     // 平淡
     case numb = "numb"               // 无感
-    case bored = "bored"             // 无聊
+    case bored = "sub_bored"         // 无聊
     case exhausted = "exhausted"     // 疲惫
     case confused = "confused"       // 迷茫
     case apathetic = "apathetic"     // 麻木
@@ -298,6 +298,18 @@ enum MoodSubType: String, CaseIterable, Codable {
         case .aching, .suffering, .hurt, .sore, .agonizing: return .painful
         }
     }
+
+    /// 从 rawValue 创建 MoodSubType，兼容旧数据中 "bored" → "sub_bored" 的迁移
+    static func from(rawValue: String) -> MoodSubType? {
+        if let subType = MoodSubType(rawValue: rawValue) {
+            return subType
+        }
+        // 向后兼容：旧版 MoodSubType.bored 的 rawValue 为 "bored"，现已改为 "sub_bored"
+        if rawValue == "bored" {
+            return .bored
+        }
+        return nil
+    }
 }
 
 // MARK: - 活动标签分类
@@ -441,7 +453,7 @@ enum TagCategory: String, CaseIterable, Codable {
 }
 
 // MARK: - 预设标签数据
-struct PresetTag {
+struct PresetTag: Hashable {
     let name: String
     let emoji: String
 }

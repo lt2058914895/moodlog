@@ -181,18 +181,13 @@ struct SubMoodSelectorView: View {
                 .font(.subheadline)
                 .foregroundColor(.secondary)
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 10) {
-                    ForEach(moodType.subTypes, id: \.self) { subType in
-                        SubMoodChip(
-                            subType: subType,
-                            isSelected: selectedSubType == subType,
-                            color: moodType.color,
-                            onTap: { onSelect(subType) }
-                        )
-                    }
-                }
-                .padding(.horizontal, 4)
+            FlowLayout(data: moodType.subTypes, spacing: 8) { subType in
+                SubMoodChip(
+                    subType: subType,
+                    isSelected: selectedSubType == subType,
+                    color: moodType.color,
+                    onTap: { onSelect(subType) }
+                )
             }
         }
     }
@@ -278,6 +273,7 @@ struct TagSelectorView: View {
     @ObservedObject var viewModel: MoodCheckinViewModel
     @ObservedObject var dataManager: MoodDataManager
     @State private var selectedCategory: TagCategory = .relationship
+    @State private var frequentTags: [ActivityTag] = []
 
     var body: some View {
         VStack(spacing: 12) {
@@ -307,55 +303,61 @@ struct TagSelectorView: View {
         .padding(16)
         .background(Color(UIColor.secondarySystemGroupedBackground))
         .cornerRadius(16)
+        .task {
+            frequentTags = dataManager.fetchFrequentTags()
+        }
     }
 
     // MARK: - 常用标签
     private var frequentTagsView: some View {
-        FlowLayout(spacing: 8) {
-            ForEach(dataManager.fetchFrequentTags(), id: \.name) { tag in
-                TagChip(
-                    emoji: tag.emoji ?? "📋",
-                    name: tag.name ?? "",
-                    isSelected: viewModel.isTagSelected(tag.name ?? ""),
-                    color: Color(hex: "6C5CE7"),
-                    onTap: { viewModel.toggleTag(tag.name ?? "") }
-                )
-            }
+        FlowLayout(data: frequentTags, spacing: 8) { tag in
+            TagChip(
+                emoji: tag.emoji ?? "📋",
+                name: tag.name ?? "",
+                isSelected: viewModel.isTagSelected(tag.name ?? ""),
+                color: Color(hex: "6C5CE7"),
+                onTap: { viewModel.toggleTag(tag.name ?? "") }
+            )
         }
     }
 
     // MARK: - 分类标签Tab视图
     private var categoryTabView: some View {
-        VStack(spacing: 12) {
-            // 分类Tab栏
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    ForEach(TagCategory.allCases, id: \.self) { category in
-                        Button(action: { selectedCategory = category }) {
-                            HStack(spacing: 4) {
-                                Text(category.emoji)
-                                    .font(.caption2)
-                                Text(category.displayName)
-                                    .font(.caption)
-                            }
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 6)
-                            .background(
-                                Capsule().fill(selectedCategory == category ? Color(hex: "6C5CE7").opacity(0.15) : Color(UIColor.tertiarySystemGroupedBackground))
-                            )
-                            .overlay(
-                                Capsule().stroke(selectedCategory == category ? Color(hex: "6C5CE7") : Color.clear, lineWidth: 1)
-                            )
-                            .foregroundColor(selectedCategory == category ? Color(hex: "6C5CE7") : .secondary)
-                        }
-                        .buttonStyle(.plain)
-                    }
+        VStack(spacing: 0) {
+            // 一级分类 - 流式换行
+            VStack(alignment: .leading, spacing: 8) {
+                Text(L.localized("checkin.category_title"))
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+
+                FlowLayout(data: Array(TagCategory.allCases), spacing: 8) { category in
+                    CategoryPill(
+                        emoji: category.emoji,
+                        name: category.displayName,
+                        isSelected: selectedCategory == category,
+                        onTap: { selectedCategory = category }
+                    )
                 }
             }
+            .padding(.bottom, 12)
 
-            // 当前分类的标签
-            FlowLayout(spacing: 8) {
-                ForEach(selectedCategory.presetTags, id: \.name) { preset in
+            // 分隔线
+            Rectangle()
+                .fill(Color(UIColor.separator).opacity(0.5))
+                .frame(height: 0.5)
+                .padding(.horizontal, -4)
+
+            // 二级标签 - 流式换行
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 4) {
+                    Text(selectedCategory.emoji)
+                        .font(.caption2)
+                    Text(selectedCategory.displayName)
+                        .font(.caption2)
+                        .foregroundColor(Color(hex: "6C5CE7"))
+                }
+
+                FlowLayout(data: selectedCategory.presetTags, spacing: 8) { preset in
                     TagChip(
                         emoji: preset.emoji,
                         name: preset.name,
@@ -365,7 +367,9 @@ struct TagSelectorView: View {
                     )
                 }
             }
+            .padding(.top, 12)
         }
+        .animation(.easeInOut(duration: 0.2), value: selectedCategory)
     }
 
     // MARK: - 已选标签预览
@@ -375,11 +379,9 @@ struct TagSelectorView: View {
                 .font(.caption2)
                 .foregroundColor(.secondary)
 
-            FlowLayout(spacing: 6) {
-                ForEach(viewModel.selectedTagNames, id: \.self) { name in
-                    SelectedTagChip(name: name) {
-                        viewModel.toggleTag(name)
-                    }
+            FlowLayout(data: viewModel.selectedTagNames, spacing: 6) { name in
+                SelectedTagChip(name: name) {
+                    viewModel.toggleTag(name)
                 }
             }
         }
@@ -387,7 +389,40 @@ struct TagSelectorView: View {
     }
 }
 
-// MARK: - 标签芯片
+// MARK: - 一级分类标签（大号胶囊，视觉层级高于二级标签）
+struct CategoryPill: View {
+    let emoji: String
+    let name: String
+    let isSelected: Bool
+    let onTap: () -> Void
+
+    var body: some View {
+        Button(action: onTap) {
+            HStack(spacing: 6) {
+                Text(emoji)
+                    .font(.system(size: 15))
+                Text(name)
+                    .font(.subheadline.weight(isSelected ? .semibold : .regular))
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
+            .background(
+                Capsule()
+                    .fill(isSelected ? Color(hex: "6C5CE7").opacity(0.12) : Color(UIColor.tertiarySystemGroupedBackground))
+            )
+            .overlay(
+                Capsule()
+                    .stroke(isSelected ? Color(hex: "6C5CE7") : Color.clear, lineWidth: 1.5)
+            )
+            .foregroundColor(isSelected ? Color(hex: "6C5CE7") : .primary)
+            .scaleEffect(isSelected ? 1.02 : 1.0)
+        }
+        .buttonStyle(.plain)
+        .animation(.easeInOut(duration: 0.15), value: isSelected)
+    }
+}
+
+// MARK: - 二级标签芯片（小号胶囊，视觉层级低于一级分类）
 struct TagChip: View {
     let emoji: String
     let name: String
@@ -399,21 +434,22 @@ struct TagChip: View {
         Button(action: onTap) {
             HStack(spacing: 4) {
                 Text(emoji)
-                    .font(.caption2)
+                    .font(.system(size: 11))
                 Text(name)
                     .font(.caption)
+                    .fontWeight(isSelected ? .medium : .regular)
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
             .background(
                 Capsule()
-                    .fill(isSelected ? color.opacity(0.15) : Color(UIColor.tertiarySystemGroupedBackground))
+                    .fill(isSelected ? color.opacity(0.12) : Color(UIColor.tertiarySystemGroupedBackground))
             )
             .overlay(
                 Capsule()
-                    .stroke(isSelected ? color : Color.clear, lineWidth: 1)
+                    .stroke(isSelected ? color.opacity(0.6) : Color.clear, lineWidth: 1)
             )
-            .foregroundColor(isSelected ? color : .primary)
+            .foregroundColor(isSelected ? color : .secondary)
         }
         .buttonStyle(.plain)
     }
@@ -441,18 +477,137 @@ struct SelectedTagChip: View {
     }
 }
 
-// MARK: - 流式布局（iOS 15兼容）
-struct FlowLayout<Content: View>: View {
+// MARK: - 流式布局（iOS 15兼容，支持自动换行）
+/// 基于数据数组的流式布局，标签超出宽度自动换行
+/// 使用 alignmentGuide + offset 实现真正的流式换行，高度自适应
+struct FlowLayout<Data: Hashable, ItemContent: View>: View {
+    let data: [Data]
     var spacing: CGFloat = 8
-    let content: Content
-
-    init(spacing: CGFloat = 8, @ViewBuilder content: () -> Content) {
-        self.spacing = spacing
-        self.content = content()
-    }
+    let content: (Data) -> ItemContent
 
     var body: some View {
-        content
+        if #available(iOS 16.0, *) {
+            FlowLayoutLayout(spacing: spacing) {
+                ForEach(data, id: \.self) { item in
+                    content(item)
+                }
+            }
+        } else {
+            FlowLayoutFallback(data: data, spacing: spacing, content: content)
+        }
+    }
+}
+
+// MARK: - iOS 16+ Layout 协议实现
+@available(iOS 16.0, *)
+private struct FlowLayoutLayout: Layout {
+    var spacing: CGFloat = 8
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let result = arrange(proposal: proposal, subviews: subviews)
+        return result.size
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let result = arrange(proposal: proposal, subviews: subviews)
+        for (index, position) in result.positions.enumerated() {
+            subviews[index].place(
+                at: CGPoint(x: bounds.minX + position.x, y: bounds.minY + position.y),
+                proposal: .unspecified
+            )
+        }
+    }
+
+    private func arrange(proposal: ProposedViewSize, subviews: Subviews) -> (positions: [CGPoint], size: CGSize) {
+        let maxWidth = proposal.width ?? .infinity
+        var positions: [CGPoint] = []
+        var currentX: CGFloat = 0
+        var currentY: CGFloat = 0
+        var rowHeight: CGFloat = 0
+        var totalHeight: CGFloat = 0
+
+        for subview in subviews {
+            let size = subview.sizeThatFits(.unspecified)
+            if currentX + size.width > maxWidth && currentX > 0 {
+                currentX = 0
+                currentY += rowHeight + spacing
+                rowHeight = 0
+            }
+            positions.append(CGPoint(x: currentX, y: currentY))
+            rowHeight = max(rowHeight, size.height)
+            currentX += size.width + spacing
+            totalHeight = currentY + rowHeight
+        }
+
+        return (positions, CGSize(width: maxWidth == .infinity ? currentX : maxWidth, height: totalHeight))
+    }
+}
+
+// MARK: - iOS 15 兼容的流式布局（使用 VStack + HStack 手动分行）
+private struct FlowLayoutFallback<Data: Hashable, ItemContent: View>: View {
+    let data: [Data]
+    var spacing: CGFloat = 8
+    let content: (Data) -> ItemContent
+
+    @State private var itemWidths: [AnyHashable: CGFloat] = [:]
+    @State private var containerWidth: CGFloat = 0
+
+    var body: some View {
+        let rows = computeRows()
+        VStack(alignment: .leading, spacing: spacing) {
+            ForEach(0..<rows.count, id: \.self) { rowIndex in
+                HStack(spacing: spacing) {
+                    ForEach(rows[rowIndex], id: \.self) { item in
+                        content(item)
+                            .background(
+                                GeometryReader { proxy in
+                                    Color.clear.onAppear {
+                                        itemWidths[AnyHashable(item)] = proxy.size.width
+                                    }
+                                    .onChange(of: proxy.size.width) { newWidth in
+                                        itemWidths[AnyHashable(item)] = newWidth
+                                    }
+                                }
+                            )
+                    }
+                }
+            }
+        }
+        .background(
+            GeometryReader { proxy in
+                Color.clear.onAppear { containerWidth = proxy.size.width }
+                .onChange(of: proxy.size.width) { newWidth in
+                    containerWidth = newWidth
+                }
+            }
+        )
+        .onChange(of: data) { _ in
+            itemWidths.removeAll()
+        }
+    }
+
+    private func computeRows() -> [[Data]] {
+        guard containerWidth > 0 else { return [data] }
+        var rows: [[Data]] = []
+        var currentRow: [Data] = []
+        var currentRowWidth: CGFloat = 0
+
+        for item in data {
+            let itemWidth = itemWidths[AnyHashable(item)] ?? 80
+            let neededWidth = currentRow.isEmpty ? itemWidth : currentRowWidth + spacing + itemWidth
+            if neededWidth > containerWidth && !currentRow.isEmpty {
+                rows.append(currentRow)
+                currentRow = [item]
+                currentRowWidth = itemWidth
+            } else {
+                currentRow.append(item)
+                currentRowWidth = neededWidth
+            }
+        }
+        if !currentRow.isEmpty {
+            rows.append(currentRow)
+        }
+        return rows.isEmpty ? [data] : rows
     }
 }
 
