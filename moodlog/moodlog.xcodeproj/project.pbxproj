@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0FFE673B374860F7176F574A /* Pods_moodlog.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2EAEDB359DB04F35B882C78 /* Pods_moodlog.framework */; };
 		AA0000012FED4D95001B6443 /* MoodModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000022FED4D95001B6443 /* MoodModels.swift */; };
 		AA0000032FED4D95001B6443 /* MoodDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000042FED4D95001B6443 /* MoodDataManager.swift */; };
 		AA0000052FED4D95001B6443 /* MoodCheckinViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000062FED4D95001B6443 /* MoodCheckinViewModel.swift */; };
@@ -33,8 +32,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		7AACA580329D5A73D8FD9408 /* Pods-moodlog.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-moodlog.debug.xcconfig"; path = "Target Support Files/Pods-moodlog/Pods-moodlog.debug.xcconfig"; sourceTree = "<group>"; };
-		9281EDC77D1F253C2CFC0F4F /* Pods-moodlog.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-moodlog.release.xcconfig"; path = "Target Support Files/Pods-moodlog/Pods-moodlog.release.xcconfig"; sourceTree = "<group>"; };
 		AA0000022FED4D95001B6443 /* MoodModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodModels.swift; sourceTree = "<group>"; };
 		AA0000042FED4D95001B6443 /* MoodDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodDataManager.swift; sourceTree = "<group>"; };
 		AA0000062FED4D95001B6443 /* MoodCheckinViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodCheckinViewModel.swift; sourceTree = "<group>"; };
@@ -59,7 +56,6 @@
 		C22D1EAF2FED4E1F001B6443 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		C2C65F322FEE4B2F006AD954 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		C2C65F342FEE4B31006AD954 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
-		E2EAEDB359DB04F35B882C78 /* Pods_moodlog.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_moodlog.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,7 +63,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0FFE673B374860F7176F574A /* Pods_moodlog.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -149,21 +144,11 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		C0735DBEFAE05B81AD634523 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				E2EAEDB359DB04F35B882C78 /* Pods_moodlog.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		C22D1E902FED4D95001B6443 = {
 			isa = PBXGroup;
 			children = (
 				C22D1E9B2FED4D95001B6443 /* moodlog */,
 				C22D1E9A2FED4D95001B6443 /* Products */,
-				F373E6941977F0D40887A367 /* Pods */,
-				C0735DBEFAE05B81AD634523 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -201,15 +186,6 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
-		F373E6941977F0D40887A367 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				7AACA580329D5A73D8FD9408 /* Pods-moodlog.debug.xcconfig */,
-				9281EDC77D1F253C2CFC0F4F /* Pods-moodlog.release.xcconfig */,
-			);
-			path = Pods;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -217,11 +193,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C22D1EAC2FED4D98001B6443 /* Build configuration list for PBXNativeTarget "moodlog" */;
 			buildPhases = (
-				6E2742ECD1E4F5E5C17E63C4 /* [CP] Check Pods Manifest.lock */,
 				C22D1E952FED4D95001B6443 /* Sources */,
 				C22D1E962FED4D95001B6443 /* Frameworks */,
 				C22D1E972FED4D95001B6443 /* Resources */,
-				306A0C957224C255D82DC59F /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -279,52 +253,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		306A0C957224C255D82DC59F /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-moodlog/Pods-moodlog-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-moodlog/Pods-moodlog-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-moodlog/Pods-moodlog-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		6E2742ECD1E4F5E5C17E63C4 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-moodlog-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		C22D1E952FED4D95001B6443 /* Sources */ = {
@@ -488,7 +416,6 @@
 		};
 		C22D1EAD2FED4D98001B6443 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7AACA580329D5A73D8FD9408 /* Pods-moodlog.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -522,7 +449,6 @@
 		};
 		C22D1EAE2FED4D98001B6443 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9281EDC77D1F253C2CFC0F4F /* Pods-moodlog.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
