@@ -19,7 +19,7 @@ class CalendarViewModel: ObservableObject {
     @Published var dayPrimaryMoods: [Date: MoodType] = [:]
     @Published var dayAverageIntensities: [Date: Double] = [:]
 
-    private let dataManager: MoodDataManager
+    private let dataManager: any MoodDataManaging
     private let calendar = Calendar.current
 
     private var cancellable: Any?
@@ -27,7 +27,7 @@ class CalendarViewModel: ObservableObject {
     /// 防抖定时器
     private var loadDebounceTimer: Timer?
 
-    init(dataManager: MoodDataManager = .shared) {
+    init(dataManager: any MoodDataManaging = MoodDataManager.shared) {
         self.dataManager = dataManager
         loadMonthlyData()
         // 监听数据变更通知（防抖）
@@ -180,6 +180,11 @@ class CalendarViewModel: ObservableObject {
     /// 连续打卡天数
     var streakDays: Int {
         dataManager.fetchStreakDays()
+    }
+
+    /// 删除记录
+    func deleteRecord(_ record: MoodRecord) throws {
+        try dataManager.deleteRecord(record)
     }
 }
 

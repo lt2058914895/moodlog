@@ -54,7 +54,7 @@ struct MoodCalendarView: View {
 
     private func deleteRecord(_ record: MoodRecord) {
         do {
-            try MoodDataManager.shared.deleteRecord(record)
+            try viewModel.deleteRecord(record)
             viewModel.loadMonthlyData()
         } catch {
             errorMessage = error.localizedDescription

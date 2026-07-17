@@ -17,6 +17,12 @@
 		AA00000D2FED4D95001B6443 /* MoodCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000E2FED4D95001B6443 /* MoodCalendarView.swift */; };
 		AA00000F2FED4D95001B6443 /* MoodInsightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000102FED4D95001B6443 /* MoodInsightView.swift */; };
 		AA0000112FED4D95001B6443 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000122FED4D95001B6443 /* MainTabView.swift */; };
+		AA0000132FED4D95001B6443 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000142FED4D95001B6443 /* LocalizationManager.swift */; };
+		AA0000152FED4D95001B6443 /* EditMoodRecordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000162FED4D95001B6443 /* EditMoodRecordView.swift */; };
+		BB0000022FED4D95001B6443 /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000012FED4D95001B6443 /* CacheManager.swift */; };
+		BB0000042FED4D95001B6443 /* MoodRecordRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000032FED4D95001B6443 /* MoodRecordRepository.swift */; };
+		BB0000062FED4D95001B6443 /* TagRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000052FED4D95001B6443 /* TagRepository.swift */; };
+		BB0000082FED4D95001B6443 /* StatisticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000072FED4D95001B6443 /* StatisticsService.swift */; };
 		C22D1E9D2FED4D95001B6443 /* moodlogApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C22D1E9C2FED4D95001B6443 /* moodlogApp.swift */; };
 		C22D1EA12FED4D98001B6443 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C22D1EA02FED4D98001B6443 /* Assets.xcassets */; };
 		C22D1EA42FED4D98001B6443 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C22D1EA32FED4D98001B6443 /* Preview Assets.xcassets */; };
@@ -24,8 +30,6 @@
 		C22D1EA92FED4D98001B6443 /* moodlog.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = C22D1EA72FED4D98001B6443 /* moodlog.xcdatamodeld */; };
 		C22D1EB02FED4E1F001B6443 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C22D1EAF2FED4E1F001B6443 /* Launch Screen.storyboard */; };
 		C2C65F312FEE4B2F006AD954 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C2C65F332FEE4B2F006AD954 /* Localizable.strings */; };
-		AA0000132FED4D95001B6443 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000142FED4D95001B6443 /* LocalizationManager.swift */; };
-		AA0000152FED4D95001B6443 /* EditMoodRecordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000162FED4D95001B6443 /* EditMoodRecordView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +44,12 @@
 		AA00000E2FED4D95001B6443 /* MoodCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodCalendarView.swift; sourceTree = "<group>"; };
 		AA0000102FED4D95001B6443 /* MoodInsightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodInsightView.swift; sourceTree = "<group>"; };
 		AA0000122FED4D95001B6443 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		AA0000142FED4D95001B6443 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
+		AA0000162FED4D95001B6443 /* EditMoodRecordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMoodRecordView.swift; sourceTree = "<group>"; };
+		BB0000012FED4D95001B6443 /* CacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheManager.swift; sourceTree = "<group>"; };
+		BB0000032FED4D95001B6443 /* MoodRecordRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodRecordRepository.swift; sourceTree = "<group>"; };
+		BB0000052FED4D95001B6443 /* TagRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagRepository.swift; sourceTree = "<group>"; };
+		BB0000072FED4D95001B6443 /* StatisticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsService.swift; sourceTree = "<group>"; };
 		C22D1E992FED4D95001B6443 /* moodlog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = moodlog.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C22D1E9C2FED4D95001B6443 /* moodlogApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = moodlogApp.swift; sourceTree = "<group>"; };
 		C22D1EA02FED4D98001B6443 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -49,8 +59,6 @@
 		C22D1EAF2FED4E1F001B6443 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		C2C65F322FEE4B2F006AD954 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		C2C65F342FEE4B31006AD954 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
-		AA0000142FED4D95001B6443 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
-		AA0000162FED4D95001B6443 /* EditMoodRecordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMoodRecordView.swift; sourceTree = "<group>"; };
 		E2EAEDB359DB04F35B882C78 /* Pods_moodlog.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_moodlog.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -79,6 +87,10 @@
 			children = (
 				AA0000042FED4D95001B6443 /* MoodDataManager.swift */,
 				AA0000142FED4D95001B6443 /* LocalizationManager.swift */,
+				BB0000012FED4D95001B6443 /* CacheManager.swift */,
+				BB0000032FED4D95001B6443 /* MoodRecordRepository.swift */,
+				BB0000052FED4D95001B6443 /* TagRepository.swift */,
+				BB0000072FED4D95001B6443 /* StatisticsService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -277,9 +289,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-moodlog/Pods-moodlog-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-moodlog/Pods-moodlog-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -329,6 +345,10 @@
 				AA0000112FED4D95001B6443 /* MainTabView.swift in Sources */,
 				AA0000132FED4D95001B6443 /* LocalizationManager.swift in Sources */,
 				AA0000152FED4D95001B6443 /* EditMoodRecordView.swift in Sources */,
+				BB0000022FED4D95001B6443 /* CacheManager.swift in Sources */,
+				BB0000042FED4D95001B6443 /* MoodRecordRepository.swift in Sources */,
+				BB0000062FED4D95001B6443 /* TagRepository.swift in Sources */,
+				BB0000082FED4D95001B6443 /* StatisticsService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

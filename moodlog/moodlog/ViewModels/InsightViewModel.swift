@@ -20,7 +20,7 @@ class InsightViewModel: ObservableObject {
     @Published var mostFrequentMood: MoodType = .happy
     @Published var availableYears: [Int] = []
 
-    private let dataManager: MoodDataManager
+    private let dataManager: any MoodDataManaging
     private let calendar = Calendar.current
 
     private var cancellable: Any?
@@ -28,7 +28,7 @@ class InsightViewModel: ObservableObject {
     /// 防抖定时器
     private var loadDebounceTimer: Timer?
 
-    init(dataManager: MoodDataManager = .shared) {
+    init(dataManager: any MoodDataManaging = MoodDataManager.shared) {
         self.dataManager = dataManager
         loadAvailableYears()
         loadData()

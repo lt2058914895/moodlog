@@ -20,9 +20,9 @@ class MoodCheckinViewModel: ObservableObject {
     @Published var showSuccessAnimation: Bool = false
     @Published var errorMessage: String?
 
-    private let dataManager: MoodDataManager
+    private let dataManager: any MoodDataManaging
 
-    init(dataManager: MoodDataManager = .shared) {
+    init(dataManager: any MoodDataManaging = MoodDataManager.shared) {
         self.dataManager = dataManager
     }
 
@@ -94,7 +94,8 @@ class MoodCheckinViewModel: ObservableObject {
                 moodType: moodType,
                 moodSubType: subType,
                 intensity: intensity,
-                tagNames: selectedTagNames
+                tagNames: selectedTagNames,
+                note: nil
             )
             showSuccessAnimation = true
         } catch {
