@@ -129,7 +129,15 @@ class StatisticsService: StatisticsProviding {
         do {
             let records = try viewContext.fetch(request)
             for record in records {
-                if let tagNamesStr = record.tagNames {
+                // 优先从关系中获取标签
+                if let tags = record.tags as? Set<ActivityTag>, !tags.isEmpty {
+                    for tag in tags {
+                        if let name = tag.name {
+                            tagCount[name, default: 0] += 1
+                        }
+                    }
+                } else if let tagNamesStr = record.tagNames {
+                    // 降级：从 tagNames 字符串解析
                     let names = tagNamesStr.components(separatedBy: ",").filter { !$0.isEmpty }
                     for name in names {
                         tagCount[name, default: 0] += 1

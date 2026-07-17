@@ -10,6 +10,7 @@
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="isSynced" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <relationship name="tags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ActivityTag" inverseName="records" inverseEntity="ActivityTag"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraintValue attribute="id"/>
@@ -36,6 +37,7 @@
         <attribute name="isCustom" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="usageCount" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="records" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MoodRecord" inverseName="tags" inverseEntity="MoodRecord"/>
         <indexes>
             <index name="byName">
                 <indexProperty name="name"/>
@@ -46,7 +48,7 @@
         </indexes>
     </entity>
     <elements>
-        <element name="MoodRecord" positionX="-63" positionY="-18" width="128" height="148"/>
-        <element name="ActivityTag" positionX="160" positionY="-18" width="128" height="118"/>
+        <element name="MoodRecord" positionX="-63" positionY="-18" width="128" height="178"/>
+        <element name="ActivityTag" positionX="160" positionY="-18" width="128" height="148"/>
     </elements>
 </model>

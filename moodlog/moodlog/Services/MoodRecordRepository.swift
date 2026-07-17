@@ -79,6 +79,10 @@ class MoodRecordRepository: MoodRecordManaging {
             record.updatedAt = Date()
             record.isSynced = false
 
+            // 建立标签关系
+            let tags = fetchTagsByNames(tagNames, in: backgroundContext)
+            record.tags = NSSet(array: tags)
+
             do {
                 try backgroundContext.save()
                 createdObjectID = record.objectID
@@ -209,6 +213,11 @@ class MoodRecordRepository: MoodRecordManaging {
                 bgRecord?.tagNames = tagNames.joined(separator: ",")
                 bgRecord?.note = note
                 bgRecord?.updatedAt = Date()
+
+                // 更新标签关系
+                let tags = fetchTagsByNames(tagNames, in: backgroundContext)
+                bgRecord?.tags = NSSet(array: tags)
+
                 try backgroundContext.save()
             } catch {
                 Self.logger.error("Failed to update mood record: \(error.localizedDescription)")
@@ -223,8 +232,28 @@ class MoodRecordRepository: MoodRecordManaging {
 
     // MARK: - 辅助方法
 
+    /// 从记录中获取标签名称列表（优先使用关系，降级使用 tagNames 字符串）
     static func tagNamesFromRecord(_ record: MoodRecord) -> [String] {
+        // 优先从关系中获取
+        if let tags = record.tags as? Set<ActivityTag>, !tags.isEmpty {
+            return tags.compactMap { $0.name }.sorted()
+        }
+        // 降级：从 tagNames 字符串解析
         guard let tagNamesStr = record.tagNames else { return [] }
         return tagNamesStr.components(separatedBy: ",").filter { !$0.isEmpty }
+    }
+
+    /// 在指定上下文中按名称批量查找 ActivityTag
+    private func fetchTagsByNames(_ names: [String], in context: NSManagedObjectContext) -> [ActivityTag] {
+        guard !names.isEmpty else { return [] }
+        let request: NSFetchRequest<ActivityTag> = ActivityTag.fetchRequest()
+        request.predicate = NSPredicate(format: "name IN %@", names)
+        request.fetchBatchSize = names.count
+        do {
+            return try context.fetch(request)
+        } catch {
+            Self.logger.error("Fetch tags by names failed: \(error.localizedDescription)")
+            return []
+        }
     }
 }
