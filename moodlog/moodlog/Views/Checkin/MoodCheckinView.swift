@@ -112,7 +112,7 @@ struct MoodSelectorView: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            // 一级情绪网格
+            // 情绪网格
             LazyVGrid(columns: columns, spacing: 16) {
                 ForEach(MoodType.allCases, id: \.self) { moodType in
                     MoodTypeCell(
@@ -122,18 +122,7 @@ struct MoodSelectorView: View {
                     )
                 }
             }
-
-            // 二级情绪选择
-            if viewModel.showSubMoods, let moodType = viewModel.selectedMoodType {
-                SubMoodSelectorView(
-                    moodType: moodType,
-                    selectedSubType: viewModel.selectedMoodSubType,
-                    onSelect: { viewModel.selectMoodSubType($0) }
-                )
-                .transition(.move(edge: .bottom).combined(with: .opacity))
-            }
         }
-        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: viewModel.showSubMoods)
     }
 }
 
@@ -164,57 +153,6 @@ struct MoodTypeCell: View {
                 RoundedRectangle(cornerRadius: 16)
                     .stroke(isSelected ? moodType.color : Color.clear, lineWidth: 2)
             )
-        }
-        .buttonStyle(.plain)
-    }
-}
-
-// MARK: - 二级情绪选择器
-struct SubMoodSelectorView: View {
-    let moodType: MoodType
-    let selectedSubType: MoodSubType?
-    let onSelect: (MoodSubType) -> Void
-
-    var body: some View {
-        VStack(spacing: 8) {
-            Text(L.localized("checkin.describe_feeling"))
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-
-            FlowLayout(data: moodType.subTypes, spacing: 8) { subType in
-                SubMoodChip(
-                    subType: subType,
-                    isSelected: selectedSubType == subType,
-                    color: moodType.color,
-                    onTap: { onSelect(subType) }
-                )
-            }
-        }
-    }
-}
-
-// MARK: - 二级情绪标签
-struct SubMoodChip: View {
-    let subType: MoodSubType
-    let isSelected: Bool
-    let color: Color
-    let onTap: () -> Void
-
-    var body: some View {
-        Button(action: onTap) {
-            Text(subType.displayName)
-                .font(.subheadline)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(
-                    Capsule()
-                        .fill(isSelected ? color.opacity(0.2) : Color(UIColor.secondarySystemGroupedBackground))
-                )
-                .overlay(
-                    Capsule()
-                        .stroke(isSelected ? color : Color.clear, lineWidth: 1.5)
-                )
-                .foregroundColor(isSelected ? color : .primary)
         }
         .buttonStyle(.plain)
     }

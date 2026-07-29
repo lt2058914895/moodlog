@@ -13,7 +13,6 @@ struct EditMoodRecordView: View {
     let record: MoodRecord
 
     @State private var selectedMoodType: MoodType
-    @State private var selectedMoodSubType: MoodSubType
     @State private var intensity: Int
     @State private var selectedTagNames: [String]
     @State private var note: String
@@ -26,7 +25,6 @@ struct EditMoodRecordView: View {
     init(record: MoodRecord) {
         self.record = record
         _selectedMoodType = State(initialValue: MoodType(rawValue: record.moodType ?? "happy") ?? .happy)
-        _selectedMoodSubType = State(initialValue: MoodSubType.from(rawValue: record.moodSubType ?? "joyful") ?? .joyful)
         _intensity = State(initialValue: Int(record.intensity))
         _selectedTagNames = State(initialValue: MoodDataManager.tagNamesFromRecord(record))
         _note = State(initialValue: record.note ?? "")
@@ -97,7 +95,6 @@ struct EditMoodRecordView: View {
                 ForEach(MoodType.allCases, id: \.self) { moodType in
                     Button(action: {
                         selectedMoodType = moodType
-                        selectedMoodSubType = moodType.subTypes.first ?? .joyful
                     }) {
                         VStack(spacing: 6) {
                             Text(moodType.emoji)
@@ -120,28 +117,6 @@ struct EditMoodRecordView: View {
                     }
                     .buttonStyle(.plain)
                 }
-            }
-
-            // 二级情绪选择
-            FlowLayout(data: selectedMoodType.subTypes, spacing: 8) { subType in
-                Button(action: {
-                    selectedMoodSubType = subType
-                }) {
-                    Text(subType.displayName)
-                        .font(.subheadline)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(
-                            Capsule()
-                                .fill(selectedMoodSubType == subType ? selectedMoodType.color.opacity(0.2) : Color(UIColor.secondarySystemGroupedBackground))
-                        )
-                        .overlay(
-                            Capsule()
-                                .stroke(selectedMoodSubType == subType ? selectedMoodType.color : Color.clear, lineWidth: 1.5)
-                        )
-                        .foregroundColor(selectedMoodSubType == subType ? selectedMoodType.color : .primary)
-                }
-                .buttonStyle(.plain)
             }
         }
     }
@@ -330,7 +305,6 @@ struct EditMoodRecordView: View {
             try dataManager.updateMoodRecord(
                 record,
                 moodType: selectedMoodType,
-                moodSubType: selectedMoodSubType,
                 intensity: intensity,
                 tagNames: selectedTagNames,
                 note: noteText

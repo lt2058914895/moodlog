@@ -13,7 +13,6 @@ import os.log
 protocol MoodRecordManaging {
     func createMoodRecord(
         moodType: MoodType,
-        moodSubType: MoodSubType,
         intensity: Int,
         tagNames: [String],
         note: String?
@@ -27,7 +26,6 @@ protocol MoodRecordManaging {
     func updateMoodRecord(
         _ record: MoodRecord,
         moodType: MoodType,
-        moodSubType: MoodSubType,
         intensity: Int,
         tagNames: [String],
         note: String?
@@ -56,7 +54,6 @@ class MoodRecordRepository: MoodRecordManaging {
 
     func createMoodRecord(
         moodType: MoodType,
-        moodSubType: MoodSubType,
         intensity: Int,
         tagNames: [String] = [],
         note: String? = nil
@@ -71,7 +68,6 @@ class MoodRecordRepository: MoodRecordManaging {
             let record = MoodRecord(context: backgroundContext)
             record.id = UUID()
             record.moodType = moodType.rawValue
-            record.moodSubType = moodSubType.rawValue
             record.intensity = Int16(intensity)
             record.note = note
             record.tagNames = tagNames.joined(separator: ",")
@@ -194,7 +190,6 @@ class MoodRecordRepository: MoodRecordManaging {
     func updateMoodRecord(
         _ record: MoodRecord,
         moodType: MoodType,
-        moodSubType: MoodSubType,
         intensity: Int,
         tagNames: [String],
         note: String?
@@ -208,7 +203,6 @@ class MoodRecordRepository: MoodRecordManaging {
             do {
                 let bgRecord = backgroundContext.object(with: objectID) as? MoodRecord
                 bgRecord?.moodType = moodType.rawValue
-                bgRecord?.moodSubType = moodSubType.rawValue
                 bgRecord?.intensity = Int16(intensity)
                 bgRecord?.tagNames = tagNames.joined(separator: ",")
                 bgRecord?.note = note

@@ -3,11 +3,12 @@
 //  moodlog
 //
 //  Created by deppon on 2026/6/26.
+//  重构于 2026/7/29 — 删除二级情绪，精简一级情绪为9个核心大类
 //
 
 import SwiftUI
 
-// MARK: - 一级情绪类型
+// MARK: - 情绪类型（精简为9个核心大类）
 enum MoodType: String, CaseIterable, Codable {
     case happy = "happy"       // 😊 开心
     case sad = "sad"           // 😢 难过
@@ -15,15 +16,9 @@ enum MoodType: String, CaseIterable, Codable {
     case anxious = "anxious"   // 😰 焦虑
     case neutral = "neutral"   // 😐 平淡
     case love = "love"         // 🥰 爱
-    case thinking = "thinking"     // 🤔 思考
-    case afraid = "afraid"         // 😨 害怕
-    case surprised = "surprised"   // 😲 惊讶
-    case tired = "tired"           // 😩 疲惫
-    case relaxed = "relaxed"       // 😌 放松
-    case calm = "calm"             // 🧘 平静
-    case bored = "bored"           // 🥱 无聊
-    case upset = "upset"           // 😖 烦恼
-    case painful = "painful"       // 😣 痛苦
+    case afraid = "afraid"     // 😨 害怕
+    case tired = "tired"       // 😩 疲惫
+    case relaxed = "relaxed"   // 😌 放松
 
     var emoji: String {
         switch self {
@@ -33,15 +28,9 @@ enum MoodType: String, CaseIterable, Codable {
         case .anxious: return "😰"
         case .neutral: return "😐"
         case .love: return "🥰"
-        case .thinking: return "🤔"
         case .afraid: return "😨"
-        case .surprised: return "😲"
         case .tired: return "😩"
         case .relaxed: return "😌"
-        case .calm: return "🧘"
-        case .bored: return "🥱"
-        case .upset: return "😖"
-        case .painful: return "😣"
         }
     }
 
@@ -53,15 +42,9 @@ enum MoodType: String, CaseIterable, Codable {
         case .anxious: return L.localized("mood.anxious")
         case .neutral: return L.localized("mood.neutral")
         case .love: return L.localized("mood.love")
-        case .thinking: return L.localized("mood.thinking")
         case .afraid: return L.localized("mood.afraid")
-        case .surprised: return L.localized("mood.surprised")
         case .tired: return L.localized("mood.tired")
         case .relaxed: return L.localized("mood.relaxed")
-        case .calm: return L.localized("mood.calm")
-        case .bored: return L.localized("mood.bored")
-        case .upset: return L.localized("mood.upset")
-        case .painful: return L.localized("mood.painful")
         }
     }
 
@@ -73,242 +56,10 @@ enum MoodType: String, CaseIterable, Codable {
         case .anxious: return Color(hex: "C084FC")
         case .neutral: return Color(hex: "94A3B8")
         case .love: return Color(hex: "F472B6")
-        case .thinking: return Color(hex: "34D399")
         case .afraid: return Color(hex: "7C3AED")
-        case .surprised: return Color(hex: "F59E0B")
         case .tired: return Color(hex: "78716C")
         case .relaxed: return Color(hex: "6EE7B7")
-        case .calm: return Color(hex: "67E8F9")
-        case .bored: return Color(hex: "A8A29E")
-        case .upset: return Color(hex: "FB923C")
-        case .painful: return Color(hex: "DC2626")
         }
-    }
-
-    var subTypes: [MoodSubType] {
-        switch self {
-        case .happy: return [.joyful, .satisfied, .grateful, .excited, .peaceful]
-        case .sad: return [.grief, .lost, .lonely, .missing, .disappointed]
-        case .angry: return [.furious, .irritated, .dissatisfied, .jealous, .wronged]
-        case .anxious: return [.tense, .worried, .scared, .uneasy, .panicked]
-        case .neutral: return [.numb, .confused, .apathetic]
-        case .love: return [.blissful, .crush, .beloved, .warm, .sweet]
-        case .thinking: return [.reflective, .conflicted, .hesitant, .insightful, .doubtful]
-        case .afraid: return [.fearful, .terrified, .insecure, .alarmed, .helpless]
-        case .surprised: return [.amazed, .shocked, .unexpected, .astonished, .awed]
-        case .tired: return [.sleepy, .drained, .burntOut, .weary, .drowsy]
-        case .relaxed: return [.cozy, .leisurely, .chill, .content, .serene]
-        case .calm: return [.tranquil, .centered, .mindful, .steady, .composed]
-        case .bored: return [.dull, .uninterested, .listless, .indifferent, .restless]
-        case .upset: return [.frustrated, .annoyed, .agitated, .disturbed, .bothered]
-        case .painful: return [.aching, .suffering, .hurt, .sore, .agonizing]
-        }
-    }
-}
-
-// MARK: - 二级情绪类型
-enum MoodSubType: String, CaseIterable, Codable {
-    // 开心
-    case joyful = "joyful"           // 愉悦
-    case satisfied = "satisfied"     // 满足
-    case grateful = "grateful"       // 感恩
-    case excited = "excited"         // 兴奋
-    case peaceful = "peaceful"       // 平静
-    // 难过
-    case grief = "grief"             // 悲伤
-    case lost = "lost"               // 失落
-    case lonely = "lonely"           // 孤独
-    case missing = "missing"         // 想念
-    case disappointed = "disappointed" // 失望
-    // 生气
-    case furious = "furious"         // 愤怒
-    case irritated = "irritated"     // 烦躁
-    case dissatisfied = "dissatisfied" // 不满
-    case jealous = "jealous"         // 嫉妒
-    case wronged = "wronged"         // 委屈
-    // 焦虑
-    case tense = "tense"             // 紧张
-    case worried = "worried"         // 担忧
-    case scared = "scared"           // 害怕
-    case uneasy = "uneasy"           // 不安
-    case panicked = "panicked"       // 恐慌
-    // 平淡
-    case numb = "numb"               // 无感
-    case bored = "sub_bored"         // 无聊
-    case exhausted = "exhausted"     // 疲惫
-    case confused = "confused"       // 迷茫
-    case apathetic = "apathetic"     // 麻木
-    // 爱
-    case blissful = "blissful"       // 幸福
-    case crush = "crush"             // 心动
-    case beloved = "beloved"         // 被爱
-    case warm = "warm"               // 温暖
-    case sweet = "sweet"             // 甜蜜
-    // 思考
-    case reflective = "reflective"   // 反思
-    case conflicted = "conflicted"   // 纠结
-    case hesitant = "hesitant"       // 犹豫
-    case insightful = "insightful"   // 领悟
-    case doubtful = "doubtful"       // 怀疑
-    // 害怕
-    case fearful = "fearful"         // 恐惧
-    case terrified = "terrified"     // 惊恐
-    case insecure = "insecure"       // 不安
-    case alarmed = "alarmed"         // 惊慌
-    case helpless = "helpless"       // 无助
-    // 惊讶
-    case amazed = "amazed"           // 惊奇
-    case shocked = "shocked"         // 震惊
-    case unexpected = "unexpected"   // 意外
-    case astonished = "astonished"   // 惊叹
-    case awed = "awed"               // 敬畏
-    // 疲惫
-    case sleepy = "sleepy"           // 困倦
-    case drained = "drained"         // 精疲力竭
-    case burntOut = "burntOut"       // 倦怠
-    case weary = "weary"             // 疲劳
-    case drowsy = "drowsy"           // 昏沉
-    // 放松
-    case cozy = "cozy"               // 惬意
-    case leisurely = "leisurely"     // 闲适
-    case chill = "chill"             // 悠闲
-    case content = "content"         // 满足
-    case serene = "serene"           // 宁静
-    // 平静
-    case tranquil = "tranquil"       // 安详
-    case centered = "centered"       // 专注
-    case mindful = "mindful"         // 正念
-    case steady = "steady"           // 稳定
-    case composed = "composed"       // 从容
-    // 无聊
-    case dull = "dull"               // 乏味
-    case uninterested = "uninterested" // 无趣
-    case listless = "listless"       // 百无聊赖
-    case indifferent = "indifferent" // 漠然
-    case restless = "restless"       // 烦闷
-    // 烦恼
-    case frustrated = "frustrated"   // 挫败
-    case annoyed = "annoyed"         // 烦扰
-    case agitated = "agitated"       // 焦躁
-    case disturbed = "disturbed"     // 不安
-    case bothered = "bothered"       // 烦心
-    // 痛苦
-    case aching = "aching"           // 隐痛
-    case suffering = "suffering"     // 煎熬
-    case hurt = "hurt"               // 受伤
-    case sore = "sore"               // 酸痛
-    case agonizing = "agonizing"     // 极痛
-
-    var displayName: String {
-        switch self {
-        case .joyful: return L.localized("moodsub.joyful")
-        case .satisfied: return L.localized("moodsub.satisfied")
-        case .grateful: return L.localized("moodsub.grateful")
-        case .excited: return L.localized("moodsub.excited")
-        case .peaceful: return L.localized("moodsub.peaceful")
-        case .grief: return L.localized("moodsub.grief")
-        case .lost: return L.localized("moodsub.lost")
-        case .lonely: return L.localized("moodsub.lonely")
-        case .missing: return L.localized("moodsub.missing")
-        case .disappointed: return L.localized("moodsub.disappointed")
-        case .furious: return L.localized("moodsub.furious")
-        case .irritated: return L.localized("moodsub.irritated")
-        case .dissatisfied: return L.localized("moodsub.dissatisfied")
-        case .jealous: return L.localized("moodsub.jealous")
-        case .wronged: return L.localized("moodsub.wronged")
-        case .tense: return L.localized("moodsub.tense")
-        case .worried: return L.localized("moodsub.worried")
-        case .scared: return L.localized("moodsub.scared")
-        case .uneasy: return L.localized("moodsub.uneasy")
-        case .panicked: return L.localized("moodsub.panicked")
-        case .numb: return L.localized("moodsub.numb")
-        case .bored: return L.localized("moodsub.bored")
-        case .exhausted: return L.localized("moodsub.exhausted")
-        case .confused: return L.localized("moodsub.confused")
-        case .apathetic: return L.localized("moodsub.apathetic")
-        case .blissful: return L.localized("moodsub.blissful")
-        case .crush: return L.localized("moodsub.crush")
-        case .beloved: return L.localized("moodsub.beloved")
-        case .warm: return L.localized("moodsub.warm")
-        case .sweet: return L.localized("moodsub.sweet")
-        case .reflective: return L.localized("moodsub.reflective")
-        case .conflicted: return L.localized("moodsub.conflicted")
-        case .hesitant: return L.localized("moodsub.hesitant")
-        case .insightful: return L.localized("moodsub.insightful")
-        case .doubtful: return L.localized("moodsub.doubtful")
-        case .fearful: return L.localized("moodsub.fearful")
-        case .terrified: return L.localized("moodsub.terrified")
-        case .insecure: return L.localized("moodsub.insecure")
-        case .alarmed: return L.localized("moodsub.alarmed")
-        case .helpless: return L.localized("moodsub.helpless")
-        case .amazed: return L.localized("moodsub.amazed")
-        case .shocked: return L.localized("moodsub.shocked")
-        case .unexpected: return L.localized("moodsub.unexpected")
-        case .astonished: return L.localized("moodsub.astonished")
-        case .awed: return L.localized("moodsub.awed")
-        case .sleepy: return L.localized("moodsub.sleepy")
-        case .drained: return L.localized("moodsub.drained")
-        case .burntOut: return L.localized("moodsub.burntOut")
-        case .weary: return L.localized("moodsub.weary")
-        case .drowsy: return L.localized("moodsub.drowsy")
-        case .cozy: return L.localized("moodsub.cozy")
-        case .leisurely: return L.localized("moodsub.leisurely")
-        case .chill: return L.localized("moodsub.chill")
-        case .content: return L.localized("moodsub.content")
-        case .serene: return L.localized("moodsub.serene")
-        case .tranquil: return L.localized("moodsub.tranquil")
-        case .centered: return L.localized("moodsub.centered")
-        case .mindful: return L.localized("moodsub.mindful")
-        case .steady: return L.localized("moodsub.steady")
-        case .composed: return L.localized("moodsub.composed")
-        case .dull: return L.localized("moodsub.dull")
-        case .uninterested: return L.localized("moodsub.uninterested")
-        case .listless: return L.localized("moodsub.listless")
-        case .indifferent: return L.localized("moodsub.indifferent")
-        case .restless: return L.localized("moodsub.restless")
-        case .frustrated: return L.localized("moodsub.frustrated")
-        case .annoyed: return L.localized("moodsub.annoyed")
-        case .agitated: return L.localized("moodsub.agitated")
-        case .disturbed: return L.localized("moodsub.disturbed")
-        case .bothered: return L.localized("moodsub.bothered")
-        case .aching: return L.localized("moodsub.aching")
-        case .suffering: return L.localized("moodsub.suffering")
-        case .hurt: return L.localized("moodsub.hurt")
-        case .sore: return L.localized("moodsub.sore")
-        case .agonizing: return L.localized("moodsub.agonizing")
-        }
-    }
-
-    var parentType: MoodType {
-        switch self {
-        case .joyful, .satisfied, .grateful, .excited, .peaceful: return .happy
-        case .grief, .lost, .lonely, .missing, .disappointed: return .sad
-        case .furious, .irritated, .dissatisfied, .jealous, .wronged: return .angry
-        case .tense, .worried, .scared, .uneasy, .panicked: return .anxious
-        case .numb, .bored, .exhausted, .confused, .apathetic: return .neutral
-        case .blissful, .crush, .beloved, .warm, .sweet: return .love
-        case .reflective, .conflicted, .hesitant, .insightful, .doubtful: return .thinking
-        case .fearful, .terrified, .insecure, .alarmed, .helpless: return .afraid
-        case .amazed, .shocked, .unexpected, .astonished, .awed: return .surprised
-        case .sleepy, .drained, .burntOut, .weary, .drowsy: return .tired
-        case .cozy, .leisurely, .chill, .content, .serene: return .relaxed
-        case .tranquil, .centered, .mindful, .steady, .composed: return .calm
-        case .dull, .uninterested, .listless, .indifferent, .restless: return .bored
-        case .frustrated, .annoyed, .agitated, .disturbed, .bothered: return .upset
-        case .aching, .suffering, .hurt, .sore, .agonizing: return .painful
-        }
-    }
-
-    /// 从 rawValue 创建 MoodSubType，兼容旧数据中 "bored" → "sub_bored" 的迁移
-    static func from(rawValue: String) -> MoodSubType? {
-        if let subType = MoodSubType(rawValue: rawValue) {
-            return subType
-        }
-        // 向后兼容：旧版 MoodSubType.bored 的 rawValue 为 "bored"，现已改为 "sub_bored"
-        if rawValue == "bored" {
-            return .bored
-        }
-        return nil
     }
 }
 
@@ -462,7 +213,6 @@ struct PresetTag: Hashable {
 struct MoodRecordUIModel: Identifiable {
     let id: UUID
     let moodType: MoodType
-    let moodSubType: MoodSubType
     let intensity: Int
     let tagNames: [String]
     let note: String?

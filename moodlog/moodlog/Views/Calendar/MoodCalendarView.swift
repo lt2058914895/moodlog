@@ -268,10 +268,6 @@ struct MoodRecordRow: View {
         MoodType(rawValue: record.moodType ?? "happy")
     }
 
-    private var moodSubType: MoodSubType? {
-        MoodSubType.from(rawValue: record.moodSubType ?? "joyful")
-    }
-
     private var timeString: String {
         guard let date = record.createdAt else { return "" }
         let formatter = DateFormatter()
@@ -303,9 +299,6 @@ struct MoodRecordRow: View {
                         .font(.title3)
                     Text(moodType?.displayName ?? "")
                         .font(.subheadline.bold())
-                    Text(moodSubType?.displayName ?? "")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
                     Spacer()
                     Text(L.localizedInt("calendar.intensity", value: Int(record.intensity)))
                         .font(.caption2)

@@ -44,13 +44,13 @@ protocol MoodDataManaging: ObservableObject {
     var lastError: MoodDataError? { get set }
 
     // MoodRecord CRUD
-    func createMoodRecord(moodType: MoodType, moodSubType: MoodSubType, intensity: Int, tagNames: [String], note: String?) throws -> MoodRecord
+    func createMoodRecord(moodType: MoodType, intensity: Int, tagNames: [String], note: String?) throws -> MoodRecord
     func fetchAllRecords() -> [MoodRecord]
     func fetchRecords(from startDate: Date, to endDate: Date) -> [MoodRecord]
     func fetchRecords(for date: Date) -> [MoodRecord]
     func deleteRecord(_ record: MoodRecord) throws
     func deleteRecords(_ records: [MoodRecord]) throws
-    func updateMoodRecord(_ record: MoodRecord, moodType: MoodType, moodSubType: MoodSubType, intensity: Int, tagNames: [String], note: String?) throws
+    func updateMoodRecord(_ record: MoodRecord, moodType: MoodType, intensity: Int, tagNames: [String], note: String?) throws
 
     // Tag
     func getOrCreateTag(name: String, category: TagCategory, emoji: String, isCustom: Bool) -> ActivityTag
@@ -120,10 +120,10 @@ class MoodDataManager: MoodDataManaging {
 
     // MARK: - MoodRecord CRUD（委托）
 
-    func createMoodRecord(moodType: MoodType, moodSubType: MoodSubType, intensity: Int, tagNames: [String] = [], note: String? = nil) throws -> MoodRecord {
+    func createMoodRecord(moodType: MoodType, intensity: Int, tagNames: [String] = [], note: String? = nil) throws -> MoodRecord {
         do {
             let record = try recordRepository.createMoodRecord(
-                moodType: moodType, moodSubType: moodSubType, intensity: intensity, tagNames: tagNames, note: note
+                moodType: moodType, intensity: intensity, tagNames: tagNames, note: note
             )
             cacheManager.clearCache()
             notifyDataChange()
@@ -172,9 +172,9 @@ class MoodDataManager: MoodDataManaging {
         }
     }
 
-    func updateMoodRecord(_ record: MoodRecord, moodType: MoodType, moodSubType: MoodSubType, intensity: Int, tagNames: [String], note: String?) throws {
+    func updateMoodRecord(_ record: MoodRecord, moodType: MoodType, intensity: Int, tagNames: [String], note: String?) throws {
         do {
-            try recordRepository.updateMoodRecord(record, moodType: moodType, moodSubType: moodSubType, intensity: intensity, tagNames: tagNames, note: note)
+            try recordRepository.updateMoodRecord(record, moodType: moodType, intensity: intensity, tagNames: tagNames, note: note)
             cacheManager.clearCache()
             notifyDataChange()
         } catch let error as MoodDataError {

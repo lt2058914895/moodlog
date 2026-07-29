@@ -15,24 +15,23 @@ struct PersistenceController {
         let viewContext = result.container.viewContext
 
         // 创建示例情绪记录
-        let moodTypes: [(type: String, subType: String, intensity: Int16)] = [
-            ("happy", "joyful", 8),
-            ("sad", "lonely", 4),
-            ("anxious", "worried", 6),
-            ("happy", "excited", 9),
-            ("neutral", "bored", 3),
-            ("love", "warm", 7),
-            ("angry", "irritated", 5),
-            ("happy", "peaceful", 6),
-            ("anxious", "tense", 7),
-            ("thinking", "reflective", 4),
+        let moodTypes: [(type: String, intensity: Int16)] = [
+            ("happy", 8),
+            ("sad", 4),
+            ("anxious", 6),
+            ("happy", 9),
+            ("neutral", 3),
+            ("love", 7),
+            ("angry", 5),
+            ("happy", 6),
+            ("anxious", 7),
+            ("relaxed", 4),
         ]
 
         for (index, mood) in moodTypes.enumerated() {
             let record = MoodRecord(context: viewContext)
             record.id = UUID()
             record.moodType = mood.type
-            record.moodSubType = mood.subType
             record.intensity = mood.intensity
             record.createdAt = Calendar.current.date(byAdding: .hour, value: -index * 3, to: Date())
             record.updatedAt = record.createdAt
