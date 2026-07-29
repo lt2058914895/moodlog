@@ -157,6 +157,10 @@ struct EditMoodRecordView: View {
     // MARK: - 标签选择
     @State private var editSelectedCategory: TagCategory = .relationship
     @State private var frequentTags: [ActivityTag] = []
+    @State private var customTags: [ActivityTag] = []
+    @State private var showCustomTagCreation: Bool = false
+    @State private var tagToDelete: ActivityTag?
+    @State private var showDeleteConfirm: Bool = false
 
     private var editTagSelector: some View {
         VStack(spacing: 12) {
@@ -216,8 +220,46 @@ struct EditMoodRecordView: View {
                                 onTap: { toggleTag(preset.name) }
                             )
                         }
+
+                        // 该分类下的自定义标签
+                        let categoryCustomTags = customTags.filter { $0.category == editSelectedCategory.rawValue }
+                        if !categoryCustomTags.isEmpty {
+                            FlowLayout(data: categoryCustomTags, spacing: 8) { tag in
+                                TagChip(
+                                    emoji: tag.emoji ?? "📋",
+                                    name: tag.name ?? "",
+                                    isSelected: selectedTagNames.contains(tag.name ?? ""),
+                                    color: Color(hex: "6C5CE7"),
+                                    onTap: { toggleTag(tag.name ?? "") },
+                                    isCustom: true,
+                                    onLongPress: {
+                                        tagToDelete = tag
+                                        showDeleteConfirm = true
+                                    }
+                                )
+                            }
+                        }
                     }
                     .padding(.top, 12)
+
+                    // 自定义标签按钮
+                    Button(action: { showCustomTagCreation = true }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "plus.circle")
+                                .font(.caption)
+                            Text(L.localized("custom_tag.add"))
+                                .font(.caption)
+                        }
+                        .foregroundColor(Color(hex: "6C5CE7"))
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(
+                            Capsule()
+                                .stroke(Color(hex: "6C5CE7").opacity(0.4), lineWidth: 1)
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.top, 8)
                 }
                 .animation(.easeInOut(duration: 0.2), value: editSelectedCategory)
             } else {
@@ -252,6 +294,37 @@ struct EditMoodRecordView: View {
         .cornerRadius(16)
         .task {
             frequentTags = dataManager.fetchFrequentTags()
+            customTags = dataManager.fetchCustomTags()
+        }
+        .sheet(isPresented: $showCustomTagCreation) {
+            CustomTagCreationView(dataManager: dataManager) { tagName in
+                frequentTags = dataManager.fetchFrequentTags()
+                customTags = dataManager.fetchCustomTags()
+                toggleTag(tagName)
+            }
+        }
+        .alert(
+            L.localized("custom_tag.delete"),
+            isPresented: $showDeleteConfirm,
+            presenting: tagToDelete
+        ) { tag in
+            Button(L.localized("custom_tag.delete"), role: .destructive) {
+                deleteCustomTag(tag)
+            }
+            Button(L.localized("checkin.cancel"), role: .cancel) {}
+        } message: { tag in
+            Text(String(format: L.localized("custom_tag.delete_confirm"), tag.name ?? ""))
+        }
+    }
+
+    // MARK: - 删除自定义标签
+    private func deleteCustomTag(_ tag: ActivityTag) {
+        do {
+            try dataManager.deleteCustomTag(tag)
+            customTags = dataManager.fetchCustomTags()
+            frequentTags = dataManager.fetchFrequentTags()
+        } catch {
+            // 静默处理
         }
     }
 

@@ -92,5 +92,21 @@
 "insight.mood_times" = "%@ %d次";
 "insight.separator" = "、";
 
+// MARK: - Custom Tag
+"custom_tag.title" = "自定义标签";
+"custom_tag.name_placeholder" = "输入标签名称";
+"custom_tag.select_category" = "选择分类";
+"custom_tag.select_emoji" = "选择表情";
+"custom_tag.create" = "创建";
+"custom_tag.add" = "自定义";
+"custom_tag.name_required" = "请输入标签名称";
+"custom_tag.name_too_long" = "标签名称不能超过10个字";
+"custom_tag.name_exists" = "该标签已存在";
+"custom_tag.created" = "标签创建成功";
+"custom_tag.delete_confirm" = "确定删除自定义标签 %@ 吗？";
+"custom_tag.delete" = "删除标签";
+"custom_tag.my_tags" = "我的自定义标签";
+"custom_tag.preview" = "预览";
+
 // MARK: - App Name
 "app.name" = "心迹";

@@ -92,5 +92,21 @@
 "insight.mood_times" = "%@ %d times";
 "insight.separator" = ", ";
 
+// MARK: - Custom Tag
+"custom_tag.title" = "Custom Tag";
+"custom_tag.name_placeholder" = "Enter tag name";
+"custom_tag.select_category" = "Select Category";
+"custom_tag.select_emoji" = "Select Emoji";
+"custom_tag.create" = "Create";
+"custom_tag.add" = "Custom";
+"custom_tag.name_required" = "Please enter a tag name";
+"custom_tag.name_too_long" = "Tag name cannot exceed 10 characters";
+"custom_tag.name_exists" = "This tag already exists";
+"custom_tag.created" = "Tag created";
+"custom_tag.delete_confirm" = "Delete custom tag %@?";
+"custom_tag.delete" = "Delete Tag";
+"custom_tag.my_tags" = "My Custom Tags";
+"custom_tag.preview" = "Preview";
+
 // MARK: - App Name
 "app.name" = "MoodLog";

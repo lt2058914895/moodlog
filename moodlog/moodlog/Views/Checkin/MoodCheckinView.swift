@@ -212,6 +212,10 @@ struct TagSelectorView: View {
     @ObservedObject var dataManager: MoodDataManager
     @State private var selectedCategory: TagCategory = .relationship
     @State private var frequentTags: [ActivityTag] = []
+    @State private var customTags: [ActivityTag] = []
+    @State private var showCustomTagCreation: Bool = false
+    @State private var tagToDelete: ActivityTag?
+    @State private var showDeleteConfirm: Bool = false
 
     var body: some View {
         VStack(spacing: 12) {
@@ -243,6 +247,27 @@ struct TagSelectorView: View {
         .cornerRadius(16)
         .task {
             frequentTags = dataManager.fetchFrequentTags()
+            customTags = dataManager.fetchCustomTags()
+        }
+        .sheet(isPresented: $showCustomTagCreation) {
+            CustomTagCreationView(dataManager: dataManager) { tagName in
+                // 创建成功后刷新标签列表并自动选中
+                frequentTags = dataManager.fetchFrequentTags()
+                customTags = dataManager.fetchCustomTags()
+                viewModel.toggleTag(tagName)
+            }
+        }
+        .alert(
+            L.localized("custom_tag.delete"),
+            isPresented: $showDeleteConfirm,
+            presenting: tagToDelete
+        ) { tag in
+            Button(L.localized("custom_tag.delete"), role: .destructive) {
+                deleteCustomTag(tag)
+            }
+            Button(L.localized("checkin.cancel"), role: .cancel) {}
+        } message: { tag in
+            Text(String(format: L.localized("custom_tag.delete_confirm"), tag.name ?? ""))
         }
     }
 
@@ -304,10 +329,59 @@ struct TagSelectorView: View {
                         onTap: { viewModel.toggleTag(preset.name) }
                     )
                 }
+
+                // 该分类下的自定义标签
+                let categoryCustomTags = customTags.filter { $0.category == selectedCategory.rawValue }
+                if !categoryCustomTags.isEmpty {
+                    FlowLayout(data: categoryCustomTags, spacing: 8) { tag in
+                        TagChip(
+                            emoji: tag.emoji ?? "📋",
+                            name: tag.name ?? "",
+                            isSelected: viewModel.isTagSelected(tag.name ?? ""),
+                            color: Color(hex: "6C5CE7"),
+                            onTap: { viewModel.toggleTag(tag.name ?? "") },
+                            isCustom: true,
+                            onLongPress: {
+                                tagToDelete = tag
+                                showDeleteConfirm = true
+                            }
+                        )
+                    }
+                }
             }
             .padding(.top, 12)
+
+            // 自定义标签按钮
+            Button(action: { showCustomTagCreation = true }) {
+                HStack(spacing: 4) {
+                    Image(systemName: "plus.circle")
+                        .font(.caption)
+                    Text(L.localized("custom_tag.add"))
+                        .font(.caption)
+                }
+                .foregroundColor(Color(hex: "6C5CE7"))
+                .padding(.horizontal, 10)
+                .padding(.vertical, 5)
+                .background(
+                    Capsule()
+                        .stroke(Color(hex: "6C5CE7").opacity(0.4), lineWidth: 1)
+                )
+            }
+            .buttonStyle(.plain)
+            .padding(.top, 8)
         }
         .animation(.easeInOut(duration: 0.2), value: selectedCategory)
+    }
+
+    // MARK: - 删除自定义标签
+    private func deleteCustomTag(_ tag: ActivityTag) {
+        do {
+            try dataManager.deleteCustomTag(tag)
+            customTags = dataManager.fetchCustomTags()
+            frequentTags = dataManager.fetchFrequentTags()
+        } catch {
+            // 静默处理
+        }
     }
 
     // MARK: - 已选标签预览
@@ -367,6 +441,8 @@ struct TagChip: View {
     let isSelected: Bool
     let color: Color
     let onTap: () -> Void
+    var isCustom: Bool = false
+    var onLongPress: (() -> Void)? = nil
 
     var body: some View {
         Button(action: onTap) {
@@ -376,6 +452,11 @@ struct TagChip: View {
                 Text(name)
                     .font(.caption)
                     .fontWeight(isSelected ? .medium : .regular)
+                if isCustom {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 8))
+                        .foregroundColor(.secondary.opacity(0.6))
+                }
             }
             .padding(.horizontal, 10)
             .padding(.vertical, 5)
@@ -390,6 +471,14 @@ struct TagChip: View {
             .foregroundColor(isSelected ? color : .secondary)
         }
         .buttonStyle(.plain)
+        .simultaneousGesture(
+            LongPressGesture(minimumDuration: 0.5)
+                .onEnded { _ in
+                    if isCustom, let onLongPress = onLongPress {
+                        onLongPress()
+                    }
+                }
+        )
     }
 }
 
