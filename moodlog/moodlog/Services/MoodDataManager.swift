@@ -189,7 +189,7 @@ class MoodDataManager: MoodDataManaging {
 
     // MARK: - Tag（委托）
 
-    func getOrCreateTag(name: String, category: TagCategory = .selfCare, emoji: String = "📋", isCustom: Bool = false) -> ActivityTag {
+    func getOrCreateTag(name: String, category: TagCategory = .lifeEvent, emoji: String = "📋", isCustom: Bool = false) -> ActivityTag {
         tagRepository.getOrCreateTag(name: name, category: category, emoji: emoji, isCustom: isCustom)
     }
 

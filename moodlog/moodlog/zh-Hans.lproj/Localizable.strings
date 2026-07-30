@@ -57,7 +57,6 @@
 "tagcat.social" = "社交生活";
 "tagcat.finance" = "财务状况";
 "tagcat.lifeEvent" = "生活事件";
-"tagcat.selfCare" = "自我关怀";
 
 // MARK: - Calendar
 "calendar.streak" = "连续打卡 %d 天";

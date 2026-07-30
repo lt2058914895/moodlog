@@ -73,7 +73,6 @@ enum TagCategory: String, CaseIterable, Codable {
     case social = "social"               // 🎭 社交生活
     case finance = "finance"             // 💰 财务状况
     case lifeEvent = "lifeEvent"         // 🌍 生活事件
-    case selfCare = "selfCare"           // 🧘 自我关怀
 
     var emoji: String {
         switch self {
@@ -85,7 +84,6 @@ enum TagCategory: String, CaseIterable, Codable {
         case .social: return "🎭"
         case .finance: return "💰"
         case .lifeEvent: return "🌍"
-        case .selfCare: return "🧘"
         }
     }
 
@@ -99,7 +97,6 @@ enum TagCategory: String, CaseIterable, Codable {
         case .social: return L.localized("tagcat.social")
         case .finance: return L.localized("tagcat.finance")
         case .lifeEvent: return L.localized("tagcat.lifeEvent")
-        case .selfCare: return L.localized("tagcat.selfCare")
         }
     }
 
@@ -108,96 +105,92 @@ enum TagCategory: String, CaseIterable, Codable {
         switch self {
         case .relationship:
             return [
-                PresetTag(name: "想离婚", emoji: "💔"),
-                PresetTag(name: "想分手", emoji: "💔"),
+                PresetTag(name: "热恋", emoji: "❤️‍🔥"),
+                PresetTag(name: "结婚", emoji: "💍"),
+                PresetTag(name: "纪念日", emoji: "💝"),
+                PresetTag(name: "约会", emoji: "🌹"),
+                PresetTag(name: "复合", emoji: "💞"),
+                PresetTag(name: "表白", emoji: "💌"),
+                PresetTag(name: "暗恋", emoji: "💕"),
+                PresetTag(name: "异地恋", emoji: "✈️"),
+                PresetTag(name: "冷战", emoji: "🧊"),
                 PresetTag(name: "吵架了", emoji: "😤"),
                 PresetTag(name: "被分手", emoji: "💔"),
-                PresetTag(name: "被出轨", emoji: "💔"),
-                PresetTag(name: "冷战", emoji: "🧊"),
-                PresetTag(name: "异地恋", emoji: "✈️"),
-                PresetTag(name: "暗恋", emoji: "💕"),
-                PresetTag(name: "表白", emoji: "💌"),
-                PresetTag(name: "复合", emoji: "💞"),
-                PresetTag(name: "约会", emoji: "🌹"),
-                PresetTag(name: "纪念日", emoji: "🎂"),
+                PresetTag(name: "想分手", emoji: "💔"),
+                PresetTag(name: "想离婚", emoji: "💔"),
             ]
         case .work:
             return [
-                PresetTag(name: "被批评", emoji: "😞"),
-                PresetTag(name: "加班", emoji: "💼"),
                 PresetTag(name: "升职加薪", emoji: "🎉"),
-                PresetTag(name: "离职", emoji: "👋"),
-                PresetTag(name: "面试", emoji: "🏢"),
-                PresetTag(name: "被辞退", emoji: "😢"),
-                PresetTag(name: "职场PUA", emoji: "😠"),
-                PresetTag(name: "同事冲突", emoji: "😤"),
-                PresetTag(name: "项目压力", emoji: "😰"),
+                PresetTag(name: "入职", emoji: "🆕"),
+                PresetTag(name: "团队协作", emoji: "🤝"),
                 PresetTag(name: "摸鱼", emoji: "🐟"),
+                PresetTag(name: "面试", emoji: "🏢"),
+                PresetTag(name: "离职", emoji: "👋"),
+                PresetTag(name: "绩效考核", emoji: "📋"),
+                PresetTag(name: "加班", emoji: "💼"),
+                PresetTag(name: "项目压力", emoji: "😰"),
+                PresetTag(name: "同事冲突", emoji: "😤"),
+                PresetTag(name: "被批评", emoji: "😞"),
             ]
         case .family:
             return [
-                PresetTag(name: "父母催婚", emoji: "💍"),
-                PresetTag(name: "婆媳矛盾", emoji: "😤"),
-                PresetTag(name: "亲子冲突", emoji: "😠"),
-                PresetTag(name: "家人生病", emoji: "😢"),
-                PresetTag(name: "家庭聚会", emoji: "🏠"),
+                PresetTag(name: "陪伴家人", emoji: "🫶"),
                 PresetTag(name: "家人支持", emoji: "❤️"),
+                PresetTag(name: "家庭聚会", emoji: "🏠"),
+                PresetTag(name: "父母催婚", emoji: "💍"),
+                PresetTag(name: "家人生病", emoji: "😢"),
+                PresetTag(name: "亲子冲突", emoji: "😠"),
             ]
         case .study:
             return [
+                PresetTag(name: "获奖", emoji: "🏆"),
+                PresetTag(name: "毕业", emoji: "🎓"),
+                PresetTag(name: "学习突破", emoji: "💡"),
+                PresetTag(name: "通过考试", emoji: "✅"),
                 PresetTag(name: "考试焦虑", emoji: "😰"),
                 PresetTag(name: "挂科", emoji: "😞"),
-                PresetTag(name: "毕业", emoji: "🎓"),
-                PresetTag(name: "论文压力", emoji: "📝"),
-                PresetTag(name: "获奖", emoji: "🏆"),
-                PresetTag(name: "学习突破", emoji: "💡"),
             ]
         case .health:
             return [
-                PresetTag(name: "失眠", emoji: "😰"),
-                PresetTag(name: "生理期", emoji: "🩹"),
-                PresetTag(name: "生病", emoji: "🤒"),
                 PresetTag(name: "运动后", emoji: "💪"),
-                PresetTag(name: "暴饮暴食", emoji: "🍔"),
-                PresetTag(name: "节食", emoji: "🥗"),
+                PresetTag(name: "养生", emoji: "🍵"),
+                PresetTag(name: "体检", emoji: "🩺"),
+                PresetTag(name: "生理期", emoji: "🩹"),
+                PresetTag(name: "失眠", emoji: "😰"),
+                PresetTag(name: "生病", emoji: "🤒"),
                 PresetTag(name: "身体疼痛", emoji: "😣"),
             ]
         case .social:
             return [
                 PresetTag(name: "朋友聚会", emoji: "🎉"),
+                PresetTag(name: "朋友出行", emoji: "🚗"),
+                PresetTag(name: "新朋友", emoji: "👋"),
                 PresetTag(name: "被误解", emoji: "😞"),
                 PresetTag(name: "社交恐惧", emoji: "😰"),
                 PresetTag(name: "被孤立", emoji: "😢"),
-                PresetTag(name: "新朋友", emoji: "👋"),
-                PresetTag(name: "网络社交", emoji: "📱"),
             ]
         case .finance:
             return [
-                PresetTag(name: "缺钱", emoji: "😰"),
-                PresetTag(name: "超支", emoji: "💸"),
-                PresetTag(name: "投资亏损", emoji: "📉"),
-                PresetTag(name: "发工资", emoji: "💰"),
-                PresetTag(name: "还贷压力", emoji: "🏦"),
                 PresetTag(name: "财务自由", emoji: "🎉"),
+                PresetTag(name: "发工资", emoji: "💰"),
+                PresetTag(name: "理财", emoji: "📊"),
+                PresetTag(name: "还贷压力", emoji: "🏦"),
+                PresetTag(name: "投资亏损", emoji: "📉"),
+                PresetTag(name: "缺钱", emoji: "😰"),
             ]
         case .lifeEvent:
             return [
-                PresetTag(name: "搬家", emoji: "🏠"),
                 PresetTag(name: "旅行", emoji: "✈️"),
-                PresetTag(name: "天气影响", emoji: "🌤"),
-                PresetTag(name: "新闻事件", emoji: "📰"),
-                PresetTag(name: "季节变化", emoji: "🍂"),
-            ]
-        case .selfCare:
-            return [
                 PresetTag(name: "冥想", emoji: "🧘"),
                 PresetTag(name: "阅读", emoji: "📖"),
-                PresetTag(name: "独处", emoji: "🤫"),
-                PresetTag(name: "哭泣", emoji: "😢"),
-                PresetTag(name: "写日记", emoji: "📝"),
                 PresetTag(name: "散步", emoji: "🚶"),
                 PresetTag(name: "听音乐", emoji: "🎵"),
                 PresetTag(name: "看电影", emoji: "🎬"),
+                PresetTag(name: "写日记", emoji: "📝"),
+                PresetTag(name: "独处", emoji: "🤫"),
+                PresetTag(name: "搬家", emoji: "🏠"),
+                PresetTag(name: "天气季节", emoji: "🌤"),
             ]
         }
     }

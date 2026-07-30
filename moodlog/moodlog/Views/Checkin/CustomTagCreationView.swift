@@ -17,7 +17,7 @@ struct CustomTagCreationView: View {
     let onTagCreated: (String) -> Void
 
     @State private var tagName: String = ""
-    @State private var selectedCategory: TagCategory = .selfCare
+    @State private var selectedCategory: TagCategory = .lifeEvent
     @State private var selectedEmoji: String = "📋"
     @State private var errorMessage: String?
     @State private var isCreating: Bool = false
