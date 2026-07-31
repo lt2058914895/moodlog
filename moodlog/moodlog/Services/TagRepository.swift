@@ -41,11 +41,12 @@ class TagRepository: TagManaging {
         request.fetchLimit = 1
 
         if let existing = try? viewContext.fetch(request).first {
-            // 更新使用次数在后台上下文
+            // 更新使用次数和最后使用时间在后台上下文
             let objectID = existing.objectID
             backgroundContext.performAndWait {
                 let bgTag = backgroundContext.object(with: objectID) as? ActivityTag
                 bgTag?.usageCount += 1
+                bgTag?.lastUsedAt = Date()
                 try? backgroundContext.save()
             }
             return existing
@@ -61,6 +62,7 @@ class TagRepository: TagManaging {
             tag.emoji = emoji
             tag.isCustom = isCustom
             tag.usageCount = 1
+            tag.lastUsedAt = Date()
             tag.createdAt = Date()
             do {
                 try backgroundContext.save()
@@ -83,6 +85,7 @@ class TagRepository: TagManaging {
         tag.emoji = emoji
         tag.isCustom = isCustom
         tag.usageCount = 1
+        tag.lastUsedAt = Date()
         tag.createdAt = Date()
         try? viewContext.save()
         return tag
@@ -91,14 +94,50 @@ class TagRepository: TagManaging {
     // MARK: - 读取（主上下文）
 
     func fetchFrequentTags(limit: Int = 8) -> [ActivityTag] {
-        let request: NSFetchRequest<ActivityTag> = ActivityTag.fetchRequest()
-        request.sortDescriptors = [NSSortDescriptor(key: "usageCount", ascending: false)]
-        request.fetchLimit = limit
-        request.fetchBatchSize = limit
+        // 1. 先获取有使用记录的标签，按最近使用排序
+        let usedRequest: NSFetchRequest<ActivityTag> = ActivityTag.fetchRequest()
+        usedRequest.predicate = NSPredicate(format: "lastUsedAt != nil")
+        usedRequest.sortDescriptors = [NSSortDescriptor(key: "lastUsedAt", ascending: false)]
+        usedRequest.fetchLimit = limit
         do {
-            return try viewContext.fetch(request)
+            let usedTags = try viewContext.fetch(usedRequest)
+            if usedTags.count >= limit {
+                return Array(usedTags.prefix(limit))
+            }
+            // 2. 已用标签不足8个时，用默认标签补充（排除已使用的）
+            let usedNames = Set(usedTags.compactMap { $0.name })
+            let defaultTags = fetchDefaultTags(limit: limit - usedTags.count, excluding: usedNames)
+            return usedTags + defaultTags
         } catch {
             Self.logger.error("Fetch frequent tags failed: \(error.localizedDescription)")
+            return fetchDefaultTags(limit: limit, excluding: [])
+        }
+    }
+
+    /// 获取默认标签（每个分类取第一个预设标签，排除已使用的）
+    private func fetchDefaultTags(limit: Int = 8, excluding: Set<String> = []) -> [ActivityTag] {
+        let request: NSFetchRequest<ActivityTag> = ActivityTag.fetchRequest()
+        request.predicate = NSPredicate(format: "isCustom == NO")
+        request.sortDescriptors = [
+            NSSortDescriptor(key: "category", ascending: true),
+            NSSortDescriptor(key: "createdAt", ascending: true)
+        ]
+        request.fetchBatchSize = 100
+        do {
+            let allPresets = try viewContext.fetch(request)
+            // 按分类分组，每组取第一个（排除已使用的标签名）
+            var seenCategories = Set<String>()
+            var defaultTags: [ActivityTag] = []
+            for tag in allPresets {
+                guard let category = tag.category, !seenCategories.contains(category) else { continue }
+                guard let name = tag.name, !excluding.contains(name) else { continue }
+                seenCategories.insert(category)
+                defaultTags.append(tag)
+                if defaultTags.count >= limit { break }
+            }
+            return defaultTags
+        } catch {
+            Self.logger.error("Fetch default tags failed: \(error.localizedDescription)")
             return []
         }
     }

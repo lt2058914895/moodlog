@@ -75,8 +75,12 @@ class MoodRecordRepository: MoodRecordManaging {
             record.updatedAt = Date()
             record.isSynced = false
 
-            // 建立标签关系
+            // 建立标签关系并更新使用时间
             let tags = fetchTagsByNames(tagNames, in: backgroundContext)
+            for tag in tags {
+                tag.lastUsedAt = Date()
+                tag.usageCount += 1
+            }
             record.tags = NSSet(array: tags)
 
             do {
@@ -208,8 +212,12 @@ class MoodRecordRepository: MoodRecordManaging {
                 bgRecord?.note = note
                 bgRecord?.updatedAt = Date()
 
-                // 更新标签关系
+                // 更新标签关系并更新使用时间
                 let tags = fetchTagsByNames(tagNames, in: backgroundContext)
+                for tag in tags {
+                    tag.lastUsedAt = Date()
+                    tag.usageCount += 1
+                }
                 bgRecord?.tags = NSSet(array: tags)
 
                 try backgroundContext.save()

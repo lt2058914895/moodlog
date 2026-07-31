@@ -296,6 +296,10 @@ struct EditMoodRecordView: View {
             frequentTags = dataManager.fetchFrequentTags()
             customTags = dataManager.fetchCustomTags()
         }
+        .onChange(of: dataManager.dataVersion) { _ in
+            frequentTags = dataManager.fetchFrequentTags()
+            customTags = dataManager.fetchCustomTags()
+        }
         .sheet(isPresented: $showCustomTagCreation) {
             CustomTagCreationView(dataManager: dataManager) { tagName in
                 frequentTags = dataManager.fetchFrequentTags()

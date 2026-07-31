@@ -249,6 +249,10 @@ struct TagSelectorView: View {
             frequentTags = dataManager.fetchFrequentTags()
             customTags = dataManager.fetchCustomTags()
         }
+        .onChange(of: dataManager.dataVersion) { _ in
+            frequentTags = dataManager.fetchFrequentTags()
+            customTags = dataManager.fetchCustomTags()
+        }
         .sheet(isPresented: $showCustomTagCreation) {
             CustomTagCreationView(dataManager: dataManager) { tagName in
                 // 创建成功后刷新标签列表并自动选中
