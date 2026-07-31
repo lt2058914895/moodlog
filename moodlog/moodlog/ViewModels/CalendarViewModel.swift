@@ -10,7 +10,7 @@ import Foundation
 /// 日历视图ViewModel（按需加载优化版）
 class CalendarViewModel: ObservableObject {
     @Published var currentMonth: Date = Date()
-    @Published var selectedDate: Date = Date()
+    @Published var selectedDate: Date? = nil
     @Published var recordsForSelectedDate: [MoodRecord] = []
     @Published var monthlyRecords: [Date: [MoodRecord]] = [:]
 
@@ -101,7 +101,11 @@ class CalendarViewModel: ObservableObject {
     }
 
     func loadRecordsForSelectedDate() {
-        recordsForSelectedDate = dataManager.fetchRecords(for: selectedDate)
+        if let date = selectedDate {
+            recordsForSelectedDate = dataManager.fetchRecords(for: date)
+        } else {
+            recordsForSelectedDate = []
+        }
     }
 
     // MARK: - 日历网格数据
@@ -172,7 +176,8 @@ class CalendarViewModel: ObservableObject {
 
     /// 是否是选中日期
     func isSelectedDate(_ date: Date) -> Bool {
-        calendar.isDate(date, inSameDayAs: selectedDate)
+        guard let selected = selectedDate else { return false }
+        return calendar.isDate(date, inSameDayAs: selected)
     }
 
     /// 月份标题

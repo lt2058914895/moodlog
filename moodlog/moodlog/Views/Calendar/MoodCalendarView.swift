@@ -16,9 +16,29 @@ struct MoodCalendarView: View {
     @State private var errorMessage: String?
 
     var body: some View {
-        VStack(spacing: 0) {
-            // 日历模式
-            calendarContent
+        ScrollView {
+            LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
+                // 日历区域
+                Section {
+                    // 月份导航
+                    monthNavigation
+
+                    // 连续打卡
+                    if viewModel.streakDays > 0 {
+                        streakBanner
+                    }
+
+                    // 日历网格
+                    calendarGrid
+                }
+
+                // 选中日期后显示记录区域（带粘性头部）
+                if viewModel.selectedDate != nil {
+                    Section(header: dayTimelineHeader) {
+                        dayTimelineContent
+                    }
+                }
+            }
         }
         .background(Color(UIColor.systemGroupedBackground))
         .sheet(item: $recordToEdit) { record in
@@ -36,27 +56,6 @@ struct MoodCalendarView: View {
             }
         } message: { msg in
             Text(msg)
-        }
-    }
-
-    // MARK: - 日历模式内容
-    private var calendarContent: some View {
-        VStack(spacing: 0) {
-            // 月份导航
-            monthNavigation
-
-            // 连续打卡
-            if viewModel.streakDays > 0 {
-                streakBanner
-            }
-
-            // 日历网格
-            calendarGrid
-
-            Divider()
-
-            // 日情绪时间线
-            dayTimeline
         }
     }
 
@@ -163,7 +162,11 @@ struct MoodCalendarView: View {
         let isSelected = viewModel.isSelectedDate(day.date)
         let hasRecords = viewModel.recordCountForDate(day.date) > 0
 
-        return Button(action: { viewModel.selectDate(day.date) }) {
+        return Button(action: {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                viewModel.selectDate(day.date)
+            }
+        }) {
             ZStack {
                 // 背景色块（情绪色）
                 if let mood = moodType, day.isCurrentMonth {
@@ -205,21 +208,24 @@ struct MoodCalendarView: View {
         .frame(height: 44)
     }
 
-    // MARK: - 日情绪时间线
-    private var dayTimeline: some View {
-        VStack(spacing: 0) {
-            // 日期标题
-            HStack {
-                Text(dateTitle)
-                    .font(.subheadline.bold())
-                Spacer()
-                Text(L.localizedInt("calendar.records_count", value: viewModel.recordsForSelectedDate.count))
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
+    // MARK: - 日情绪时间线粘性头部
+    private var dayTimelineHeader: some View {
+        HStack {
+            Text(dateTitle)
+                .font(.subheadline.bold())
+            Spacer()
+            Text(L.localizedInt("calendar.records_count", value: viewModel.recordsForSelectedDate.count))
+                .font(.caption)
+                .foregroundColor(.secondary)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(Color(UIColor.systemBackground))
+    }
 
+    // MARK: - 日情绪时间线内容
+    private var dayTimelineContent: some View {
+        VStack(spacing: 0) {
             if viewModel.recordsForSelectedDate.isEmpty {
                 // 空状态
                 VStack(spacing: 8) {
@@ -233,20 +239,19 @@ struct MoodCalendarView: View {
                 .padding(.vertical, 32)
             } else {
                 // 时间线列表
-                ScrollView {
-                    VStack(spacing: 12) {
-                        ForEach(viewModel.recordsForSelectedDate, id: \.id) { record in
-                            MoodRecordRow(record: record, onEdit: {
-                                recordToEdit = record
-                            }, onDelete: {
-                                recordToDelete = record
-                                showDeleteConfirmation = true
-                            })
-                        }
+                VStack(spacing: 12) {
+                    ForEach(viewModel.recordsForSelectedDate, id: \.id) { record in
+                        MoodRecordRow(record: record, onEdit: {
+                            recordToEdit = record
+                        }, onDelete: {
+                            recordToDelete = record
+                            showDeleteConfirmation = true
+                        })
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 8)
                 }
+                .padding(.horizontal, 16)
+                .padding(.top, 4)
+                .padding(.bottom, 8)
 
                 // 操作提示
                 Text(L.localized("calendar.long_press_hint"))
@@ -254,15 +259,18 @@ struct MoodCalendarView: View {
                     .foregroundColor(.secondary.opacity(0.6))
                     .padding(.bottom, 8)
             }
+
+            // 底部安全区域
+            Color.clear.frame(height: 20)
         }
-        .background(Color(UIColor.systemBackground))
     }
 
     private var dateTitle: String {
+        guard let date = viewModel.selectedDate else { return "" }
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         formatter.timeStyle = .none
-        return formatter.string(from: viewModel.selectedDate)
+        return formatter.string(from: date)
     }
 }
 
