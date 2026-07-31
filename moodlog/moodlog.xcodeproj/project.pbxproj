@@ -19,7 +19,6 @@
 		AA0000132FED4D95001B6443 /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000142FED4D95001B6443 /* LocalizationManager.swift */; };
 		AA0000152FED4D95001B6443 /* EditMoodRecordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000162FED4D95001B6443 /* EditMoodRecordView.swift */; };
 		BB0000022FED4D95001B6443 /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000012FED4D95001B6443 /* CacheManager.swift */; };
-		DD0000012FED4D95001B6443 /* CustomTagCreationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0000022FED4D95001B6443 /* CustomTagCreationView.swift */; };
 		BB0000042FED4D95001B6443 /* MoodRecordRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000032FED4D95001B6443 /* MoodRecordRepository.swift */; };
 		BB0000062FED4D95001B6443 /* TagRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000052FED4D95001B6443 /* TagRepository.swift */; };
 		BB0000082FED4D95001B6443 /* StatisticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000072FED4D95001B6443 /* StatisticsService.swift */; };
@@ -30,6 +29,7 @@
 		C22D1EA92FED4D98001B6443 /* moodlog.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = C22D1EA72FED4D98001B6443 /* moodlog.xcdatamodeld */; };
 		C22D1EB02FED4E1F001B6443 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C22D1EAF2FED4E1F001B6443 /* Launch Screen.storyboard */; };
 		C2C65F312FEE4B2F006AD954 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C2C65F332FEE4B2F006AD954 /* Localizable.strings */; };
+		DD0000012FED4D95001B6443 /* CustomTagCreationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0000022FED4D95001B6443 /* CustomTagCreationView.swift */; };
 		EE0000022FED4D95001B6443 /* MoodRecordsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0000012FED4D95001B6443 /* MoodRecordsView.swift */; };
 /* End PBXBuildFile section */
 
@@ -45,7 +45,6 @@
 		AA0000122FED4D95001B6443 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		AA0000142FED4D95001B6443 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
 		AA0000162FED4D95001B6443 /* EditMoodRecordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMoodRecordView.swift; sourceTree = "<group>"; };
-		DD0000022FED4D95001B6443 /* CustomTagCreationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTagCreationView.swift; sourceTree = "<group>"; };
 		BB0000012FED4D95001B6443 /* CacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheManager.swift; sourceTree = "<group>"; };
 		BB0000032FED4D95001B6443 /* MoodRecordRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodRecordRepository.swift; sourceTree = "<group>"; };
 		BB0000052FED4D95001B6443 /* TagRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagRepository.swift; sourceTree = "<group>"; };
@@ -59,6 +58,7 @@
 		C22D1EAF2FED4E1F001B6443 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		C2C65F322FEE4B2F006AD954 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		C2C65F342FEE4B31006AD954 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		DD0000022FED4D95001B6443 /* CustomTagCreationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTagCreationView.swift; sourceTree = "<group>"; };
 		EE0000012FED4D95001B6443 /* MoodRecordsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodRecordsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -130,14 +130,6 @@
 			path = Insight;
 			sourceTree = "<group>";
 		};
-		EE0000032FED4D95001B6443 /* Records */ = {
-			isa = PBXGroup;
-			children = (
-				EE0000012FED4D95001B6443 /* MoodRecordsView.swift */,
-			);
-			path = Records;
-			sourceTree = "<group>";
-		};
 		AA1000072FED4D95001B6443 /* Main */ = {
 			isa = PBXGroup;
 			children = (
@@ -198,6 +190,14 @@
 				C22D1EA32FED4D98001B6443 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		EE0000032FED4D95001B6443 /* Records */ = {
+			isa = PBXGroup;
+			children = (
+				EE0000012FED4D95001B6443 /* MoodRecordsView.swift */,
+			);
+			path = Records;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -436,13 +436,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_ASSET_PATHS = "\"moodlog/Preview Content\"";
 				DEVELOPMENT_TEAM = CV7ZT772HQ;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "心迹";
+				INFOPLIST_KEY_CFBundleDisplayName = "情绪日记";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -454,7 +454,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = lt.moodlog;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -469,13 +469,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_ASSET_PATHS = "\"moodlog/Preview Content\"";
 				DEVELOPMENT_TEAM = CV7ZT772HQ;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "心迹";
+				INFOPLIST_KEY_CFBundleDisplayName = "情绪日记";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -487,7 +487,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = lt.moodlog;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
