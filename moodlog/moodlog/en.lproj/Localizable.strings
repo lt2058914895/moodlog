@@ -6,6 +6,7 @@
 // MARK: - Tab Bar
 "tab.checkin" = "Check-in";
 "tab.calendar" = "Calendar";
+"tab.records" = "Records";
 "tab.insight" = "Insights";
 
 // MARK: - Checkin
@@ -19,7 +20,8 @@
 "checkin.more" = "More";
 "checkin.collapse" = "Collapse";
 "checkin.selected_count" = "Selected %d/5";
-"checkin.note_placeholder" = "Add a note (optional)";
+"checkin.note_placeholder" = "What's on your mind...";
+"checkin.note_title" = "Note (optional)";
 "checkin.submit" = "Record Mood";
 "checkin.success" = "Recorded!";
 "checkin.select_mood_first" = "Please select a mood first";
@@ -36,6 +38,13 @@
 "checkin.update_success" = "Updated!";
 "checkin.delete_success" = "Deleted";
 "calendar.long_press_hint" = "Long press a record to edit or delete";
+
+// MARK: - Records
+"records.mode.calendar" = "Calendar";
+"records.mode.records" = "Records";
+"records.empty" = "No records yet";
+"records.today" = "Today";
+"records.yesterday" = "Yesterday";
 
 // MARK: - Mood Types (9 core categories)
 "mood.happy" = "Happy";

@@ -14,13 +14,13 @@ struct MainTabView: View {
 
     enum Tab: Int, CaseIterable {
         case checkin = 0
-        case calendar = 1
+        case records = 1
         case insight = 2
 
         var title: String {
             switch self {
             case .checkin: return L.localized("tab.checkin")
-            case .calendar: return L.localized("tab.calendar")
+            case .records: return L.localized("tab.records")
             case .insight: return L.localized("tab.insight")
             }
         }
@@ -28,7 +28,7 @@ struct MainTabView: View {
         var icon: String {
             switch self {
             case .checkin: return "heart.circle"
-            case .calendar: return "calendar"
+            case .records: return "list.bullet.clipboard"
             case .insight: return "chart.bar"
             }
         }
@@ -36,7 +36,7 @@ struct MainTabView: View {
         var selectedIcon: String {
             switch self {
             case .checkin: return "heart.circle.fill"
-            case .calendar: return "calendar"
+            case .records: return "list.bullet.clipboard.fill"
             case .insight: return "chart.bar.fill"
             }
         }
@@ -56,17 +56,17 @@ struct MainTabView: View {
             }
             .tag(Tab.checkin)
 
-            // 日历视图
+            // 记录视图
             NavigationView {
                 MoodCalendarView()
-                    .navigationTitle(L.localized("tab.calendar"))
+                    .navigationTitle(L.localized("tab.records"))
                     .navigationBarTitleDisplayMode(.inline)
             }
             .tabItem {
-                Image(systemName: selectedTab == .calendar ? Tab.calendar.selectedIcon : Tab.calendar.icon)
-                Text(Tab.calendar.title)
+                Image(systemName: selectedTab == .records ? Tab.records.selectedIcon : Tab.records.icon)
+                Text(Tab.records.title)
             }
-            .tag(Tab.calendar)
+            .tag(Tab.records)
 
             // 数据洞察
             MoodInsightView()

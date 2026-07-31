@@ -19,6 +19,7 @@ struct EditMoodRecordView: View {
     @State private var showAllTags: Bool = false
     @State private var showSuccessAnimation: Bool = false
     @State private var errorMessage: String?
+    @FocusState private var isNoteFocused: Bool
 
     @StateObject private var dataManager = MoodDataManager.shared
 
@@ -54,6 +55,9 @@ struct EditMoodRecordView: View {
             }
             .background(Color(UIColor.systemGroupedBackground))
             .navigationTitle(L.localized("checkin.edit_title"))
+            .onTapGesture {
+                isNoteFocused = false
+            }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -334,13 +338,46 @@ struct EditMoodRecordView: View {
 
     // MARK: - 备注
     private var editNoteField: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            TextField("", text: $note, prompt: Text(L.localized("checkin.note_placeholder")).foregroundColor(.secondary))
-                .font(.subheadline)
-                .padding(12)
-                .background(Color(UIColor.tertiarySystemGroupedBackground))
-                .cornerRadius(10)
+        VStack(spacing: 12) {
+            HStack {
+                Text(L.localized("checkin.note_title"))
+                    .font(.subheadline.bold())
+                Spacer()
+            }
+
+            if #available(iOS 16.0, *) {
+                TextField("", text: $note, prompt: Text(L.localized("checkin.note_placeholder")).foregroundColor(.secondary), axis: .vertical)
+                    .font(.subheadline)
+                    .lineLimit(3...6)
+                    .padding(12)
+                    .background(Color(UIColor.tertiarySystemGroupedBackground))
+                    .cornerRadius(10)
+                    .focused($isNoteFocused)
+            } else {
+                ZStack(alignment: .topLeading) {
+                    TextEditor(text: $note)
+                        .font(.subheadline)
+                        .frame(minHeight: 80)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color(UIColor.tertiarySystemGroupedBackground))
+                        .cornerRadius(10)
+                        .focused($isNoteFocused)
+
+                    if note.isEmpty {
+                        Text(L.localized("checkin.note_placeholder"))
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                            .allowsHitTesting(false)
+                    }
+                }
+            }
         }
+        .padding(16)
+        .background(Color(UIColor.secondarySystemGroupedBackground))
+        .cornerRadius(16)
     }
 
     // MARK: - 更新按钮

@@ -11,6 +11,7 @@ import SwiftUI
 struct MoodCheckinView: View {
     @StateObject private var viewModel = MoodCheckinViewModel()
     @StateObject private var dataManager = MoodDataManager.shared
+    @FocusState private var isNoteFocused: Bool
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -33,6 +34,12 @@ struct MoodCheckinView: View {
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
 
+                // 备注
+                if viewModel.selectedMoodType != nil {
+                    noteField
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+
                 // 记录按钮
                 if viewModel.selectedMoodType != nil {
                     submitButton
@@ -44,6 +51,9 @@ struct MoodCheckinView: View {
         }
         .background(Color(UIColor.systemGroupedBackground))
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: viewModel.selectedMoodType != nil)
+        .onTapGesture {
+            isNoteFocused = false
+        }
         .overlay {
             if viewModel.showSuccessAnimation {
                 SuccessOverlayView {
@@ -72,6 +82,50 @@ struct MoodCheckinView: View {
                 .foregroundColor(.secondary)
         }
         .padding(.top, 20)
+    }
+
+    // MARK: - 备注
+    private var noteField: some View {
+        VStack(spacing: 12) {
+            HStack {
+                Text(L.localized("checkin.note_title"))
+                    .font(.subheadline.bold())
+                Spacer()
+            }
+
+            if #available(iOS 16.0, *) {
+                TextField("", text: $viewModel.note, prompt: Text(L.localized("checkin.note_placeholder")).foregroundColor(.secondary), axis: .vertical)
+                    .font(.subheadline)
+                    .lineLimit(3...6)
+                    .padding(12)
+                    .background(Color(UIColor.tertiarySystemGroupedBackground))
+                    .cornerRadius(10)
+                    .focused($isNoteFocused)
+            } else {
+                ZStack(alignment: .topLeading) {
+                    TextEditor(text: $viewModel.note)
+                        .font(.subheadline)
+                        .frame(minHeight: 80)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color(UIColor.tertiarySystemGroupedBackground))
+                        .cornerRadius(10)
+                        .focused($isNoteFocused)
+
+                    if viewModel.note.isEmpty {
+                        Text(L.localized("checkin.note_placeholder"))
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                            .allowsHitTesting(false)
+                    }
+                }
+            }
+        }
+        .padding(16)
+        .background(Color(UIColor.secondarySystemGroupedBackground))
+        .cornerRadius(16)
     }
 
     // MARK: - 提交按钮

@@ -7,9 +7,23 @@
 
 import SwiftUI
 
+/// 视图模式切换
+enum CalendarViewMode: String, CaseIterable {
+    case calendar
+    case records
+
+    var title: String {
+        switch self {
+        case .calendar: return L.localized("records.mode.calendar")
+        case .records: return L.localized("records.mode.records")
+        }
+    }
+}
+
 /// 日历视图主页面
 struct MoodCalendarView: View {
     @StateObject private var viewModel = CalendarViewModel()
+    @State private var selectedViewMode: CalendarViewMode = .calendar
     @State private var recordToEdit: MoodRecord?
     @State private var recordToDelete: MoodRecord?
     @State private var showDeleteConfirmation = false
@@ -17,21 +31,16 @@ struct MoodCalendarView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // 月份导航
-            monthNavigation
+            // 日历/记录切换头部
+            viewModePicker
 
-            // 连续打卡
-            if viewModel.streakDays > 0 {
-                streakBanner
+            if selectedViewMode == .calendar {
+                // 日历模式
+                calendarContent
+            } else {
+                // 记录列表模式
+                recordsListContent
             }
-
-            // 日历网格
-            calendarGrid
-
-            Divider()
-
-            // 日情绪时间线
-            dayTimeline
         }
         .background(Color(UIColor.systemGroupedBackground))
         .sheet(item: $recordToEdit) { record in
@@ -52,6 +61,77 @@ struct MoodCalendarView: View {
         }
     }
 
+    // MARK: - 日历模式内容
+    private var calendarContent: some View {
+        VStack(spacing: 0) {
+            // 月份导航
+            monthNavigation
+
+            // 连续打卡
+            if viewModel.streakDays > 0 {
+                streakBanner
+            }
+
+            // 日历网格
+            calendarGrid
+
+            Divider()
+
+            // 日情绪时间线
+            dayTimeline
+        }
+    }
+
+    // MARK: - 记录列表模式内容
+    private var recordsListContent: some View {
+        Group {
+            if viewModel.groupedRecords.isEmpty {
+                // 空状态
+                VStack(spacing: 12) {
+                    Spacer()
+                    Text("📝")
+                        .font(.system(size: 48))
+                    Text(L.localized("records.empty"))
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                    Spacer()
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                List {
+                    ForEach(viewModel.groupedRecords, id: \.date) { group in
+                        Section {
+                            ForEach(group.records, id: \.id) { record in
+                                MoodRecordListRow(record: record, onEdit: {
+                                    recordToEdit = record
+                                }, onDelete: {
+                                    recordToDelete = record
+                                    showDeleteConfirmation = true
+                                })
+                            }
+                        } header: {
+                            recordsSectionHeader(group.date, count: group.records.count)
+                        }
+                    }
+                }
+                .listStyle(.insetGrouped)
+            }
+        }
+    }
+
+    // MARK: - 记录列表分组头部
+    private func recordsSectionHeader(_ date: Date, count: Int) -> some View {
+        HStack {
+            Text(viewModel.sectionDateTitle(date))
+                .font(.subheadline.bold())
+                .foregroundColor(Color(hex: "6C5CE7"))
+            Spacer()
+            Text(L.localizedInt("calendar.records_count", value: count))
+                .font(.caption2)
+                .foregroundColor(.secondary)
+        }
+    }
+
     private func deleteRecord(_ record: MoodRecord) {
         do {
             try viewModel.deleteRecord(record)
@@ -59,6 +139,43 @@ struct MoodCalendarView: View {
         } catch {
             errorMessage = error.localizedDescription
         }
+    }
+
+    // MARK: - 日历/记录切换头部
+    private var viewModePicker: some View {
+        HStack(spacing: 0) {
+            ForEach(CalendarViewMode.allCases, id: \.self) { mode in
+                Button(action: {
+                    withAnimation(.easeInOut(duration: 0.25)) {
+                        selectedViewMode = mode
+                    }
+                    if mode == .records {
+                        viewModel.loadGroupedRecords()
+                    }
+                }) {
+                    HStack(spacing: 6) {
+                        Image(systemName: mode == .calendar ? "calendar" : "list.bullet")
+                            .font(.caption)
+                        Text(mode.title)
+                            .font(.subheadline.bold())
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                    .background(
+                        selectedViewMode == mode
+                            ? Capsule().fill(Color(hex: "6C5CE7"))
+                            : Capsule().fill(Color.clear)
+                    )
+                    .foregroundColor(selectedViewMode == mode ? .white : .secondary)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(4)
+        .background(Capsule().fill(Color(UIColor.tertiarySystemGroupedBackground)))
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(Color(UIColor.systemBackground))
     }
 
     // MARK: - 月份导航
@@ -357,6 +474,87 @@ struct IntensityBar: View {
                 RoundedRectangle(cornerRadius: 1)
                     .fill(i <= value ? color : Color.gray.opacity(0.15))
                     .frame(width: 3, height: 3)
+            }
+        }
+    }
+}
+
+// MARK: - 记录列表行（用于记录列表模式）
+struct MoodRecordListRow: View {
+    let record: MoodRecord
+    var onEdit: (() -> Void)?
+    var onDelete: (() -> Void)?
+
+    private var moodType: MoodType? {
+        MoodType(rawValue: record.moodType ?? "happy")
+    }
+
+    private var timeString: String {
+        guard let date = record.createdAt else { return "" }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        return formatter.string(from: date)
+    }
+
+    private var tagNames: [String] {
+        MoodDataManager.tagNamesFromRecord(record)
+    }
+
+    var body: some View {
+        HStack(spacing: 12) {
+            // 情绪色块
+            RoundedRectangle(cornerRadius: 4)
+                .fill(moodType?.color ?? .gray)
+                .frame(width: 4, height: 40)
+
+            // 情绪信息
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 6) {
+                    Text(moodType?.emoji ?? "😊")
+                        .font(.title3)
+                    Text(moodType?.displayName ?? "")
+                        .font(.subheadline.bold())
+                    Spacer()
+                    Text(timeString)
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                    Text(L.localizedInt("calendar.intensity", value: Int(record.intensity)))
+                        .font(.caption2)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Capsule().fill(moodType?.color.opacity(0.15) ?? Color.gray.opacity(0.15)))
+                        .foregroundColor(moodType?.color ?? .gray)
+                }
+
+                if !tagNames.isEmpty {
+                    Text(tagNames.joined(separator: " · "))
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                }
+
+                if let note = record.note, !note.isEmpty {
+                    Text(note)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .lineLimit(2)
+                }
+            }
+
+            // 强度指示条
+            IntensityBar(value: Int(record.intensity), color: moodType?.color ?? .gray)
+        }
+        .padding(.vertical, 4)
+        .contextMenu {
+            Button {
+                onEdit?()
+            } label: {
+                Label(L.localized("checkin.edit"), systemImage: "pencil")
+            }
+            Button(role: .destructive) {
+                onDelete?()
+            } label: {
+                Label(L.localized("checkin.delete"), systemImage: "trash")
             }
         }
     }

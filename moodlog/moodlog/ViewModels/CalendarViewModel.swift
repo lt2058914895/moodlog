@@ -19,6 +19,9 @@ class CalendarViewModel: ObservableObject {
     @Published var dayPrimaryMoods: [Date: MoodType] = [:]
     @Published var dayAverageIntensities: [Date: Double] = [:]
 
+    /// 记录列表数据（按天分组）
+    @Published var groupedRecords: [(date: Date, records: [MoodRecord])] = []
+
     private let dataManager: any MoodDataManaging
     private let calendar = Calendar.current
 
@@ -30,9 +33,11 @@ class CalendarViewModel: ObservableObject {
     init(dataManager: any MoodDataManaging = MoodDataManager.shared) {
         self.dataManager = dataManager
         loadMonthlyData()
+        loadGroupedRecords()
         // 监听数据变更通知（防抖）
         cancellable = NotificationCenter.default.addObserver(forName: .moodDataDidChange, object: nil, queue: .main) { [weak self] _ in
             self?.debouncedLoadMonthlyData()
+            self?.loadGroupedRecords()
         }
     }
 
@@ -185,6 +190,34 @@ class CalendarViewModel: ObservableObject {
     /// 删除记录
     func deleteRecord(_ record: MoodRecord) throws {
         try dataManager.deleteRecord(record)
+    }
+
+    // MARK: - 记录列表（按天分组）
+
+    /// 加载所有记录并按天分组（倒序）
+    func loadGroupedRecords() {
+        let allRecords = dataManager.fetchAllRecords()
+        let grouped = Dictionary(grouping: allRecords) { record in
+            calendar.startOfDay(for: record.createdAt ?? Date())
+        }
+        // 按日期倒序排列
+        groupedRecords = grouped
+            .map { (date: $0.key, records: $0.value.sorted { ($0.createdAt ?? Date()) > ($1.createdAt ?? Date()) }) }
+            .sorted { $0.date > $1.date }
+    }
+
+    /// 格式化日期为分组标题（如"7月31日 周五"）
+    func sectionDateTitle(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale.current
+        if calendar.isDateInToday(date) {
+            return L.localized("records.today")
+        } else if calendar.isDateInYesterday(date) {
+            return L.localized("records.yesterday")
+        } else {
+            formatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "MMMMddEEE", options: 0, locale: Locale.current)
+            return formatter.string(from: date)
+        }
     }
 }
 

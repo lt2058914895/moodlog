@@ -6,6 +6,7 @@
 // MARK: - Tab Bar
 "tab.checkin" = "打卡";
 "tab.calendar" = "日历";
+"tab.records" = "记录";
 "tab.insight" = "洞察";
 
 // MARK: - Checkin
@@ -19,7 +20,8 @@
 "checkin.more" = "更多";
 "checkin.collapse" = "收起";
 "checkin.selected_count" = "已选 %d/5";
-"checkin.note_placeholder" = "添加备注（可选）";
+"checkin.note_placeholder" = "记录此刻的想法…";
+"checkin.note_title" = "添加备注(可选)";
 "checkin.submit" = "记录情绪";
 "checkin.success" = "记录成功！";
 "checkin.select_mood_first" = "请先选择情绪";
@@ -36,6 +38,13 @@
 "checkin.update_success" = "更新成功！";
 "checkin.delete_success" = "已删除";
 "calendar.long_press_hint" = "长按记录可编辑或删除";
+
+// MARK: - Records
+"records.mode.calendar" = "日历";
+"records.mode.records" = "记录";
+"records.empty" = "还没有任何记录";
+"records.today" = "今天";
+"records.yesterday" = "昨天";
 
 // MARK: - Mood Types (9个核心大类)
 "mood.happy" = "开心";
