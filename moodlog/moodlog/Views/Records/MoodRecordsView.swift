@@ -30,6 +30,14 @@ struct MoodRecordsView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
+                // 操作提示
+                Text(L.localized("calendar.long_press_hint"))
+                    .font(.caption2)
+                    .foregroundColor(.secondary.opacity(0.6))
+                    .padding(.top, 0)
+                    .padding(.bottom, 2)
+                    .frame(maxWidth: .infinity)
+
                 List {
                     ForEach(viewModel.groupedRecords, id: \.date) { group in
                         Section {
