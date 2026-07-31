@@ -81,8 +81,14 @@ class CalendarViewModel: ObservableObject {
     // MARK: - 日期选择
 
     func selectDate(_ date: Date) {
-        selectedDate = date
-        loadRecordsForSelectedDate()
+        if selectedDate != nil && Calendar.current.isDate(date, inSameDayAs: selectedDate!) {
+            // 再次点击已选中日期，取消选中
+            selectedDate = nil
+            recordsForSelectedDate = []
+        } else {
+            selectedDate = date
+            loadRecordsForSelectedDate()
+        }
     }
 
     // MARK: - 数据加载
