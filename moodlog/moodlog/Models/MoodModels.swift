@@ -200,6 +200,22 @@ enum TagCategory: String, CaseIterable, Codable {
 struct PresetTag: Hashable {
     let name: String
     let emoji: String
+
+    /// 根据标签名查找对应emoji（遍历所有分类的预设标签）
+    static func emoji(for name: String) -> String? {
+        allPresetTags[name]
+    }
+
+    /// 所有预设标签的 名称→emoji 映射（懒加载缓存）
+    private static let allPresetTags: [String: String] = {
+        var map: [String: String] = [:]
+        for category in TagCategory.allCases {
+            for tag in category.presetTags {
+                map[tag.name] = tag.emoji
+            }
+        }
+        return map
+    }()
 }
 
 // MARK: - 情绪记录UI模型

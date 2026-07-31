@@ -398,25 +398,27 @@ struct MoodRecordRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            // 时间
-            Text(timeString)
-                .font(.caption2)
-                .foregroundColor(.secondary)
-                .frame(width: 36, alignment: .leading)
-
-            // 情绪色块
-            RoundedRectangle(cornerRadius: 4)
-                .fill(moodType?.color ?? .gray)
-                .frame(width: 4, height: 40)
+            // 情绪emoji圆形背景
+            ZStack {
+                Circle()
+                    .fill((moodType?.color ?? .gray).opacity(0.15))
+                    .frame(width: 44, height: 44)
+                Text(moodType?.emoji ?? "😊")
+                    .font(.title2)
+            }
 
             // 情绪信息
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 6) {
+                // 第一行：情绪名称 + 时间
                 HStack(spacing: 6) {
-                    Text(moodType?.emoji ?? "😊")
-                        .font(.title3)
                     Text(moodType?.displayName ?? "")
                         .font(.subheadline.bold())
+                        .foregroundColor(.primary)
                     Spacer()
+                    Text(timeString)
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                    // 强度胶囊
                     Text(L.localizedInt("calendar.intensity", value: Int(record.intensity)))
                         .font(.caption2)
                         .padding(.horizontal, 6)
@@ -425,18 +427,29 @@ struct MoodRecordRow: View {
                         .foregroundColor(moodType?.color ?? .gray)
                 }
 
+                // 活动标签
                 if !tagNames.isEmpty {
-                    Text(tagNames.joined(separator: " · "))
-                        .font(.caption2)
+                    FlowLayout(data: tagNames, spacing: 6) { tagName in
+                        HStack(spacing: 4) {
+                            Text(PresetTag.emoji(for: tagName) ?? "📋")
+                                .font(.system(size: 11))
+                            Text(tagName)
+                                .font(.caption)
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(
+                            Capsule().fill(Color(UIColor.tertiarySystemGroupedBackground))
+                        )
                         .foregroundColor(.secondary)
-                        .lineLimit(1)
+                    }
                 }
 
+                // 备注
                 if let note = record.note, !note.isEmpty {
                     Text(note)
                         .font(.caption)
                         .foregroundColor(.secondary)
-                        .lineLimit(2)
                 }
             }
 
@@ -502,22 +515,27 @@ struct MoodRecordListRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            // 情绪色块
-            RoundedRectangle(cornerRadius: 4)
-                .fill(moodType?.color ?? .gray)
-                .frame(width: 4, height: 40)
+            // 情绪emoji圆形背景
+            ZStack {
+                Circle()
+                    .fill((moodType?.color ?? .gray).opacity(0.15))
+                    .frame(width: 44, height: 44)
+                Text(moodType?.emoji ?? "😊")
+                    .font(.title2)
+            }
 
             // 情绪信息
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 6) {
+                // 第一行：情绪名称 + 时间
                 HStack(spacing: 6) {
-                    Text(moodType?.emoji ?? "😊")
-                        .font(.title3)
                     Text(moodType?.displayName ?? "")
                         .font(.subheadline.bold())
+                        .foregroundColor(.primary)
                     Spacer()
                     Text(timeString)
                         .font(.caption2)
                         .foregroundColor(.secondary)
+                    // 强度胶囊
                     Text(L.localizedInt("calendar.intensity", value: Int(record.intensity)))
                         .font(.caption2)
                         .padding(.horizontal, 6)
@@ -526,18 +544,29 @@ struct MoodRecordListRow: View {
                         .foregroundColor(moodType?.color ?? .gray)
                 }
 
+                // 活动标签
                 if !tagNames.isEmpty {
-                    Text(tagNames.joined(separator: " · "))
-                        .font(.caption2)
+                    FlowLayout(data: tagNames, spacing: 6) { tagName in
+                        HStack(spacing: 4) {
+                            Text(PresetTag.emoji(for: tagName) ?? "📋")
+                                .font(.system(size: 11))
+                            Text(tagName)
+                                .font(.caption)
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(
+                            Capsule().fill(Color(UIColor.tertiarySystemGroupedBackground))
+                        )
                         .foregroundColor(.secondary)
-                        .lineLimit(1)
+                    }
                 }
 
+                // 备注
                 if let note = record.note, !note.isEmpty {
                     Text(note)
                         .font(.caption)
                         .foregroundColor(.secondary)
-                        .lineLimit(2)
                 }
             }
 
