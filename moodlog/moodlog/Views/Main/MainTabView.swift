@@ -51,8 +51,15 @@ struct MainTabView: View {
             // 情绪打卡
             NavigationView {
                 MoodCheckinView()
-                    .navigationTitle(L.localized("app.name"))
+                    .navigationTitle(L.localized("tab.checkin"))
                     .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .principal) {
+                            Text(L.localized("tab.checkin"))
+                                .font(.system(size: 18, weight: .semibold))
+                                .foregroundColor(.primary)
+                        }
+                    }
             }
             .tabItem {
                 Image(systemName: selectedTab == .checkin ? Tab.checkin.selectedIcon : Tab.checkin.icon)
@@ -65,6 +72,13 @@ struct MainTabView: View {
                 MoodRecordsView()
                     .navigationTitle(L.localized("tab.records"))
                     .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .principal) {
+                            Text(L.localized("tab.records"))
+                                .font(.system(size: 18, weight: .semibold))
+                                .foregroundColor(.primary)
+                        }
+                    }
             }
             .tabItem {
                 Image(systemName: selectedTab == .records ? Tab.records.selectedIcon : Tab.records.icon)
@@ -77,6 +91,13 @@ struct MainTabView: View {
                 MoodCalendarView()
                     .navigationTitle(L.localized("tab.calendar"))
                     .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .principal) {
+                            Text(L.localized("tab.calendar"))
+                                .font(.system(size: 18, weight: .semibold))
+                                .foregroundColor(.primary)
+                        }
+                    }
             }
             .tabItem {
                 Image(systemName: selectedTab == .calendar ? Tab.calendar.selectedIcon : Tab.calendar.icon)
