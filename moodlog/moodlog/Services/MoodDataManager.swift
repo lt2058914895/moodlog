@@ -63,8 +63,6 @@ protocol MoodDataManaging: ObservableObject {
     // Statistics
     func fetchMoodDistribution(from startDate: Date, to endDate: Date) -> [MoodType: Int]
     func fetchTopTags(from startDate: Date, to endDate: Date, limit: Int) -> [(name: String, count: Int)]
-    func fetchDailyAverageIntensity(from startDate: Date, to endDate: Date) -> [(date: Date, intensity: Double)]
-    func fetchMonthlyAverageIntensity(for year: Int) -> [(month: Int, intensity: Double)]
     func fetchAvailableYears() -> [Int]
     func fetchStreakDays() -> Int
     func fetchDayRecordCounts(year: Int, month: Int) -> [Date: Int]
@@ -216,14 +214,6 @@ class MoodDataManager: MoodDataManaging {
 
     func fetchTopTags(from startDate: Date, to endDate: Date, limit: Int = 10) -> [(name: String, count: Int)] {
         statisticsService.fetchTopTags(from: startDate, to: endDate, limit: limit)
-    }
-
-    func fetchDailyAverageIntensity(from startDate: Date, to endDate: Date) -> [(date: Date, intensity: Double)] {
-        statisticsService.fetchDailyAverageIntensity(from: startDate, to: endDate)
-    }
-
-    func fetchMonthlyAverageIntensity(for year: Int) -> [(month: Int, intensity: Double)] {
-        statisticsService.fetchMonthlyAverageIntensity(for: year)
     }
 
     func fetchAvailableYears() -> [Int] { statisticsService.fetchAvailableYears() }

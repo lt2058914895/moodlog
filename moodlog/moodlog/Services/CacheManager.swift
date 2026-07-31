@@ -9,12 +9,6 @@ import Foundation
 
 /// 缓存键
 enum CacheKey {
-    static func dailyIntensity(start: Date, end: Date) -> String {
-        "daily_intensity_\(Int(start.timeIntervalSince1970))_\(Int(end.timeIntervalSince1970))"
-    }
-    static func monthlyIntensity(year: Int) -> String {
-        "monthly_intensity_\(year)"
-    }
     static func moodDistribution(start: Date, end: Date) -> String {
         "mood_dist_\(Int(start.timeIntervalSince1970))_\(Int(end.timeIntervalSince1970))"
     }

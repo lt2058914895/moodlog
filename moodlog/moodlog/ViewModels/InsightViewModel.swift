@@ -11,8 +11,6 @@ import Foundation
 class InsightViewModel: ObservableObject {
     @Published var selectedPeriod: InsightPeriod = .month
     @Published var selectedYear: Int = Calendar.current.component(.year, from: Date())
-    @Published var dailyIntensityData: [(date: Date, intensity: Double)] = []
-    @Published var monthlyIntensityData: [(month: Int, intensity: Double)] = []
     @Published var moodDistribution: [MoodType: Int] = [:]
     @Published var topTags: [(name: String, count: Int)] = []
     @Published var totalRecords: Int = 0
@@ -117,15 +115,6 @@ class InsightViewModel: ObservableObject {
             averageIntensity = 0
         }
 
-        switch selectedPeriod {
-        case .month:
-            // 日均强度
-            dailyIntensityData = dataManager.fetchDailyAverageIntensity(from: range.start, to: range.end)
-        case .year:
-            // 月均强度
-            monthlyIntensityData = dataManager.fetchMonthlyAverageIntensity(for: selectedYear)
-        }
-
         // 情绪分布
         moodDistribution = dataManager.fetchMoodDistribution(from: range.start, to: range.end)
 
@@ -136,32 +125,6 @@ class InsightViewModel: ObservableObject {
 
         // 标签频次
         topTags = dataManager.fetchTopTags(from: range.start, to: range.end, limit: 10)
-    }
-
-    // MARK: - 图表数据
-
-    /// 趋势图数据点
-    var chartDataPoints: [ChartDataPoint] {
-        switch selectedPeriod {
-        case .month:
-            return dailyIntensityData.map { point in
-                let formatter = DateFormatter()
-                formatter.dateFormat = "M/d"
-                return ChartDataPoint(
-                    label: formatter.string(from: point.date),
-                    value: point.intensity,
-                    date: point.date
-                )
-            }
-        case .year:
-            return monthlyIntensityData.map { point in
-                ChartDataPoint(
-                    label: "\(point.month)月",
-                    value: point.intensity,
-                    date: calendar.date(from: DateComponents(year: selectedYear, month: point.month, day: 1))!
-                )
-            }
-        }
     }
 
     /// 饼图数据
@@ -218,13 +181,6 @@ enum InsightPeriod: String, CaseIterable {
     var displayName: String {
         L.localized(rawValue)
     }
-}
-
-struct ChartDataPoint: Identifiable {
-    let id = UUID()
-    let label: String
-    let value: Double
-    let date: Date
 }
 
 struct PieChartData: Identifiable {

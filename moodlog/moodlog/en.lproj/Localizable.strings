@@ -90,10 +90,8 @@
 "insight.record_count" = "Records";
 "insight.avg_intensity" = "Avg Intensity";
 "insight.most_mood" = "Top Mood";
-"insight.mood_trend" = "Mood Trend";
 "insight.mood_distribution" = "Mood Distribution";
 "insight.tag_frequency" = "Top 10 Activity Tags";
-"insight.no_trend_data" = "No trend data yet";
 "insight.no_distribution_data" = "No distribution data yet";
 "insight.no_tag_data" = "No tag data yet";
 "insight.no_data" = "No data yet";

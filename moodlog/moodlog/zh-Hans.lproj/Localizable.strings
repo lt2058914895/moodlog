@@ -90,10 +90,8 @@
 "insight.record_count" = "记录数";
 "insight.avg_intensity" = "平均强度";
 "insight.most_mood" = "最多情绪";
-"insight.mood_trend" = "情绪趋势";
 "insight.mood_distribution" = "情绪分布";
 "insight.tag_frequency" = "活动标签频次 Top10";
-"insight.no_trend_data" = "暂无趋势数据";
 "insight.no_distribution_data" = "暂无分布数据";
 "insight.no_tag_data" = "暂无标签数据";
 "insight.no_data" = "暂无数据";

@@ -20,9 +20,6 @@ struct MoodInsightView: View {
                 // 统计概览卡片
                 statsOverview
 
-                // 情绪趋势图
-                trendChartCard
-
                 // 情绪分布饼图
                 distributionCard
 
@@ -140,30 +137,6 @@ struct MoodInsightView: View {
         }
     }
 
-    // MARK: - 趋势图卡片
-    private var trendChartCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text(L.localized("insight.mood_trend"))
-                    .font(.subheadline.bold())
-                Spacer()
-                Text(viewModel.periodTitle)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-
-            if viewModel.chartDataPoints.isEmpty {
-                emptyState(text: L.localized("insight.no_trend_data"))
-            } else {
-                MoodTrendChart(dataPoints: viewModel.chartDataPoints)
-                    .frame(height: 200)
-            }
-        }
-        .padding(16)
-        .background(Color(UIColor.secondarySystemGroupedBackground))
-        .cornerRadius(16)
-    }
-
     // MARK: - 情绪分布卡片
     private var distributionCard: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -255,90 +228,6 @@ struct StatCard: View {
         .padding(.vertical, 12)
         .background(Color(UIColor.tertiarySystemGroupedBackground))
         .cornerRadius(12)
-    }
-}
-
-// MARK: - 情绪趋势折线图
-struct MoodTrendChart: View {
-    let dataPoints: [ChartDataPoint]
-
-    private let lineWidth: CGFloat = 2.5
-    private let pointSize: CGFloat = 6
-
-    var body: some View {
-        GeometryReader { geometry in
-            let width = geometry.size.width
-            let height = geometry.size.height
-            let padding: CGFloat = 30
-
-            ZStack {
-                // Y轴刻度线
-                VStack(spacing: 0) {
-                    ForEach([10, 7, 4, 1], id: \.self) { value in
-                        HStack {
-                            Text("\(value)")
-                                .font(.system(size: 9))
-                                .foregroundColor(.secondary)
-                                .frame(width: 20, alignment: .trailing)
-                            Rectangle()
-                                .fill(Color.gray.opacity(0.1))
-                                .frame(height: 0.5)
-                            Spacer()
-                        }
-                        .frame(height: (height - padding * 2) / 3)
-                    }
-                }
-
-                // 折线
-                if dataPoints.count >= 2 {
-                    let chartWidth = width - padding - 20
-                    let chartHeight = height - padding * 2
-
-                    Path { path in
-                        for (index, point) in dataPoints.enumerated() {
-                            let x = padding + 20 + (CGFloat(index) / CGFloat(max(dataPoints.count - 1, 1))) * chartWidth
-                            let y = padding + chartHeight - ((point.value - 1) / 9) * chartHeight
-
-                            if index == 0 {
-                                path.move(to: CGPoint(x: x, y: y))
-                            } else {
-                                path.addLine(to: CGPoint(x: x, y: y))
-                            }
-                        }
-                    }
-                    .stroke(
-                        LinearGradient(
-                            colors: [Color(hex: "6C5CE7"), Color(hex: "A29BFE")],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        ),
-                        style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round)
-                    )
-
-                    // 数据点
-                    ForEach(Array(dataPoints.enumerated()), id: \.element.id) { index, point in
-                        let x = padding + 20 + (CGFloat(index) / CGFloat(max(dataPoints.count - 1, 1))) * chartWidth
-                        let y = padding + chartHeight - ((point.value - 1) / 9) * chartHeight
-
-                        Circle()
-                            .fill(Color(hex: "6C5CE7"))
-                            .frame(width: pointSize, height: pointSize)
-                            .position(x: x, y: y)
-                    }
-
-                    // X轴标签
-                    ForEach(Array(dataPoints.enumerated()), id: \.element.id) { index, point in
-                        if dataPoints.count <= 7 || index % (dataPoints.count / 7 + 1) == 0 {
-                            let x = padding + 20 + (CGFloat(index) / CGFloat(max(dataPoints.count - 1, 1))) * chartWidth
-                            Text(point.label)
-                                .font(.system(size: 8))
-                                .foregroundColor(.secondary)
-                                .position(x: x, y: height - 8)
-                        }
-                    }
-                }
-            }
-        }
     }
 }
 
