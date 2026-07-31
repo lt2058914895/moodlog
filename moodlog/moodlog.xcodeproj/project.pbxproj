@@ -30,6 +30,7 @@
 		C22D1EA92FED4D98001B6443 /* moodlog.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = C22D1EA72FED4D98001B6443 /* moodlog.xcdatamodeld */; };
 		C22D1EB02FED4E1F001B6443 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C22D1EAF2FED4E1F001B6443 /* Launch Screen.storyboard */; };
 		C2C65F312FEE4B2F006AD954 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C2C65F332FEE4B2F006AD954 /* Localizable.strings */; };
+		EE0000022FED4D95001B6443 /* MoodRecordsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0000012FED4D95001B6443 /* MoodRecordsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -58,6 +59,7 @@
 		C22D1EAF2FED4E1F001B6443 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		C2C65F322FEE4B2F006AD954 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		C2C65F342FEE4B31006AD954 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		EE0000012FED4D95001B6443 /* MoodRecordsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodRecordsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,6 +130,14 @@
 			path = Insight;
 			sourceTree = "<group>";
 		};
+		EE0000032FED4D95001B6443 /* Records */ = {
+			isa = PBXGroup;
+			children = (
+				EE0000012FED4D95001B6443 /* MoodRecordsView.swift */,
+			);
+			path = Records;
+			sourceTree = "<group>";
+		};
 		AA1000072FED4D95001B6443 /* Main */ = {
 			isa = PBXGroup;
 			children = (
@@ -140,6 +150,7 @@
 			isa = PBXGroup;
 			children = (
 				AA1000042FED4D95001B6443 /* Checkin */,
+				EE0000032FED4D95001B6443 /* Records */,
 				AA1000052FED4D95001B6443 /* Calendar */,
 				AA1000062FED4D95001B6443 /* Insight */,
 				AA1000072FED4D95001B6443 /* Main */,
@@ -281,6 +292,7 @@
 				BB0000042FED4D95001B6443 /* MoodRecordRepository.swift in Sources */,
 				BB0000062FED4D95001B6443 /* TagRepository.swift in Sources */,
 				BB0000082FED4D95001B6443 /* StatisticsService.swift in Sources */,
+				EE0000022FED4D95001B6443 /* MoodRecordsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

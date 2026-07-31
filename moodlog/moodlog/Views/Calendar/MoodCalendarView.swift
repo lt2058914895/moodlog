@@ -7,23 +7,9 @@
 
 import SwiftUI
 
-/// 视图模式切换
-enum CalendarViewMode: String, CaseIterable {
-    case calendar
-    case records
-
-    var title: String {
-        switch self {
-        case .calendar: return L.localized("records.mode.calendar")
-        case .records: return L.localized("records.mode.records")
-        }
-    }
-}
-
 /// 日历视图主页面
 struct MoodCalendarView: View {
     @StateObject private var viewModel = CalendarViewModel()
-    @State private var selectedViewMode: CalendarViewMode = .calendar
     @State private var recordToEdit: MoodRecord?
     @State private var recordToDelete: MoodRecord?
     @State private var showDeleteConfirmation = false
@@ -31,16 +17,8 @@ struct MoodCalendarView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // 日历/记录切换头部
-            viewModePicker
-
-            if selectedViewMode == .calendar {
-                // 日历模式
-                calendarContent
-            } else {
-                // 记录列表模式
-                recordsListContent
-            }
+            // 日历模式
+            calendarContent
         }
         .background(Color(UIColor.systemGroupedBackground))
         .sheet(item: $recordToEdit) { record in
@@ -82,56 +60,6 @@ struct MoodCalendarView: View {
         }
     }
 
-    // MARK: - 记录列表模式内容
-    private var recordsListContent: some View {
-        Group {
-            if viewModel.groupedRecords.isEmpty {
-                // 空状态
-                VStack(spacing: 12) {
-                    Spacer()
-                    Text("📝")
-                        .font(.system(size: 48))
-                    Text(L.localized("records.empty"))
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                    Spacer()
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else {
-                List {
-                    ForEach(viewModel.groupedRecords, id: \.date) { group in
-                        Section {
-                            ForEach(group.records, id: \.id) { record in
-                                MoodRecordListRow(record: record, onEdit: {
-                                    recordToEdit = record
-                                }, onDelete: {
-                                    recordToDelete = record
-                                    showDeleteConfirmation = true
-                                })
-                            }
-                        } header: {
-                            recordsSectionHeader(group.date, count: group.records.count)
-                        }
-                    }
-                }
-                .listStyle(.insetGrouped)
-            }
-        }
-    }
-
-    // MARK: - 记录列表分组头部
-    private func recordsSectionHeader(_ date: Date, count: Int) -> some View {
-        HStack {
-            Text(viewModel.sectionDateTitle(date))
-                .font(.subheadline.bold())
-                .foregroundColor(Color(hex: "6C5CE7"))
-            Spacer()
-            Text(L.localizedInt("calendar.records_count", value: count))
-                .font(.caption2)
-                .foregroundColor(.secondary)
-        }
-    }
-
     private func deleteRecord(_ record: MoodRecord) {
         do {
             try viewModel.deleteRecord(record)
@@ -139,43 +67,6 @@ struct MoodCalendarView: View {
         } catch {
             errorMessage = error.localizedDescription
         }
-    }
-
-    // MARK: - 日历/记录切换头部
-    private var viewModePicker: some View {
-        HStack(spacing: 0) {
-            ForEach(CalendarViewMode.allCases, id: \.self) { mode in
-                Button(action: {
-                    withAnimation(.easeInOut(duration: 0.25)) {
-                        selectedViewMode = mode
-                    }
-                    if mode == .records {
-                        viewModel.loadGroupedRecords()
-                    }
-                }) {
-                    HStack(spacing: 6) {
-                        Image(systemName: mode == .calendar ? "calendar" : "list.bullet")
-                            .font(.caption)
-                        Text(mode.title)
-                            .font(.subheadline.bold())
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 8)
-                    .background(
-                        selectedViewMode == mode
-                            ? Capsule().fill(Color(hex: "6C5CE7"))
-                            : Capsule().fill(Color.clear)
-                    )
-                    .foregroundColor(selectedViewMode == mode ? .white : .secondary)
-                }
-                .buttonStyle(.plain)
-            }
-        }
-        .padding(4)
-        .background(Capsule().fill(Color(UIColor.tertiarySystemGroupedBackground)))
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-        .background(Color(UIColor.systemBackground))
     }
 
     // MARK: - 月份导航

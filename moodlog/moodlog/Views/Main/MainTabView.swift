@@ -15,12 +15,14 @@ struct MainTabView: View {
     enum Tab: Int, CaseIterable {
         case checkin = 0
         case records = 1
-        case insight = 2
+        case calendar = 2
+        case insight = 3
 
         var title: String {
             switch self {
             case .checkin: return L.localized("tab.checkin")
             case .records: return L.localized("tab.records")
+            case .calendar: return L.localized("tab.calendar")
             case .insight: return L.localized("tab.insight")
             }
         }
@@ -29,6 +31,7 @@ struct MainTabView: View {
             switch self {
             case .checkin: return "heart.circle"
             case .records: return "list.bullet.clipboard"
+            case .calendar: return "calendar"
             case .insight: return "chart.bar"
             }
         }
@@ -37,6 +40,7 @@ struct MainTabView: View {
             switch self {
             case .checkin: return "heart.circle.fill"
             case .records: return "list.bullet.clipboard.fill"
+            case .calendar: return "calendar"
             case .insight: return "chart.bar.fill"
             }
         }
@@ -56,9 +60,9 @@ struct MainTabView: View {
             }
             .tag(Tab.checkin)
 
-            // 记录视图
+            // 记录列表
             NavigationView {
-                MoodCalendarView()
+                MoodRecordsView()
                     .navigationTitle(L.localized("tab.records"))
                     .navigationBarTitleDisplayMode(.inline)
             }
@@ -67,6 +71,18 @@ struct MainTabView: View {
                 Text(Tab.records.title)
             }
             .tag(Tab.records)
+
+            // 日历视图
+            NavigationView {
+                MoodCalendarView()
+                    .navigationTitle(L.localized("tab.calendar"))
+                    .navigationBarTitleDisplayMode(.inline)
+            }
+            .tabItem {
+                Image(systemName: selectedTab == .calendar ? Tab.calendar.selectedIcon : Tab.calendar.icon)
+                Text(Tab.calendar.title)
+            }
+            .tag(Tab.calendar)
 
             // 数据洞察
             MoodInsightView()
