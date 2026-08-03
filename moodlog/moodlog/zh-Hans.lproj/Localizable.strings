@@ -46,13 +46,12 @@
 "records.today" = "今天";
 "records.yesterday" = "昨天";
 
-// MARK: - Mood Types (9个核心大类)
+// MARK: - Mood Types (8个核心大类)
 "mood.happy" = "开心";
 "mood.sad" = "难过";
 "mood.angry" = "生气";
 "mood.anxious" = "焦虑";
 "mood.neutral" = "平淡";
-"mood.love" = "爱";
 "mood.afraid" = "害怕";
 "mood.tired" = "疲惫";
 "mood.relaxed" = "放松";

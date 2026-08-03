@@ -21,7 +21,7 @@ struct PersistenceController {
             ("anxious", 6),
             ("happy", 9),
             ("neutral", 3),
-            ("love", 7),
+            ("happy", 7),
             ("angry", 5),
             ("happy", 6),
             ("anxious", 7),

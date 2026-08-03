@@ -3,19 +3,18 @@
 //  moodlog
 //
 //  Created by deppon on 2026/6/26.
-//  重构于 2026/7/29 — 删除二级情绪，精简一级情绪为9个核心大类
+//  重构于 2026/7/29 — 删除二级情绪，精简一级情绪为8个核心大类（爱合并到开心）
 //
 
 import SwiftUI
 
-// MARK: - 情绪类型（精简为9个核心大类）
+// MARK: - 情绪类型（精简为8个核心大类）
 enum MoodType: String, CaseIterable, Codable {
     case happy = "happy"       // 😊 开心
     case sad = "sad"           // 😢 难过
     case angry = "angry"       // 😠 生气
     case anxious = "anxious"   // 😰 焦虑
     case neutral = "neutral"   // 😐 平淡
-    case love = "love"         // 🥰 爱
     case afraid = "afraid"     // 😨 害怕
     case tired = "tired"       // 😩 疲惫
     case relaxed = "relaxed"   // 😌 放松
@@ -27,7 +26,6 @@ enum MoodType: String, CaseIterable, Codable {
         case .angry: return "😠"
         case .anxious: return "😰"
         case .neutral: return "😐"
-        case .love: return "🥰"
         case .afraid: return "😨"
         case .tired: return "😩"
         case .relaxed: return "😌"
@@ -41,7 +39,6 @@ enum MoodType: String, CaseIterable, Codable {
         case .angry: return L.localized("mood.angry")
         case .anxious: return L.localized("mood.anxious")
         case .neutral: return L.localized("mood.neutral")
-        case .love: return L.localized("mood.love")
         case .afraid: return L.localized("mood.afraid")
         case .tired: return L.localized("mood.tired")
         case .relaxed: return L.localized("mood.relaxed")
@@ -55,7 +52,6 @@ enum MoodType: String, CaseIterable, Codable {
         case .angry: return Color(hex: "FF6B6B")
         case .anxious: return Color(hex: "C084FC")
         case .neutral: return Color(hex: "94A3B8")
-        case .love: return Color(hex: "F472B6")
         case .afraid: return Color(hex: "7C3AED")
         case .tired: return Color(hex: "78716C")
         case .relaxed: return Color(hex: "6EE7B7")

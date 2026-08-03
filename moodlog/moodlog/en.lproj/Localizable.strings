@@ -46,13 +46,12 @@
 "records.today" = "Today";
 "records.yesterday" = "Yesterday";
 
-// MARK: - Mood Types (9 core categories)
+// MARK: - Mood Types (8 core categories)
 "mood.happy" = "Happy";
 "mood.sad" = "Sad";
 "mood.angry" = "Angry";
 "mood.anxious" = "Anxious";
 "mood.neutral" = "Neutral";
-"mood.love" = "Love";
 "mood.afraid" = "Afraid";
 "mood.tired" = "Tired";
 "mood.relaxed" = "Relaxed";

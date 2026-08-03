@@ -110,7 +110,7 @@ class MoodCheckinViewModel: ObservableObject {
         } else if intensity <= 6 {
             return (.neutral, .happy)
         } else {
-            return (.happy, .love)
+            return (.happy, .happy)
         }
     }
 }
