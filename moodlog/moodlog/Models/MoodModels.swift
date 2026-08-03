@@ -57,6 +57,20 @@ enum MoodType: String, CaseIterable, Codable {
         case .relaxed: return Color(hex: "6EE7B7")
         }
     }
+
+    /// Assets 中对应的表情图片名称
+    var imageName: String {
+        switch self {
+        case .happy: return "happy"
+        case .sad: return "sad"
+        case .angry: return "angry"
+        case .anxious: return "anxious"
+        case .neutral: return "indifferent"
+        case .afraid: return "scared"
+        case .tired: return "tired"
+        case .relaxed: return "relaxed"
+        }
+    }
 }
 
 // MARK: - 活动标签分类

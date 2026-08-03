@@ -101,8 +101,10 @@ struct EditMoodRecordView: View {
                         selectedMoodType = moodType
                     }) {
                         VStack(spacing: 6) {
-                            Text(moodType.emoji)
-                                .font(.system(size: selectedMoodType == moodType ? 40 : 32))
+                            Image(moodType.imageName)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: selectedMoodType == moodType ? 40 : 32, height: selectedMoodType == moodType ? 40 : 32)
                                 .scaleEffect(selectedMoodType == moodType ? 1.1 : 1.0)
                             Text(moodType.displayName)
                                 .font(.caption)

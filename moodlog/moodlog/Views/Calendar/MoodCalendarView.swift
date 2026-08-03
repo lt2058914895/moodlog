@@ -302,8 +302,10 @@ struct MoodRecordRow: View {
                 Circle()
                     .fill((moodType?.color ?? .gray).opacity(0.15))
                     .frame(width: 44, height: 44)
-                Text(moodType?.emoji ?? "😊")
-                    .font(.title2)
+                Image(moodType?.imageName ?? "happy")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 28, height: 28)
             }
 
             // 情绪信息
@@ -419,8 +421,10 @@ struct MoodRecordListRow: View {
                 Circle()
                     .fill((moodType?.color ?? .gray).opacity(0.15))
                     .frame(width: 44, height: 44)
-                Text(moodType?.emoji ?? "😊")
-                    .font(.title2)
+                Image(moodType?.imageName ?? "happy")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 28, height: 28)
             }
 
             // 情绪信息

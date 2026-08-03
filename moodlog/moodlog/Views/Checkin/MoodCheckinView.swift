@@ -189,8 +189,10 @@ struct MoodTypeCell: View {
     var body: some View {
         Button(action: onTap) {
             VStack(spacing: 6) {
-                Text(moodType.emoji)
-                    .font(.system(size: isSelected ? 40 : 32))
+                Image(moodType.imageName)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: isSelected ? 40 : 32, height: isSelected ? 40 : 32)
                     .scaleEffect(isSelected ? 1.1 : 1.0)
 
                 Text(moodType.displayName)

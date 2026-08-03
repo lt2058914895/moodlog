@@ -131,6 +131,7 @@ struct MoodInsightView: View {
             StatCard(
                 title: L.localized("insight.most_mood"),
                 value: viewModel.mostFrequentMood.emoji,
+                moodImageName: viewModel.mostFrequentMood.imageName,
                 icon: "heart.fill",
                 color: viewModel.mostFrequentMood.color
             )
@@ -208,6 +209,7 @@ struct MoodInsightView: View {
 struct StatCard: View {
     let title: String
     let value: String
+    var moodImageName: String? = nil
     let icon: String
     let color: Color
 
@@ -217,8 +219,15 @@ struct StatCard: View {
                 .font(.title3)
                 .foregroundColor(color)
 
-            Text(value)
-                .font(.title3.bold())
+            if let imageName = moodImageName {
+                Image(imageName)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 28, height: 28)
+            } else {
+                Text(value)
+                    .font(.title3.bold())
+            }
 
             Text(title)
                 .font(.caption2)
@@ -308,8 +317,10 @@ struct MoodEmotionWheel: View {
                     let labelY = center.y + midRadius * CGFloat(sin(angle))
 
                     VStack(spacing: 0) {
-                        Text(item.moodType.emoji)
-                            .font(.system(size: 16))
+                        Image(item.moodType.imageName)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 16, height: 16)
                         Text(String(format: "%.0f%%", item.percentage))
                             .font(.system(size: 9, weight: .bold))
                             .foregroundColor(.white)
