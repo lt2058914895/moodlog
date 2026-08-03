@@ -161,7 +161,6 @@ struct MoodSelectorView: View {
         GridItem(.flexible()),
         GridItem(.flexible()),
         GridItem(.flexible()),
-        GridItem(.flexible()),
     ]
 
     var body: some View {
@@ -188,11 +187,11 @@ struct MoodTypeCell: View {
 
     var body: some View {
         Button(action: onTap) {
-            VStack(spacing: 6) {
+            VStack(spacing: 2) {
                 Image(moodType.imageName)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: isSelected ? 40 : 32, height: isSelected ? 40 : 32)
+                    .frame(width: isSelected ? 62 : 54, height: isSelected ? 62 : 54)
                     .scaleEffect(isSelected ? 1.1 : 1.0)
 
                 Text(moodType.displayName)
@@ -200,7 +199,7 @@ struct MoodTypeCell: View {
                     .foregroundColor(isSelected ? moodType.color : .secondary)
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
+            .padding(.vertical, 6)
             .background(
                 RoundedRectangle(cornerRadius: 16)
                     .fill(isSelected ? moodType.color.opacity(0.15) : Color(UIColor.secondarySystemGroupedBackground))

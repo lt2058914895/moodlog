@@ -92,7 +92,6 @@ struct EditMoodRecordView: View {
                 GridItem(.flexible()),
                 GridItem(.flexible()),
                 GridItem(.flexible()),
-                GridItem(.flexible()),
             ]
 
             LazyVGrid(columns: columns, spacing: 16) {
@@ -104,7 +103,7 @@ struct EditMoodRecordView: View {
                             Image(moodType.imageName)
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
-                                .frame(width: selectedMoodType == moodType ? 40 : 32, height: selectedMoodType == moodType ? 40 : 32)
+                                .frame(width: selectedMoodType == moodType ? 54 : 46, height: selectedMoodType == moodType ? 54 : 46)
                                 .scaleEffect(selectedMoodType == moodType ? 1.1 : 1.0)
                             Text(moodType.displayName)
                                 .font(.caption)

@@ -301,11 +301,11 @@ struct MoodRecordRow: View {
             ZStack {
                 Circle()
                     .fill((moodType?.color ?? .gray).opacity(0.15))
-                    .frame(width: 44, height: 44)
+                    .frame(width: 50, height: 50)
                 Image(moodType?.imageName ?? "happy")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 28, height: 28)
+                    .frame(width: 38, height: 38)
             }
 
             // 情绪信息
@@ -420,11 +420,11 @@ struct MoodRecordListRow: View {
             ZStack {
                 Circle()
                     .fill((moodType?.color ?? .gray).opacity(0.15))
-                    .frame(width: 44, height: 44)
+                    .frame(width: 50, height: 50)
                 Image(moodType?.imageName ?? "happy")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 28, height: 28)
+                    .frame(width: 40, height: 40)
             }
 
             // 情绪信息
