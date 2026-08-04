@@ -7,11 +7,11 @@
 "tab.checkin" = "Mood";
 "tab.calendar" = "Calendar";
 "tab.records" = "Records";
-"tab.insight" = "Insights";
+"tab.insight" = "Look Back";
 
 // MARK: - Checkin
 "checkin.title" = "How are you feeling?";
-"checkin.subtitle" = "Record your mood, understand yourself";
+"checkin.subtitle" = "How are you feeling? Just jot it down";
 "checkin.intensity" = "Intensity";
 "checkin.intensity.light" = "Light";
 "checkin.intensity.strong" = "Strong";
@@ -23,8 +23,8 @@
 "checkin.note_placeholder" = "What's on your mind...";
 "checkin.note_title" = "Note (optional)";
 "checkin.submit" = "Record Mood";
-"checkin.success" = "Recorded!";
-"checkin.select_mood_first" = "Please select a mood first";
+"checkin.success" = "Saved your moment";
+"checkin.select_mood_first" = "Pick today's mood first";
 "checkin.alert_title" = "Notice";
 "checkin.alert_ok" = "OK";
 "checkin.save_failed" = "Save failed: %@";
@@ -42,7 +42,7 @@
 // MARK: - Records
 "records.mode.calendar" = "Calendar";
 "records.mode.records" = "Records";
-"records.empty" = "No records yet";
+"records.empty" = "No mood records yet. Jot down how you feel";
 "records.today" = "Today";
 "records.yesterday" = "Yesterday";
 
@@ -81,19 +81,19 @@
 "calendar.weekday_sun" = "Sun";
 
 // MARK: - Insight
-"insight.title" = "Insights";
+"insight.title" = "Mood Journey";
 "insight.month" = "Month";
 "insight.year" = "Year";
 "insight.year_unit" = "";
 "insight.last_30_days" = "Last 30 Days";
-"insight.record_count" = "Records";
+"insight.record_count" = "Total Records";
 "insight.avg_intensity" = "Avg Intensity";
 "insight.most_mood" = "Top Mood";
 "insight.mood_distribution" = "Mood Distribution";
 "insight.tag_frequency" = "Top 10 Activity Tags";
-"insight.no_distribution_data" = "No distribution data yet";
-"insight.no_tag_data" = "No tag data yet";
-"insight.no_data" = "No data yet";
+"insight.no_distribution_data" = "No data yet. Record more moods";
+"insight.no_tag_data" = "No tag data yet. Record more to learn about yourself";
+"insight.no_data" = "No data yet. Record more to see patterns";
 "insight.mood_times" = "%@ %d times";
 "insight.separator" = ", ";
 

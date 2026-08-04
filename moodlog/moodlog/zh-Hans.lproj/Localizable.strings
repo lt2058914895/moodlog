@@ -7,11 +7,11 @@
 "tab.checkin" = "心情";
 "tab.calendar" = "日历";
 "tab.records" = "记录";
-"tab.insight" = "洞察";
+"tab.insight" = "回顾";
 
 // MARK: - Checkin
 "checkin.title" = "你现在感觉怎么样？";
-"checkin.subtitle" = "记录此刻的情绪，了解自己";
+"checkin.subtitle" = "现在感觉如何？轻轻记下就好";
 "checkin.intensity" = "情绪强度";
 "checkin.intensity.light" = "轻微";
 "checkin.intensity.strong" = "强烈";
@@ -23,8 +23,8 @@
 "checkin.note_placeholder" = "记录此刻的想法…";
 "checkin.note_title" = "添加备注(可选)";
 "checkin.submit" = "记录情绪";
-"checkin.success" = "记录成功！";
-"checkin.select_mood_first" = "请先选择情绪";
+"checkin.success" = "已记下此刻的心情";
+"checkin.select_mood_first" = "先选一个今天的心情吧";
 "checkin.alert_title" = "提示";
 "checkin.alert_ok" = "确定";
 "checkin.save_failed" = "记录保存失败：%@";
@@ -42,7 +42,7 @@
 // MARK: - Records
 "records.mode.calendar" = "日历";
 "records.mode.records" = "记录";
-"records.empty" = "还没有任何记录";
+"records.empty" = "还没有心情记录，去记下此刻的感受吧";
 "records.today" = "今天";
 "records.yesterday" = "昨天";
 
@@ -81,19 +81,19 @@
 "calendar.weekday_sun" = "日";
 
 // MARK: - Insight
-"insight.title" = "数据洞察";
+"insight.title" = "心情轨迹";
 "insight.month" = "月";
 "insight.year" = "年";
 "insight.year_unit" = "年";
 "insight.last_30_days" = "最近30天";
-"insight.record_count" = "记录数";
+"insight.record_count" = "总记录";
 "insight.avg_intensity" = "平均强度";
 "insight.most_mood" = "最多情绪";
 "insight.mood_distribution" = "情绪分布";
 "insight.tag_frequency" = "活动标签频次 Top10";
-"insight.no_distribution_data" = "暂无分布数据";
-"insight.no_tag_data" = "暂无标签数据";
-"insight.no_data" = "暂无数据";
+"insight.no_distribution_data" = "还没有分布数据，多记录一些心情来看看吧";
+"insight.no_tag_data" = "还没有标签数据，记录更多来了解自己";
+"insight.no_data" = "还没有数据，记录更多心情来发现规律吧";
 "insight.mood_times" = "%@ %d次";
 "insight.separator" = "、";
 
