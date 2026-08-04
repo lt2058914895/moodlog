@@ -48,7 +48,7 @@ struct MainTabView: View {
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            // 情绪打卡
+            // 情绪记录
             NavigationView {
                 MoodCheckinView()
                     .navigationTitle(L.localized("tab.checkin"))

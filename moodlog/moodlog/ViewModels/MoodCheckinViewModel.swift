@@ -9,7 +9,7 @@
 import CoreData
 import Foundation
 
-/// 情绪打卡ViewModel
+/// 情绪记录ViewModel
 class MoodCheckinViewModel: ObservableObject {
     @Published var selectedMoodType: MoodType?
     @Published var intensity: Int = 5
@@ -48,7 +48,7 @@ class MoodCheckinViewModel: ObservableObject {
         selectedTagNames.contains(tagName)
     }
 
-    // MARK: - 打卡操作
+    // MARK: - 记录操作
 
     /// 提交情绪记录
     func submitRecord() {
@@ -76,7 +76,7 @@ class MoodCheckinViewModel: ObservableObject {
         }
     }
 
-    /// 快捷打卡（使用上次标签+强度）
+    /// 快速记录（使用上次标签+强度）
     func quickCheckin(moodType: MoodType) {
         do {
             _ = try dataManager.createMoodRecord(

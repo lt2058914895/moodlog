@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// 情绪打卡主页面
+/// 情绪记录主页面
 struct MoodCheckinView: View {
     @StateObject private var viewModel = MoodCheckinViewModel()
     @StateObject private var dataManager = MoodDataManager.shared

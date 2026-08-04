@@ -4,7 +4,7 @@
 */
 
 // MARK: - Tab Bar
-"tab.checkin" = "打卡";
+"tab.checkin" = "心情";
 "tab.calendar" = "日历";
 "tab.records" = "记录";
 "tab.insight" = "洞察";
@@ -28,7 +28,7 @@
 "checkin.alert_title" = "提示";
 "checkin.alert_ok" = "确定";
 "checkin.save_failed" = "记录保存失败：%@";
-"checkin.quick_failed" = "快捷打卡失败：%@";
+"checkin.quick_failed" = "快速记录失败：%@";
 "checkin.delete_confirm" = "确定删除这条记录吗？";
 "checkin.delete" = "删除";
 "checkin.edit" = "编辑";
@@ -67,7 +67,7 @@
 "tagcat.lifeEvent" = "生活事件";
 
 // MARK: - Calendar
-"calendar.streak" = "连续打卡 %d 天";
+"calendar.streak" = "已连续记录 %d 天";
 "calendar.today" = "今天";
 "calendar.no_records" = "这一天还没有记录";
 "calendar.records_count" = "%d条记录";

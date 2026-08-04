@@ -193,7 +193,7 @@ class CalendarViewModel: ObservableObject {
         return formatter.string(from: currentMonth)
     }
 
-    /// 连续打卡天数
+    /// 连续记录天数
     var streakDays: Int {
         dataManager.fetchStreakDays()
     }

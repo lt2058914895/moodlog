@@ -23,7 +23,7 @@ struct MoodCalendarView: View {
                     // 月份导航
                     monthNavigation
 
-                    // 连续打卡
+                    // 连续记录
                     if viewModel.streakDays > 0 {
                         streakBanner
                     }
@@ -106,7 +106,7 @@ struct MoodCalendarView: View {
         .background(Color(UIColor.systemBackground))
     }
 
-    // MARK: - 连续打卡横幅
+    // MARK: - 连续记录横幅
     private var streakBanner: some View {
         HStack(spacing: 6) {
             Text("🔥")

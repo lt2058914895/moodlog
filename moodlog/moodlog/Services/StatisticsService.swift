@@ -200,7 +200,7 @@ class StatisticsService: StatisticsProviding {
         return result
     }
 
-    // MARK: - 连续打卡天数
+    // MARK: - 连续记录天数
 
     func fetchStreakDays() -> Int {
         if let cached = cache.cacheGet(CacheKey.streakDays, type: Int.self) {

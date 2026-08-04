@@ -4,7 +4,7 @@
 */
 
 // MARK: - Tab Bar
-"tab.checkin" = "Check-in";
+"tab.checkin" = "Mood";
 "tab.calendar" = "Calendar";
 "tab.records" = "Records";
 "tab.insight" = "Insights";
@@ -28,7 +28,7 @@
 "checkin.alert_title" = "Notice";
 "checkin.alert_ok" = "OK";
 "checkin.save_failed" = "Save failed: %@";
-"checkin.quick_failed" = "Quick check-in failed: %@";
+"checkin.quick_failed" = "Quick record failed: %@";
 "checkin.delete_confirm" = "Are you sure you want to delete this record?";
 "checkin.delete" = "Delete";
 "checkin.edit" = "Edit";
@@ -67,7 +67,7 @@
 "tagcat.lifeEvent" = "Life Events";
 
 // MARK: - Calendar
-"calendar.streak" = "%d Day Streak";
+"calendar.streak" = "%d Day Record Streak";
 "calendar.today" = "Today";
 "calendar.no_records" = "No records this day";
 "calendar.records_count" = "%d records";
