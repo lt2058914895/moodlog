@@ -301,8 +301,8 @@ struct MoodRecordRow: View {
     var onEdit: (() -> Void)?
     var onDelete: (() -> Void)?
 
-    private var moodType: MoodType? {
-        MoodType(rawValue: record.moodType ?? "happy")
+    private var moodType: MoodType {
+        MoodType.from(rawValue: record.moodType)
     }
 
     private var timeString: String {
@@ -321,9 +321,9 @@ struct MoodRecordRow: View {
             // 情绪emoji圆形背景
             ZStack {
                 Circle()
-                    .fill((moodType?.color ?? .gray).opacity(0.15))
+                    .fill(moodType.color.opacity(0.15))
                     .frame(width: 50, height: 50)
-                Image(moodType?.imageName ?? "happy")
+                Image(moodType.imageName)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 38, height: 38)
@@ -333,7 +333,7 @@ struct MoodRecordRow: View {
             VStack(alignment: .leading, spacing: 6) {
                 // 第一行：情绪名称 + 时间
                 HStack(spacing: 6) {
-                    Text(moodType?.displayName ?? "")
+                    Text(moodType.displayName)
                         .font(.subheadline.bold())
                         .foregroundColor(.primary)
                     Spacer()
@@ -345,8 +345,8 @@ struct MoodRecordRow: View {
                         .font(.caption2)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
-                        .background(Capsule().fill(moodType?.color.opacity(0.15) ?? Color.gray.opacity(0.15)))
-                        .foregroundColor(moodType?.color ?? .gray)
+                        .background(Capsule().fill(moodType.color.opacity(0.15)))
+                        .foregroundColor(moodType.color)
                 }
 
                 // 活动标签
@@ -376,7 +376,7 @@ struct MoodRecordRow: View {
             }
 
             // 强度指示条
-            IntensityBar(value: Int(record.intensity), color: moodType?.color ?? .gray)
+            IntensityBar(value: Int(record.intensity), color: moodType.color)
         }
         .padding(12)
         .background(
@@ -420,8 +420,8 @@ struct MoodRecordListRow: View {
     var onEdit: (() -> Void)?
     var onDelete: (() -> Void)?
 
-    private var moodType: MoodType? {
-        MoodType(rawValue: record.moodType ?? "happy")
+    private var moodType: MoodType {
+        MoodType.from(rawValue: record.moodType)
     }
 
     private var timeString: String {
@@ -440,9 +440,9 @@ struct MoodRecordListRow: View {
             // 情绪emoji圆形背景
             ZStack {
                 Circle()
-                    .fill((moodType?.color ?? .gray).opacity(0.15))
+                    .fill(moodType.color.opacity(0.15))
                     .frame(width: 50, height: 50)
-                Image(moodType?.imageName ?? "happy")
+                Image(moodType.imageName)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 40, height: 40)
@@ -452,7 +452,7 @@ struct MoodRecordListRow: View {
             VStack(alignment: .leading, spacing: 6) {
                 // 第一行：情绪名称 + 时间
                 HStack(spacing: 6) {
-                    Text(moodType?.displayName ?? "")
+                    Text(moodType.displayName)
                         .font(.subheadline.bold())
                         .foregroundColor(.primary)
                     Spacer()
@@ -464,8 +464,8 @@ struct MoodRecordListRow: View {
                         .font(.caption2)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
-                        .background(Capsule().fill(moodType?.color.opacity(0.15) ?? Color.gray.opacity(0.15)))
-                        .foregroundColor(moodType?.color ?? .gray)
+                        .background(Capsule().fill(moodType.color.opacity(0.15)))
+                        .foregroundColor(moodType.color)
                 }
 
                 // 活动标签
@@ -495,7 +495,7 @@ struct MoodRecordListRow: View {
             }
 
             // 强度指示条
-            IntensityBar(value: Int(record.intensity), color: moodType?.color ?? .gray)
+            IntensityBar(value: Int(record.intensity), color: moodType.color)
         }
         .padding(.vertical, 4)
         .contextMenu {

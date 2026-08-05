@@ -19,6 +19,14 @@ enum MoodType: String, CaseIterable, Codable {
     case tired = "tired"       // 😩 疲惫
     case relaxed = "relaxed"   // 😌 放松
 
+    /// 安全初始化，兼容旧数据中已废弃的情绪类型
+    static func from(rawValue: String?) -> MoodType {
+        guard let value = rawValue, let type = MoodType(rawValue: value) else {
+            return .neutral
+        }
+        return type
+    }
+
     var emoji: String {
         switch self {
         case .happy: return "😊"
