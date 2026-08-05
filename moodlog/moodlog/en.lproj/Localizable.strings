@@ -11,7 +11,13 @@
 
 // MARK: - Checkin
 "checkin.title" = "How are you feeling?";
-"checkin.subtitle" = "How are you feeling? Just jot it down";
+"checkin.subtitle" = "Pick a mood and jot it down";
+"greeting.morning" = "Good morning, how are you feeling?";
+"greeting.forenoon" = "Good forenoon, how's your mood?";
+"greeting.noon" = "Good noon, have you eaten?";
+"greeting.afternoon" = "Good afternoon, take a coffee break?";
+"greeting.evening" = "Good evening, how was your day?";
+"greeting.night" = "Late night, are you okay?";
 "checkin.intensity" = "Intensity";
 "checkin.intensity.light" = "Light";
 "checkin.intensity.strong" = "Strong";

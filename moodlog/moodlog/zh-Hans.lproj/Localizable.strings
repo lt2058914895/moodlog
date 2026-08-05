@@ -11,7 +11,13 @@
 
 // MARK: - Checkin
 "checkin.title" = "你现在感觉怎么样？";
-"checkin.subtitle" = "现在感觉如何？轻轻记下就好";
+"checkin.subtitle" = "选一个心情，轻轻记下来就好";
+"greeting.morning" = "早上好，今天感觉怎么样？";
+"greeting.forenoon" = "上午好，现在心情如何？";
+"greeting.noon" = "中午好，吃过饭了吗？";
+"greeting.afternoon" = "下午好，喝杯咖啡休息一下吧？";
+"greeting.evening" = "晚上好，今天过得怎么样？";
+"greeting.night" = "夜深了，还好吗？";
 "checkin.intensity" = "情绪强度";
 "checkin.intensity.light" = "轻微";
 "checkin.intensity.strong" = "强烈";
