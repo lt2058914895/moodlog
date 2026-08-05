@@ -15,14 +15,12 @@ struct MainTabView: View {
     enum Tab: Int, CaseIterable {
         case checkin = 0
         case records = 1
-        case calendar = 2
-        case insight = 3
+        case insight = 2
 
         var title: String {
             switch self {
             case .checkin: return L.localized("tab.checkin")
             case .records: return L.localized("tab.records")
-            case .calendar: return L.localized("tab.calendar")
             case .insight: return L.localized("tab.insight")
             }
         }
@@ -31,7 +29,6 @@ struct MainTabView: View {
             switch self {
             case .checkin: return "heart.circle"
             case .records: return "list.bullet.clipboard"
-            case .calendar: return "calendar"
             case .insight: return "chart.bar"
             }
         }
@@ -40,7 +37,6 @@ struct MainTabView: View {
             switch self {
             case .checkin: return "heart.circle.fill"
             case .records: return "list.bullet.clipboard.fill"
-            case .calendar: return "calendar"
             case .insight: return "chart.bar.fill"
             }
         }
@@ -48,7 +44,7 @@ struct MainTabView: View {
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            // 情绪记录
+            // 心情
             NavigationView {
                 MoodCheckinView()
                     .navigationBarTitleDisplayMode(.inline)
@@ -60,20 +56,13 @@ struct MainTabView: View {
             }
             .tag(Tab.checkin)
 
-            // 记录列表
+            // 记录
             NavigationView {
                 MoodRecordsView(onNavigateToCheckin: {
                     selectedTab = .checkin
                 })
-                    .navigationTitle(L.localized("tab.records"))
                     .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem(placement: .principal) {
-                            Text(L.localized("tab.records"))
-                                .font(.system(size: 18, weight: .semibold))
-                                .foregroundColor(.primary)
-                        }
-                    }
+                    .navigationBarHidden(true)
             }
             .tabItem {
                 Image(systemName: selectedTab == .records ? Tab.records.selectedIcon : Tab.records.icon)
@@ -81,28 +70,7 @@ struct MainTabView: View {
             }
             .tag(Tab.records)
 
-            // 日历视图
-            NavigationView {
-                MoodCalendarView(onNavigateToCheckin: {
-                    selectedTab = .checkin
-                })
-                    .navigationTitle(L.localized("tab.calendar"))
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem(placement: .principal) {
-                            Text(L.localized("tab.calendar"))
-                                .font(.system(size: 18, weight: .semibold))
-                                .foregroundColor(.primary)
-                        }
-                    }
-            }
-            .tabItem {
-                Image(systemName: selectedTab == .calendar ? Tab.calendar.selectedIcon : Tab.calendar.icon)
-                Text(Tab.calendar.title)
-            }
-            .tag(Tab.calendar)
-
-            // 数据洞察
+            // 回顾
             MoodInsightView()
                 .tabItem {
                     Image(systemName: selectedTab == .insight ? Tab.insight.selectedIcon : Tab.insight.icon)
