@@ -48,13 +48,13 @@ enum MoodType: String, CaseIterable, Codable {
     var color: Color {
         switch self {
         case .happy: return Color(hex: "FFD93D")
-        case .sad: return Color(hex: "6C9BCF")
-        case .angry: return Color(hex: "FF6B6B")
-        case .anxious: return Color(hex: "C084FC")
-        case .neutral: return Color(hex: "94A3B8")
-        case .afraid: return Color(hex: "7C3AED")
-        case .tired: return Color(hex: "78716C")
-        case .relaxed: return Color(hex: "6EE7B7")
+        case .sad: return Color(hex: "5B8FB9")
+        case .angry: return Color(hex: "FF4757")
+        case .anxious: return Color(hex: "F39C12")
+        case .neutral: return Color(hex: "95A5A6")
+        case .afraid: return Color(hex: "8E44AD")
+        case .tired: return Color(hex: "8D6E63")
+        case .relaxed: return Color(hex: "2ECC71")
         }
     }
 
