@@ -51,15 +51,8 @@ struct MainTabView: View {
             // 情绪记录
             NavigationView {
                 MoodCheckinView()
-                    .navigationTitle(L.localized("tab.checkin"))
                     .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem(placement: .principal) {
-                            Text(L.localized("tab.checkin"))
-                                .font(.system(size: 18, weight: .semibold))
-                                .foregroundColor(.primary)
-                        }
-                    }
+                    .navigationBarHidden(true)
             }
             .tabItem {
                 Image(systemName: selectedTab == .checkin ? Tab.checkin.selectedIcon : Tab.checkin.icon)

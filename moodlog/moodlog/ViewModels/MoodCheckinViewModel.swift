@@ -113,4 +113,41 @@ class MoodCheckinViewModel: ObservableObject {
             return (.happy, .happy)
         }
     }
+
+    // MARK: - 时间段问候语
+
+    /// 当前时间段
+    enum TimeOfDay: String {
+        case morning, forenoon, noon, afternoon, evening, night
+
+        var greetingKey: String {
+            "greeting.\(rawValue)"
+        }
+
+        var imageName: String {
+            rawValue
+        }
+
+        static var current: TimeOfDay {
+            let hour = Calendar.current.component(.hour, from: Date())
+            switch hour {
+            case 5..<9: return .morning
+            case 9..<12: return .forenoon
+            case 12..<14: return .noon
+            case 14..<18: return .afternoon
+            case 18..<22: return .evening
+            default: return .night
+            }
+        }
+    }
+
+    /// 当前时间段问候语
+    var currentGreeting: String {
+        L.localized(TimeOfDay.current.greetingKey)
+    }
+
+    /// 当前时间段图标名称
+    var currentTimeImageName: String {
+        TimeOfDay.current.imageName
+    }
 }

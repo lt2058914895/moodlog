@@ -73,15 +73,22 @@ struct MoodCheckinView: View {
     // MARK: - 标题区域
     private var headerSection: some View {
         VStack(spacing: 8) {
-            Text(L.localized("checkin.title"))
-                .font(.title2.bold())
-                .foregroundColor(.primary)
+            HStack(spacing: 8) {
+                Image(viewModel.currentTimeImageName)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 28, height: 28)
+
+                Text(viewModel.currentGreeting)
+                    .font(.headline)
+                    .foregroundColor(.primary)
+            }
 
             Text(L.localized("checkin.subtitle"))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
         }
-        .padding(.top, 20)
+        .padding(.top, 48)
     }
 
     // MARK: - 备注
