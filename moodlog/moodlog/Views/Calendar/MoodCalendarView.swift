@@ -14,6 +14,7 @@ struct MoodCalendarView: View {
     @State private var recordToDelete: MoodRecord?
     @State private var showDeleteConfirmation = false
     @State private var errorMessage: String?
+    var onNavigateToCheckin: (() -> Void)? = nil
 
     var body: some View {
         ScrollView {
@@ -227,16 +228,36 @@ struct MoodCalendarView: View {
     private var dayTimelineContent: some View {
         VStack(spacing: 0) {
             if viewModel.recordsForSelectedDate.isEmpty {
-                // 空状态
-                VStack(spacing: 8) {
-                    Text("📝")
-                        .font(.title)
+                VStack(spacing: 14) {
+                    Image(systemName: "heart.text.square")
+                        .font(.system(size: 40))
+                        .foregroundColor(Color(hex: "6C5CE7").opacity(0.5))
                     Text(L.localized("calendar.no_records"))
                         .font(.subheadline)
                         .foregroundColor(.secondary)
+                    Button(action: {
+                        onNavigateToCheckin?()
+                    }) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "plus.circle.fill")
+                            Text(L.localized("calendar.empty_action"))
+                                .font(.subheadline.weight(.semibold))
+                        }
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 10)
+                        .background(
+                            LinearGradient(
+                                colors: [Color(hex: "6C5CE7"), Color(hex: "A29BFE")],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .cornerRadius(14)
+                    }
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 32)
+                .padding(.vertical, 28)
             } else {
                 // 时间线列表
                 VStack(spacing: 12) {

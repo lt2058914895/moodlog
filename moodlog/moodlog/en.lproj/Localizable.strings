@@ -43,6 +43,7 @@
 "records.mode.calendar" = "Calendar";
 "records.mode.records" = "Records";
 "records.empty" = "No mood records yet. Jot down how you feel";
+"records.empty_action" = "Record a mood";
 "records.today" = "Today";
 "records.yesterday" = "Yesterday";
 
@@ -70,6 +71,7 @@
 "calendar.streak" = "%d Day Record Streak";
 "calendar.today" = "Today";
 "calendar.no_records" = "No records this day";
+"calendar.empty_action" = "Record how you feel";
 "calendar.records_count" = "%d records";
 "calendar.intensity" = "Intensity %d";
 "calendar.weekday_mon" = "Mon";

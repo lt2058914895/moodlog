@@ -69,7 +69,9 @@ struct MainTabView: View {
 
             // 记录列表
             NavigationView {
-                MoodRecordsView()
+                MoodRecordsView(onNavigateToCheckin: {
+                    selectedTab = .checkin
+                })
                     .navigationTitle(L.localized("tab.records"))
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
@@ -88,7 +90,9 @@ struct MainTabView: View {
 
             // 日历视图
             NavigationView {
-                MoodCalendarView()
+                MoodCalendarView(onNavigateToCheckin: {
+                    selectedTab = .checkin
+                })
                     .navigationTitle(L.localized("tab.calendar"))
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {

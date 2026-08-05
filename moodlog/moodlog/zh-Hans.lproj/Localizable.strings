@@ -43,6 +43,7 @@
 "records.mode.calendar" = "日历";
 "records.mode.records" = "记录";
 "records.empty" = "还没有心情记录，去记下此刻的感受吧";
+"records.empty_action" = "去记录心情";
 "records.today" = "今天";
 "records.yesterday" = "昨天";
 
@@ -70,6 +71,7 @@
 "calendar.streak" = "已连续记录 %d 天";
 "calendar.today" = "今天";
 "calendar.no_records" = "这一天还没有记录";
+"calendar.empty_action" = "记下此刻心情";
 "calendar.records_count" = "%d条记录";
 "calendar.intensity" = "强度%d";
 "calendar.weekday_mon" = "一";

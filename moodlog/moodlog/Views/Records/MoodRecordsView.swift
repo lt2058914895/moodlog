@@ -14,21 +14,12 @@ struct MoodRecordsView: View {
     @State private var recordToDelete: MoodRecord?
     @State private var showDeleteConfirmation = false
     @State private var errorMessage: String?
+    var onNavigateToCheckin: (() -> Void)? = nil
 
     var body: some View {
         VStack(spacing: 0) {
             if viewModel.groupedRecords.isEmpty {
-                // 空状态
-                VStack(spacing: 12) {
-                    Spacer()
-                    Text("📝")
-                        .font(.system(size: 48))
-                    Text(L.localized("records.empty"))
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                    Spacer()
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                emptyStateView
             } else {
                 // 操作提示
                 Text(L.localized("calendar.long_press_hint"))
@@ -87,6 +78,44 @@ struct MoodRecordsView: View {
                 .font(.caption2)
                 .foregroundColor(.secondary)
         }
+    }
+
+    // MARK: - 空状态
+    private var emptyStateView: some View {
+        VStack(spacing: 20) {
+            Spacer()
+            Image(systemName: "heart.text.square")
+                .font(.system(size: 56))
+                .foregroundColor(Color(hex: "6C5CE7").opacity(0.6))
+            Text(L.localized("records.empty"))
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 40)
+            Button(action: {
+                onNavigateToCheckin?()
+            }) {
+                HStack(spacing: 6) {
+                    Image(systemName: "plus.circle.fill")
+                    Text(L.localized("records.empty_action"))
+                        .font(.subheadline.weight(.semibold))
+                }
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
+                .background(
+                    LinearGradient(
+                        colors: [Color(hex: "6C5CE7"), Color(hex: "A29BFE")],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .cornerRadius(16)
+            }
+            .padding(.horizontal, 40)
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private func deleteRecord(_ record: MoodRecord) {
