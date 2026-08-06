@@ -247,8 +247,14 @@ struct EditMoodRecordView: View {
                     }
                     .padding(.top, 12)
 
-                    // 自定义标签按钮
-                    Button(action: { showCustomTagCreation = true }) {
+                    // 自定义标签按钮 - push 进入创建页
+                    NavigationLink(isActive: $showCustomTagCreation) {
+                        CustomTagCreationView(dataManager: dataManager) { tagName in
+                            frequentTags = dataManager.fetchFrequentTags()
+                            customTags = dataManager.fetchCustomTags()
+                            toggleTag(tagName)
+                        }
+                    } label: {
                         HStack(spacing: 4) {
                             Image(systemName: "plus.circle")
                                 .font(.caption)
@@ -304,13 +310,6 @@ struct EditMoodRecordView: View {
         .onChange(of: dataManager.dataVersion) { _ in
             frequentTags = dataManager.fetchFrequentTags()
             customTags = dataManager.fetchCustomTags()
-        }
-        .sheet(isPresented: $showCustomTagCreation) {
-            CustomTagCreationView(dataManager: dataManager) { tagName in
-                frequentTags = dataManager.fetchFrequentTags()
-                customTags = dataManager.fetchCustomTags()
-                toggleTag(tagName)
-            }
         }
         .alert(
             L.localized("custom_tag.delete"),

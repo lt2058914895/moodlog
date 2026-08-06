@@ -21,6 +21,7 @@ struct CustomTagCreationView: View {
     @State private var selectedEmoji: String = "📋"
     @State private var errorMessage: String?
     @State private var isCreating: Bool = false
+    @FocusState private var isInputFocused: Bool
 
     /// 可选 emoji 列表
     private let emojiOptions: [[String]] = [
@@ -35,46 +36,64 @@ struct CustomTagCreationView: View {
     ]
 
     var body: some View {
-        NavigationView {
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 24) {
-                    // 标签名称输入
-                    nameInputSection
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 24) {
+                // 标签名称输入
+                nameInputSection
 
-                    // 分类选择
-                    categorySection
+                // 分类选择
+                categorySection
 
-                    // Emoji 选择
-                    emojiSection
+                // Emoji 选择
+                emojiSection
 
-                    // 错误提示
-                    if let error = errorMessage {
-                        Text(error)
-                            .font(.caption)
-                            .foregroundColor(.red)
-                            .padding(.horizontal, 4)
-                    }
-
-                    // 预览
-                    previewSection
-
-                    // 创建按钮
-                    createButton
+                // 错误提示
+                if let error = errorMessage {
+                    Text(error)
+                        .font(.caption)
+                        .foregroundColor(.red)
+                        .padding(.horizontal, 4)
                 }
-                .padding(.horizontal, 20)
-                .padding(.bottom, 30)
+
+                // 预览
+                previewSection
+
+                // 创建按钮
+                createButton
             }
-            .background(Color(UIColor.systemGroupedBackground))
-            .navigationTitle(L.localized("custom_tag.title"))
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(L.localized("checkin.cancel")) {
-                        dismiss()
-                    }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 30)
+        }
+        .background(Color(UIColor.systemGroupedBackground))
+        .navigationTitle(L.localized("custom_tag.title"))
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: { dismiss() }) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundColor(Color(hex: "6C5CE7"))
                 }
             }
         }
+        .onAppear {
+            // 隐藏 Tab 栏
+            TabBarHelper.setTabBarHidden(true)
+        }
+        .onDisappear {
+            // 恢复 Tab 栏
+            TabBarHelper.setTabBarHidden(false)
+        }
+        .onTapGesture {
+            // 点击空白区域收起键盘
+            isInputFocused = false
+            hideKeyboard()
+        }
+    }
+
+    private func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 
     // MARK: - 标签名称输入
@@ -84,6 +103,7 @@ struct CustomTagCreationView: View {
                 .font(.subheadline.bold())
 
             TextField(L.localized("custom_tag.name_placeholder"), text: $tagName)
+                .focused($isInputFocused)
                 .font(.body)
                 .padding(12)
                 .background(Color(UIColor.tertiarySystemGroupedBackground))
@@ -163,11 +183,10 @@ struct CustomTagCreationView: View {
 
     // MARK: - 预览
     private var previewSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        HStack(spacing: 12) {
             Text(L.localized("custom_tag.preview"))
-                .font(.caption2)
-                .foregroundColor(.secondary)
-
+                .font(.subheadline.bold())
+            Spacer()
             HStack(spacing: 4) {
                 Text(selectedEmoji)
                     .font(.system(size: 14))
@@ -185,7 +204,9 @@ struct CustomTagCreationView: View {
                 Capsule()
                     .stroke(tagName.isEmpty ? Color.clear : Color(hex: "6C5CE7").opacity(0.6), lineWidth: 1)
             )
+            Spacer()
         }
+        .frame(maxWidth: .infinity, alignment: .center)
         .padding(16)
         .background(Color(UIColor.secondarySystemGroupedBackground))
         .cornerRadius(16)
@@ -258,6 +279,37 @@ struct CustomTagCreationView: View {
             isCreating = false
             errorMessage = error.localizedDescription
         }
+    }
+}
+
+// MARK: - Tab 栏辅助
+struct TabBarHelper {
+    static func setTabBarHidden(_ hidden: Bool) {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let rootViewController = windowScene.windows.first?.rootViewController else {
+            return
+        }
+        findTabBarController(from: rootViewController)?.tabBar.isHidden = hidden
+    }
+
+    private static func findTabBarController(from vc: UIViewController) -> UITabBarController? {
+        if let tabBar = vc as? UITabBarController {
+            return tabBar
+        }
+        if let nav = vc as? UINavigationController {
+            return findTabBarController(from: nav.visibleViewController ?? nav.topViewController ?? nav)
+        }
+        if let presented = vc.presentedViewController {
+            if let tabBar = findTabBarController(from: presented) {
+                return tabBar
+            }
+        }
+        for child in vc.children {
+            if let tabBar = findTabBarController(from: child) {
+                return tabBar
+            }
+        }
+        return nil
     }
 }
 

@@ -315,14 +315,6 @@ struct TagSelectorView: View {
             frequentTags = dataManager.fetchFrequentTags()
             customTags = dataManager.fetchCustomTags()
         }
-        .sheet(isPresented: $showCustomTagCreation) {
-            CustomTagCreationView(dataManager: dataManager) { tagName in
-                // 创建成功后刷新标签列表并自动选中
-                frequentTags = dataManager.fetchFrequentTags()
-                customTags = dataManager.fetchCustomTags()
-                viewModel.toggleTag(tagName)
-            }
-        }
         .alert(
             L.localized("custom_tag.delete"),
             isPresented: $showDeleteConfirm,
@@ -417,8 +409,14 @@ struct TagSelectorView: View {
             }
             .padding(.top, 12)
 
-            // 自定义标签按钮
-            Button(action: { showCustomTagCreation = true }) {
+            // 自定义标签按钮 - push 进入创建页
+            NavigationLink(isActive: $showCustomTagCreation) {
+                CustomTagCreationView(dataManager: dataManager) { tagName in
+                    frequentTags = dataManager.fetchFrequentTags()
+                    customTags = dataManager.fetchCustomTags()
+                    viewModel.toggleTag(tagName)
+                }
+            } label: {
                 HStack(spacing: 4) {
                     Image(systemName: "plus.circle")
                         .font(.caption)
