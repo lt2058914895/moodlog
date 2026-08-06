@@ -126,6 +126,9 @@
 "custom_tag.got_it" = "Got it";
 "custom_tag.created" = "Tag created";
 "custom_tag.delete_confirm" = "Delete custom tag %@?";
+"custom_tag.delete_confirm_prefix" = "Delete custom";
+"custom_tag.delete_confirm_suffix" = "tag?";
+"custom_tag.create_title" = "Create Tag";
 "custom_tag.delete" = "Delete Tag";
 "custom_tag.my_tags" = "My Custom Tags";
 "custom_tag.preview" = "Preview";

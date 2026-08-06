@@ -248,7 +248,7 @@ struct EditMoodRecordView: View {
                                     color: Color(hex: "6C5CE7"),
                                     onTap: { toggleTag(tag.name ?? "") },
                                     isCustom: true,
-                                    onLongPress: {
+                                    onDelete: {
                                         tagToDelete = tag
                                         showDeleteConfirm = true
                                     }
@@ -332,16 +332,21 @@ struct EditMoodRecordView: View {
             }
             Button(L.localized("checkin.cancel"), role: .cancel) {}
         } message: { tag in
-            Text(String(format: L.localized("custom_tag.delete_confirm"), tag.name ?? ""))
+            Text(L.localized("custom_tag.delete_confirm_prefix") + "「\(tag.emoji ?? "📋") \(tag.name ?? "")」" + L.localized("custom_tag.delete_confirm_suffix"))
         }
     }
 
     // MARK: - 删除自定义标签
     private func deleteCustomTag(_ tag: ActivityTag) {
         do {
+            let tagName = tag.name ?? ""
             try dataManager.deleteCustomTag(tag)
             customTags = dataManager.fetchCustomTags()
             frequentTags = dataManager.fetchFrequentTags()
+            // 如果该标签已被选中，从已选列表中移除
+            if selectedTagNames.contains(tagName) {
+                toggleTag(tagName)
+            }
         } catch {
             // 静默处理
         }

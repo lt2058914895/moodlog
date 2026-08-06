@@ -325,7 +325,7 @@ struct TagSelectorView: View {
             }
             Button(L.localized("checkin.cancel"), role: .cancel) {}
         } message: { tag in
-            Text(String(format: L.localized("custom_tag.delete_confirm"), tag.name ?? ""))
+            Text(L.localized("custom_tag.delete_confirm_prefix") + "「\(tag.emoji ?? "📋") \(tag.name ?? "")」" + L.localized("custom_tag.delete_confirm_suffix"))
         }
     }
 
@@ -399,7 +399,7 @@ struct TagSelectorView: View {
                             color: Color(hex: "6C5CE7"),
                             onTap: { viewModel.toggleTag(tag.name ?? "") },
                             isCustom: true,
-                            onLongPress: {
+                            onDelete: {
                                 tagToDelete = tag
                                 showDeleteConfirm = true
                             }
@@ -440,9 +440,14 @@ struct TagSelectorView: View {
     // MARK: - 删除自定义标签
     private func deleteCustomTag(_ tag: ActivityTag) {
         do {
+            let tagName = tag.name ?? ""
             try dataManager.deleteCustomTag(tag)
             customTags = dataManager.fetchCustomTags()
             frequentTags = dataManager.fetchFrequentTags()
+            // 如果该标签已被选中，从已选列表中移除
+            if viewModel.selectedTagNames.contains(tagName) {
+                viewModel.toggleTag(tagName)
+            }
         } catch {
             // 静默处理
         }
@@ -518,43 +523,44 @@ struct TagChip: View {
     let color: Color
     let onTap: () -> Void
     var isCustom: Bool = false
-    var onLongPress: (() -> Void)? = nil
+    var onDelete: (() -> Void)? = nil
 
     var body: some View {
-        Button(action: onTap) {
-            HStack(spacing: 4) {
-                Text(emoji)
-                    .font(.system(size: 11))
-                Text(name)
-                    .font(.caption)
-                    .fontWeight(isSelected ? .medium : .regular)
-                if isCustom {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 8))
-                        .foregroundColor(.secondary.opacity(0.6))
+        ZStack(alignment: .topTrailing) {
+            Button(action: onTap) {
+                HStack(spacing: 4) {
+                    Text(emoji)
+                        .font(.system(size: 11))
+                    Text(name)
+                        .font(.caption)
+                        .fontWeight(isSelected ? .medium : .regular)
                 }
+                .padding(.horizontal, 10)
+                .padding(.vertical, 5)
+                .background(
+                    Capsule()
+                        .fill(isSelected ? color.opacity(0.12) : Color(UIColor.tertiarySystemGroupedBackground))
+                )
+                .overlay(
+                    Capsule()
+                        .stroke(isSelected ? color.opacity(0.6) : Color.clear, lineWidth: 1)
+                )
+                .foregroundColor(isSelected ? color : .secondary)
             }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 5)
-            .background(
-                Capsule()
-                    .fill(isSelected ? color.opacity(0.12) : Color(UIColor.tertiarySystemGroupedBackground))
-            )
-            .overlay(
-                Capsule()
-                    .stroke(isSelected ? color.opacity(0.6) : Color.clear, lineWidth: 1)
-            )
-            .foregroundColor(isSelected ? color : .secondary)
-        }
-        .buttonStyle(.plain)
-        .simultaneousGesture(
-            LongPressGesture(minimumDuration: 0.5)
-                .onEnded { _ in
-                    if isCustom, let onLongPress = onLongPress {
-                        onLongPress()
-                    }
+            .buttonStyle(.plain)
+
+            if isCustom, let onDelete = onDelete {
+                Button(action: onDelete) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 14))
+                        .foregroundColor(.white)
+                        .background(Circle().fill(Color.red.opacity(0.7)))
+                        .frame(width: 18, height: 18)
                 }
-        )
+                .offset(x: 6, y: -6)
+                .buttonStyle(.plain)
+            }
+        }
     }
 }
 

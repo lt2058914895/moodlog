@@ -93,7 +93,7 @@ struct CustomTagCreationView: View {
             isInputFocused = false
             hideKeyboard()
         }
-        .alert("", isPresented: $showConfirmAlert) {
+        .alert(L.localized("custom_tag.create_title"), isPresented: $showConfirmAlert) {
             Button(L.localized("custom_tag.cancel"), role: .cancel) {}
             Button(L.localized("custom_tag.confirm"), role: .none) {
                 createTag()
