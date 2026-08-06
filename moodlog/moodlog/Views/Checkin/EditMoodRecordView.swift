@@ -167,6 +167,17 @@ struct EditMoodRecordView: View {
     @State private var tagToDelete: ActivityTag?
     @State private var showDeleteConfirm: Bool = false
 
+    /// 标签名 → emoji 映射
+    private var editTagEmojiMap: [String: String] {
+        var map: [String: String] = [:]
+        for tag in frequentTags { map[tag.name ?? ""] = tag.emoji ?? "📋" }
+        for tag in customTags { map[tag.name ?? ""] = tag.emoji ?? "📋" }
+        for category in TagCategory.allCases {
+            for preset in category.presetTags { map[preset.name] = preset.emoji }
+        }
+        return map
+    }
+
     private var editTagSelector: some View {
         VStack(spacing: 12) {
             HStack {
@@ -292,7 +303,7 @@ struct EditMoodRecordView: View {
                         .foregroundColor(.secondary)
 
                     FlowLayout(data: selectedTagNames, spacing: 6) { name in
-                        SelectedTagChip(name: name) {
+                        SelectedTagChip(emoji: editTagEmojiMap[name] ?? "📋", name: name) {
                             toggleTag(name)
                         }
                     }

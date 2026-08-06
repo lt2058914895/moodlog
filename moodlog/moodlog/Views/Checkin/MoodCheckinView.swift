@@ -449,6 +449,18 @@ struct TagSelectorView: View {
     }
 
     // MARK: - 已选标签预览
+    /// 标签名 → emoji 映射
+    private var tagEmojiMap: [String: String] {
+        var map: [String: String] = [:]
+        for tag in frequentTags { map[tag.name ?? ""] = tag.emoji ?? "📋" }
+        for tag in customTags { map[tag.name ?? ""] = tag.emoji ?? "📋" }
+        // 补充预设标签
+        for category in TagCategory.allCases {
+            for preset in category.presetTags { map[preset.name] = preset.emoji }
+        }
+        return map
+    }
+
     private var selectedTagsPreview: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(L.localizedInt("checkin.selected_count", value: viewModel.selectedTagNames.count))
@@ -456,7 +468,7 @@ struct TagSelectorView: View {
                 .foregroundColor(.secondary)
 
             FlowLayout(data: viewModel.selectedTagNames, spacing: 6) { name in
-                SelectedTagChip(name: name) {
+                SelectedTagChip(emoji: tagEmojiMap[name] ?? "📋", name: name) {
                     viewModel.toggleTag(name)
                 }
             }
@@ -548,11 +560,14 @@ struct TagChip: View {
 
 // MARK: - 已选标签芯片
 struct SelectedTagChip: View {
+    let emoji: String
     let name: String
     let onRemove: () -> Void
 
     var body: some View {
         HStack(spacing: 4) {
+            Text(emoji)
+                .font(.system(size: 12))
             Text(name)
                 .font(.caption2)
             Button(action: onRemove) {
