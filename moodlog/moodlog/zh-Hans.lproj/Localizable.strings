@@ -90,10 +90,12 @@
 
 // MARK: - Insight
 "insight.title" = "心情轨迹";
-"insight.month" = "月";
-"insight.year" = "年";
+"insight.range_today" = "今日";
+"insight.range_week" = "本周";
+"insight.range_month" = "本月";
+"insight.range_quarter" = "本季";
+"insight.range_year" = "年度";
 "insight.year_unit" = "年";
-"insight.last_30_days" = "最近30天";
 "insight.record_count" = "总记录";
 "insight.avg_intensity" = "平均强度";
 "insight.most_mood" = "最多情绪";
@@ -104,6 +106,10 @@
 "insight.no_data" = "还没有数据，记录更多心情来发现规律吧";
 "insight.mood_times" = "%@ %d次";
 "insight.separator" = "、";
+"insight.greeting" = "这段时间";
+"insight.hero_title" = "你的心情以「%@」为主";
+"insight.empty_greeting" = "欢迎来到";
+"insight.empty_title" = "心情回顾";
 
 // MARK: - Custom Tag
 "custom_tag.title" = "自定义标签";

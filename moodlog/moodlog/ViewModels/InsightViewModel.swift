@@ -9,7 +9,7 @@ import Foundation
 
 /// 数据洞察ViewModel
 class InsightViewModel: ObservableObject {
-    @Published var selectedPeriod: InsightPeriod = .month
+    @Published var selectedRange: InsightTimeRange = .week
     @Published var selectedYear: Int = Calendar.current.component(.year, from: Date())
     @Published var moodDistribution: [MoodType: Int] = [:]
     @Published var topTags: [(name: String, count: Int)] = []
@@ -19,7 +19,18 @@ class InsightViewModel: ObservableObject {
     @Published var availableYears: [Int] = []
 
     private let dataManager: any MoodDataManaging
-    private let calendar = Calendar.current
+    private let calendar: Calendar = {
+        var cal = Calendar.current
+        // 根据用户 locale 设置每周第一天
+        // 中文地区默认周一起始（firstWeekday = 2），英文地区默认周日起始（firstWeekday = 1）
+        let localeId = Locale.current.identifier
+        if localeId.hasPrefix("zh") {
+            cal.firstWeekday = 2
+        } else {
+            cal.firstWeekday = 1
+        }
+        return cal
+    }()
 
     private var cancellable: Any?
 
@@ -83,9 +94,27 @@ class InsightViewModel: ObservableObject {
 
     var dateRange: (start: Date, end: Date) {
         let now = Date()
-        switch selectedPeriod {
+        switch selectedRange {
+        case .today:
+            let start = calendar.startOfDay(for: now)
+            return (start, now.endOfDay)
+        case .week:
+            // 使用 dateInterval 自动适应用户地区（中国周一为起始，美国周日为起始）
+            if let weekInterval = calendar.dateInterval(of: .weekOfYear, for: now) {
+                return (weekInterval.start, now.endOfDay)
+            }
+            return (calendar.startOfDay(for: now), now.endOfDay)
         case .month:
-            let start = calendar.date(byAdding: .day, value: -29, to: now.startOfDay)!
+            let components = calendar.dateComponents([.year, .month], from: now)
+            let start = calendar.date(from: components)!
+            return (start, now.endOfDay)
+        case .quarter:
+            let month = calendar.component(.month, from: now)
+            let quarterStartMonth = ((month - 1) / 3) * 3 + 1
+            var components = calendar.dateComponents([.year], from: now)
+            components.month = quarterStartMonth
+            components.day = 1
+            let start = calendar.date(from: components)!
             return (start, now.endOfDay)
         case .year:
             var components = DateComponents()
@@ -93,9 +122,44 @@ class InsightViewModel: ObservableObject {
             components.month = 1
             components.day = 1
             let start = calendar.date(from: components)!
-            components.year = selectedYear + 1
-            let end = calendar.date(from: components)!
-            return (start, end)
+            if selectedYear == currentYear {
+                // 今年：1.1 到今日
+                return (start, now.endOfDay)
+            } else {
+                // 往年：整年
+                components.year = selectedYear + 1
+                let end = calendar.date(from: components)!
+                return (start, end)
+            }
+        }
+    }
+
+    // MARK: - 日期范围标题
+
+    var dateRangeTitle: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "M.d"
+        let now = Date()
+        let today = formatter.string(from: now)
+        let todayLabel = L.localized("insight.range_today")
+
+        switch selectedRange {
+        case .today:
+            // 今日：只显示当天，如 "8.6"
+            return today
+        case .week, .month, .quarter:
+            // 本周/本月/本季：起始日 - 今日(日期)，如 "8.4 - 今日(8.6)"
+            let start = formatter.string(from: dateRange.start)
+            return "\(start) - \(todayLabel)(\(today))"
+        case .year:
+            if selectedYear == currentYear {
+                // 今年：1.1 - 今日(日期)，如 "1.1 - 今日(8.6)"
+                let start = formatter.string(from: dateRange.start)
+                return "\(start) - \(todayLabel)(\(today))"
+            } else {
+                // 往年：只显示年份，如 "2025"
+                return "\(selectedYear)"
+            }
         }
     }
 
@@ -121,6 +185,9 @@ class InsightViewModel: ObservableObject {
         // 最频繁情绪
         if let maxMood = moodDistribution.max(by: { $0.value < $1.value }) {
             mostFrequentMood = maxMood.key
+        } else {
+            // 无数据时重置为默认值，配合 UI 显示 "--"
+            mostFrequentMood = .happy
         }
 
         // 标签频次
@@ -153,33 +220,38 @@ class InsightViewModel: ObservableObject {
         }
     }
 
-    /// 情绪分布摘要文字
-    var distributionSummary: String {
-        guard !moodDistribution.isEmpty else { return L.localized("insight.no_data") }
-        let sorted = moodDistribution.sorted { $0.value > $1.value }
-        let top = sorted.prefix(3).map { mood, count in
-            String(format: L.localized("insight.mood_times"), "\(mood.emoji)\(mood.displayName)", count)
-        }
-        return top.joined(separator: L.localized("insight.separator"))
-    }
-
     /// 时间范围标题
     var periodTitle: String {
-        switch selectedPeriod {
-        case .month: return L.localized("insight.last_30_days")
-        case .year: return "\(selectedYear)\(L.localized("insight.year_unit"))"
-        }
+        return dateRangeTitle
     }
 }
 
 // MARK: - 枚举与数据模型
 
-enum InsightPeriod: String, CaseIterable {
-    case month = "insight.month"
-    case year = "insight.year"
-    
+enum InsightTimeRange: Hashable, CaseIterable {
+    case today
+    case week
+    case month
+    case quarter
+    case year
+
+    static var allCases: [InsightTimeRange] {
+        [.today, .week, .month, .quarter, .year]
+    }
+
     var displayName: String {
-        L.localized(rawValue)
+        switch self {
+        case .today:
+            return L.localized("insight.range_today")
+        case .week:
+            return L.localized("insight.range_week")
+        case .month:
+            return L.localized("insight.range_month")
+        case .quarter:
+            return L.localized("insight.range_quarter")
+        case .year:
+            return L.localized("insight.range_year")
+        }
     }
 }
 

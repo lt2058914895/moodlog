@@ -90,10 +90,12 @@
 
 // MARK: - Insight
 "insight.title" = "Mood Journey";
-"insight.month" = "Month";
-"insight.year" = "Year";
+"insight.range_today" = "Today";
+"insight.range_week" = "This Week";
+"insight.range_month" = "This Month";
+"insight.range_quarter" = "This Quarter";
+"insight.range_year" = "This Year";
 "insight.year_unit" = "";
-"insight.last_30_days" = "Last 30 Days";
 "insight.record_count" = "Total Records";
 "insight.avg_intensity" = "Avg Intensity";
 "insight.most_mood" = "Top Mood";
@@ -104,6 +106,10 @@
 "insight.no_data" = "No data yet. Record more to see patterns";
 "insight.mood_times" = "%@ %d times";
 "insight.separator" = ", ";
+"insight.greeting" = "Lately";
+"insight.hero_title" = "Your mood has been dominated by \"%@\"";
+"insight.empty_greeting" = "Welcome to";
+"insight.empty_title" = "Mood Journey";
 
 // MARK: - Custom Tag
 "custom_tag.title" = "Custom Tag";
