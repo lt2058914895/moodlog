@@ -364,7 +364,7 @@ struct MoodRecordRow: View {
                 if !tagNames.isEmpty {
                     FlowLayout(data: tagNames, spacing: 6) { tagName in
                         HStack(spacing: 4) {
-                            Text(PresetTag.emoji(for: tagName) ?? "📋")
+                            Text(MoodDataManager.emojiForTagName(tagName))
                                 .font(.system(size: 11))
                             Text(tagName)
                                 .font(.caption)
@@ -483,7 +483,7 @@ struct MoodRecordListRow: View {
                 if !tagNames.isEmpty {
                     FlowLayout(data: tagNames, spacing: 6) { tagName in
                         HStack(spacing: 4) {
-                            Text(PresetTag.emoji(for: tagName) ?? "📋")
+                            Text(MoodDataManager.emojiForTagName(tagName))
                                 .font(.system(size: 11))
                             Text(tagName)
                                 .font(.caption)

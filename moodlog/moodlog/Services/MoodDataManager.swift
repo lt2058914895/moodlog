@@ -73,6 +73,9 @@ protocol MoodDataManaging: ObservableObject {
 
     // 辅助
     static func tagNamesFromRecord(_ record: MoodRecord) -> [String]
+
+    /// 根据标签名获取emoji，优先查预设标签，再查自定义标签
+    static func emojiForTagName(_ name: String) -> String
 }
 
 // MARK: - MoodDataManager 门面（组合子组件）
@@ -234,6 +237,19 @@ class MoodDataManager: MoodDataManaging {
 
     static func tagNamesFromRecord(_ record: MoodRecord) -> [String] {
         MoodRecordRepository.tagNamesFromRecord(record)
+    }
+
+    /// 根据标签名获取emoji，优先查预设标签，再查自定义标签
+    static func emojiForTagName(_ name: String) -> String {
+        // 优先查预设标签
+        if let emoji = PresetTag.emoji(for: name) {
+            return emoji
+        }
+        // 查自定义标签
+        if let tag = shared.tagRepository.fetchTagByName(name) {
+            return tag.emoji ?? "📋"
+        }
+        return "📋"
     }
 
     /// 发送数据变更通知
