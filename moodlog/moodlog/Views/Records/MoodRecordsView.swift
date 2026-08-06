@@ -44,9 +44,20 @@ struct MoodRecordsView: View {
             }
         }
         .background(Color(UIColor.systemGroupedBackground))
-        .sheet(item: $recordToEdit) { record in
-            EditMoodRecordView(record: record)
-        }
+        .background(
+            NavigationLink(
+                isActive: Binding(
+                    get: { recordToEdit != nil },
+                    set: { if !$0 { recordToEdit = nil } }
+                ),
+                destination: {
+                    if let record = recordToEdit {
+                        EditMoodRecordView(record: record)
+                    }
+                },
+                label: { EmptyView() }
+            )
+        )
         .alert(L.localized("checkin.delete_confirm"), isPresented: $showDeleteConfirmation, presenting: recordToDelete) { record in
             Button(L.localized("checkin.delete"), role: .destructive) {
                 deleteRecord(record)

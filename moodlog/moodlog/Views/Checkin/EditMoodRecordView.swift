@@ -32,55 +32,62 @@ struct EditMoodRecordView: View {
     }
 
     var body: some View {
-        NavigationView {
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 24) {
-                    // 情绪选择器
-                    editMoodSelector
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 24) {
+                // 情绪选择器
+                editMoodSelector
 
-                    // 情绪强度滑块
-                    editIntensitySlider
+                // 情绪强度滑块
+                editIntensitySlider
 
-                    // 活动标签选择
-                    editTagSelector
+                // 活动标签选择
+                editTagSelector
 
-                    // 备注
-                    editNoteField
+                // 备注
+                editNoteField
 
-                    // 更新按钮
-                    updateButton
-                }
-                .padding(.horizontal, 20)
-                .padding(.bottom, 40)
+                // 更新按钮
+                updateButton
             }
-            .background(Color(UIColor.systemGroupedBackground))
-            .navigationTitle(L.localized("checkin.edit_title"))
-            .onTapGesture {
-                isNoteFocused = false
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(L.localized("checkin.cancel")) {
-                        dismiss()
-                    }
-                }
-            }
-            .overlay {
-                if showSuccessAnimation {
-                    SuccessOverlayView {
-                        showSuccessAnimation = false
-                        dismiss()
-                    }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 40)
+        }
+        .background(Color(UIColor.systemGroupedBackground))
+        .navigationTitle(L.localized("checkin.edit_title"))
+        .onTapGesture {
+            isNoteFocused = false
+        }
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: { dismiss() }) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundColor(Color(hex: "6C5CE7"))
                 }
             }
-            .alert(L.localized("checkin.alert_title"), isPresented: .constant(errorMessage != nil)) {
-                Button(L.localized("checkin.alert_ok")) {
-                    errorMessage = nil
+        }
+        .onAppear {
+            TabBarHelper.setTabBarHidden(true)
+        }
+        .onDisappear {
+            TabBarHelper.setTabBarHidden(false)
+        }
+        .overlay {
+            if showSuccessAnimation {
+                SuccessOverlayView {
+                    showSuccessAnimation = false
+                    dismiss()
                 }
-            } message: {
-                Text(errorMessage ?? "")
             }
+        }
+        .alert(L.localized("checkin.alert_title"), isPresented: .constant(errorMessage != nil)) {
+            Button(L.localized("checkin.alert_ok")) {
+                errorMessage = nil
+            }
+        } message: {
+            Text(errorMessage ?? "")
         }
     }
 
