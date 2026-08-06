@@ -744,7 +744,7 @@ struct SuccessOverlayView: View {
 
                 Text(L.localized("checkin.success"))
                     .font(.title3.bold())
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                     .opacity(showText ? 1 : 0)
             }
             .padding(40)

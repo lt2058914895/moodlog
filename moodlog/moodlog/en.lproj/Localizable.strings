@@ -30,6 +30,11 @@
 "checkin.note_title" = "Note (optional)";
 "checkin.submit" = "Record Mood";
 "checkin.success" = "Saved your moment";
+"checkin.encourage.1" = "Every day is worth recording";
+"checkin.encourage.2" = "Your feelings matter";
+"checkin.encourage.3" = "Keep going, you're doing great";
+"checkin.encourage.4" = "Every record is self-care";
+"checkin.encourage.5" = "Take it easy, everything will be fine";
 "checkin.select_mood_first" = "Pick today's mood first";
 "checkin.alert_title" = "Notice";
 "checkin.alert_ok" = "OK";

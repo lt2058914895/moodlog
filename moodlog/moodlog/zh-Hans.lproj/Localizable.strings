@@ -30,6 +30,11 @@
 "checkin.note_title" = "添加备注(可选)";
 "checkin.submit" = "记录情绪";
 "checkin.success" = "已记下此刻的心情";
+"checkin.encourage.1" = "每一天都值得被记录";
+"checkin.encourage.2" = "你的感受很重要";
+"checkin.encourage.3" = "坚持记录，遇见更好的自己";
+"checkin.encourage.4" = "每一次记录都是对自己的关爱";
+"checkin.encourage.5" = "慢慢来，一切都会好的";
 "checkin.select_mood_first" = "先选一个今天的心情吧";
 "checkin.alert_title" = "提示";
 "checkin.alert_ok" = "确定";
