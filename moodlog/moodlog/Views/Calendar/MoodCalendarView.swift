@@ -351,13 +351,6 @@ struct MoodRecordRow: View {
                     Text(timeString)
                         .font(.caption2)
                         .foregroundColor(.secondary)
-                    // 强度胶囊
-                    Text(L.localizedInt("calendar.intensity", value: Int(record.intensity)))
-                        .font(.caption2)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(Capsule().fill(moodType.color.opacity(0.15)))
-                        .foregroundColor(moodType.color)
                 }
 
                 // 活动标签
@@ -470,13 +463,6 @@ struct MoodRecordListRow: View {
                     Text(timeString)
                         .font(.caption2)
                         .foregroundColor(.secondary)
-                    // 强度胶囊
-                    Text(L.localizedInt("calendar.intensity", value: Int(record.intensity)))
-                        .font(.caption2)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(Capsule().fill(moodType.color.opacity(0.15)))
-                        .foregroundColor(moodType.color)
                 }
 
                 // 活动标签
