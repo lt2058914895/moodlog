@@ -21,6 +21,9 @@ struct CustomTagCreationView: View {
     @State private var selectedEmoji: String = "📋"
     @State private var errorMessage: String?
     @State private var isCreating: Bool = false
+    @State private var showConfirmAlert: Bool = false
+    @State private var showExistsAlert: Bool = false
+    @State private var existingCategoryName: String = ""
     @FocusState private var isInputFocused: Bool
 
     /// 可选 emoji 列表
@@ -90,6 +93,19 @@ struct CustomTagCreationView: View {
             isInputFocused = false
             hideKeyboard()
         }
+        .alert("", isPresented: $showConfirmAlert) {
+            Button(L.localized("custom_tag.cancel"), role: .cancel) {}
+            Button(L.localized("custom_tag.confirm"), role: .none) {
+                createTag()
+            }
+        } message: {
+            Text(L.localized("custom_tag.confirm_create_message_prefix") + "「\(selectedEmoji) \(tagName.trimmingCharacters(in: .whitespacesAndNewlines))」" + L.localized("custom_tag.confirm_create_message_suffix"))
+        }
+        .alert("", isPresented: $showExistsAlert) {
+            Button(L.localized("custom_tag.got_it"), role: .cancel) {}
+        } message: {
+            Text("「\(selectedEmoji) \(tagName.trimmingCharacters(in: .whitespacesAndNewlines))」" + L.localized("custom_tag.name_exists_in_category") + "「\(existingCategoryName)」")
+        }
     }
 
     private func hideKeyboard() {
@@ -150,26 +166,19 @@ struct CustomTagCreationView: View {
             Text(L.localized("custom_tag.select_emoji"))
                 .font(.subheadline.bold())
 
-            // 当前选中 emoji 预览
-            Text(selectedEmoji)
-                .font(.system(size: 36))
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 8)
-
             // Emoji 网格
             ForEach(0..<emojiOptions.count, id: \.self) { rowIndex in
                 HStack(spacing: 12) {
                     ForEach(emojiOptions[rowIndex], id: \.self) { emoji in
                         Button(action: { selectedEmoji = emoji }) {
                             Text(emoji)
-                                .font(.system(size: selectedEmoji == emoji ? 28 : 22))
+                                .font(.system(size: 22))
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 4)
                                 .background(
                                     RoundedRectangle(cornerRadius: 8)
                                         .fill(selectedEmoji == emoji ? Color(hex: "6C5CE7").opacity(0.15) : Color.clear)
                                 )
-                                .scaleEffect(selectedEmoji == emoji ? 1.1 : 1.0)
                         }
                         .buttonStyle(.plain)
                     }
@@ -214,13 +223,11 @@ struct CustomTagCreationView: View {
 
     // MARK: - 创建按钮
     private var createButton: some View {
-        Button(action: createTag) {
+        Button(action: checkAndCreate) {
             HStack(spacing: 8) {
                 if isCreating {
                     ProgressView()
                         .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                } else {
-                    Image(systemName: "plus.circle.fill")
                 }
                 Text(L.localized("custom_tag.create"))
                     .font(.headline)
@@ -241,6 +248,21 @@ struct CustomTagCreationView: View {
         .opacity(tagName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 0.6 : 1.0)
     }
 
+    // MARK: - 检查并创建
+    private func checkAndCreate() {
+        let trimmedName = tagName.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // 检查是否已存在同名标签（精确按名称查找，包含所有预设标签）
+        if let existingTag = dataManager.fetchTagByName(trimmedName) {
+            existingCategoryName = TagCategory(rawValue: existingTag.category ?? "")?.displayName ?? L.localized("custom_tag.unknown_category")
+            showExistsAlert = true
+            return
+        }
+
+        // 不存在，弹出确认创建弹窗
+        showConfirmAlert = true
+    }
+
     // MARK: - 创建标签
     private func createTag() {
         let trimmedName = tagName.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -253,13 +275,6 @@ struct CustomTagCreationView: View {
 
         guard trimmedName.count <= 10 else {
             errorMessage = L.localized("custom_tag.name_too_long")
-            return
-        }
-
-        // 检查是否已存在同名标签
-        let existingTags = dataManager.fetchFrequentTags(limit: 100)
-        if existingTags.contains(where: { $0.name == trimmedName }) {
-            errorMessage = L.localized("custom_tag.name_exists")
             return
         }
 

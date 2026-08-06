@@ -56,6 +56,7 @@ protocol MoodDataManaging: ObservableObject {
     func getOrCreateTag(name: String, category: TagCategory, emoji: String, isCustom: Bool) -> ActivityTag
     func fetchFrequentTags(limit: Int) -> [ActivityTag]
     func fetchCustomTags() -> [ActivityTag]
+    func fetchTagByName(_ name: String) -> ActivityTag?
     func createCustomTag(name: String, category: TagCategory, emoji: String) throws -> ActivityTag
     func deleteCustomTag(_ tag: ActivityTag) throws
     func initializePresetTagsIfNeeded()
@@ -193,6 +194,7 @@ class MoodDataManager: MoodDataManaging {
 
     func fetchFrequentTags(limit: Int = 8) -> [ActivityTag] { tagRepository.fetchFrequentTags(limit: limit) }
     func fetchCustomTags() -> [ActivityTag] { tagRepository.fetchCustomTags() }
+    func fetchTagByName(_ name: String) -> ActivityTag? { tagRepository.fetchTagByName(name) }
 
     func createCustomTag(name: String, category: TagCategory, emoji: String) throws -> ActivityTag {
         try tagRepository.createCustomTag(name: name, category: category, emoji: emoji)

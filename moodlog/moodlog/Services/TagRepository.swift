@@ -14,6 +14,7 @@ protocol TagManaging {
     func getOrCreateTag(name: String, category: TagCategory, emoji: String, isCustom: Bool) -> ActivityTag
     func fetchFrequentTags(limit: Int) -> [ActivityTag]
     func fetchCustomTags() -> [ActivityTag]
+    func fetchTagByName(_ name: String) -> ActivityTag?
     func createCustomTag(name: String, category: TagCategory, emoji: String) throws -> ActivityTag
     func deleteCustomTag(_ tag: ActivityTag) throws
     func initializePresetTagsIfNeeded()
@@ -153,6 +154,13 @@ class TagRepository: TagManaging {
             Self.logger.error("Fetch custom tags failed: \(error.localizedDescription)")
             return []
         }
+    }
+
+    func fetchTagByName(_ name: String) -> ActivityTag? {
+        let request: NSFetchRequest<ActivityTag> = ActivityTag.fetchRequest()
+        request.predicate = NSPredicate(format: "name == %@", name)
+        request.fetchLimit = 1
+        return try? viewContext.fetch(request).first
     }
 
     // MARK: - 写入（后台上下文）

@@ -121,11 +121,19 @@
 "custom_tag.name_required" = "Please enter a tag name";
 "custom_tag.name_too_long" = "Tag name cannot exceed 10 characters";
 "custom_tag.name_exists" = "This tag already exists";
+"custom_tag.name_exists_in_category" = "tag already exists in";
+"custom_tag.unknown_category" = "Unknown Category";
+"custom_tag.got_it" = "Got it";
 "custom_tag.created" = "Tag created";
 "custom_tag.delete_confirm" = "Delete custom tag %@?";
 "custom_tag.delete" = "Delete Tag";
 "custom_tag.my_tags" = "My Custom Tags";
 "custom_tag.preview" = "Preview";
+"custom_tag.confirm_create" = "Confirm Creation";
+"custom_tag.confirm_create_message_prefix" = "Create";
+"custom_tag.confirm_create_message_suffix" = "tag?";
+"custom_tag.cancel" = "Cancel";
+"custom_tag.confirm" = "Confirm";
 
 // MARK: - App Name
 "app.name" = "MoodLog";
