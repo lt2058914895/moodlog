@@ -130,6 +130,16 @@
 
 // MARK: - Custom Tag
 "custom_tag.title" = "自定义标签";
+"custom_tag.create_title" = "创建自定义标签";
+"custom_tag.cancel" = "取消";
+"custom_tag.confirm" = "确认创建";
+"custom_tag.got_it" = "好的";
+"custom_tag.confirm_create_message_prefix" = "即将创建标签：";
+"custom_tag.confirm_create_message_suffix" = "，确认后可在所有记录中使用";
+"custom_tag.name_exists_in_category" = "已存在于分类：";
+"custom_tag.unknown_category" = "未知分类";
+"custom_tag.delete_confirm_prefix" = "确定删除自定义标签：";
+"custom_tag.delete_confirm_suffix" = " 吗？已引用该标签的历史记录不会受影响";
 "custom_tag.name_placeholder" = "输入标签名称";
 "custom_tag.select_category" = "选择分类";
 "custom_tag.select_emoji" = "选择表情";

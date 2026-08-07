@@ -130,6 +130,16 @@
 
 // MARK: - Custom Tag
 "custom_tag.title" = "Custom Tag";
+"custom_tag.create_title" = "Create Custom Tag";
+"custom_tag.cancel" = "Cancel";
+"custom_tag.confirm" = "Confirm Create";
+"custom_tag.got_it" = "Got it";
+"custom_tag.confirm_create_message_prefix" = "You're about to create tag: ";
+"custom_tag.confirm_create_message_suffix" = ". It will be available in all records";
+"custom_tag.name_exists_in_category" = " already exists in category: ";
+"custom_tag.unknown_category" = "Unknown Category";
+"custom_tag.delete_confirm_prefix" = "Delete custom tag: ";
+"custom_tag.delete_confirm_suffix" = " ? Existing records using this tag won't be affected";
 "custom_tag.name_placeholder" = "Enter tag name";
 "custom_tag.select_category" = "Select Category";
 "custom_tag.select_emoji" = "Select Emoji";

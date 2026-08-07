@@ -652,6 +652,8 @@ struct SelectedTagChip: View {
 
     var body: some View {
         HStack(spacing: 4) {
+            Text(MoodDataManager.emojiForTagName(name))
+                .font(.caption2)
             Text(name)
                 .font(.caption2)
             Button(action: onRemove) {
