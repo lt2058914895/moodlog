@@ -237,9 +237,19 @@ class CalendarViewModel: ObservableObject {
         return formatter.string(from: currentMonth)
     }
 
-    /// 连续记录天数
+    /// 连续记录天数（首页已有展示，此处保留供兼容）
     var streakDays: Int {
         dataManager.fetchStreakDays()
+    }
+
+    /// 当前选中月份的总记录数
+    var currentMonthRecordCount: Int {
+        dayRecordCounts.values.reduce(0, +)
+    }
+
+    /// 当前月份的打卡天数（有记录的天数）
+    var currentMonthActiveDays: Int {
+        dayRecordCounts.values.filter { $0 > 0 }.count
     }
 
     /// 删除记录（异步，不阻塞主线程）

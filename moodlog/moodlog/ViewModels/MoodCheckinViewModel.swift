@@ -20,11 +20,37 @@ class MoodCheckinViewModel: ObservableObject {
     @Published var showSuccessAnimation: Bool = false
     @Published var errorMessage: String?
     @Published var isSubmitting: Bool = false
+    @Published var streakDays: Int = 0
+    @Published var totalRecords: Int = 0
+    @Published var daysSinceLastRecord: Int = 0
 
     private let dataManager: any MoodDataManaging
 
     init(dataManager: any MoodDataManaging = MoodDataManager.shared) {
         self.dataManager = dataManager
+        loadStats()
+    }
+
+    /// 加载统计数据
+    private func loadStats() {
+        totalRecords = dataManager.fetchAllRecords().count
+        streakDays = dataManager.fetchStreakDays()
+        daysSinceLastRecord = calculateDaysSinceLastRecord()
+    }
+
+    private func calculateDaysSinceLastRecord() -> Int {
+        let records = dataManager.fetchAllRecords()
+        guard let lastRecord = records.max(by: { ($0.createdAt ?? Date.distantPast) < ($1.createdAt ?? Date.distantPast) }),
+              let lastDate = lastRecord.createdAt else {
+            return 0
+        }
+        let calendar = Calendar.current
+        return calendar.dateComponents([.day], from: calendar.startOfDay(for: lastDate), to: calendar.startOfDay(for: Date())).day ?? 0
+    }
+
+    /// 数据变更后刷新统计
+    func refreshStats() {
+        loadStats()
     }
 
     // MARK: - 情绪选择
@@ -74,9 +100,10 @@ class MoodCheckinViewModel: ObservableObject {
                     tagNames: tags,
                     note: noteText
                 )
-                // 成功动画 + 重置表单
+                // 成功动画 + 重置表单 + 刷新统计
                 showSuccessAnimation = true
                 resetForm()
+                loadStats()
                 isSubmitting = false
             } catch {
                 errorMessage = String(format: L.localized("checkin.save_failed"), error.localizedDescription)

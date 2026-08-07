@@ -43,7 +43,24 @@
 "checkin.update" = "Update Record";
 "checkin.update_success" = "Updated!";
 "checkin.delete_success" = "Deleted";
+"checkin.streak_days" = "day streak";
+"checkin.streak_start" = "Logging your mood is the first step to self-awareness";
+"checkin.streak_keepgoing" = "%1$d more days to a 7-day streak — start seeing your mood patterns";
+"checkin.streak_7plus" = "One week! Keep going for 30 days to map out your emotional landscape";
+"checkin.streak_30plus" = "A month! Your patterns are emerging — keep observing yourself";
+"checkin.streak_100plus" = "100 days! You know yourself better than 90% of people";
+"checkin.total_records" = "Total records";
+"checkin.first_record" = "No records yet";
+"checkin.recorded_today" = "Recorded today";
+"checkin.recorded_yesterday" = "Recorded yesterday";
+"checkin.recorded_days_ago" = "Recorded %1$d days ago";
+"checkin.record_subtitle_first" = "Log your mood whenever you're ready";
+"checkin.record_subtitle_today" = "Learned a little more about yourself today";
+"checkin.record_subtitle_return" = "Come back anytime, I'll be here";
 "calendar.long_press_hint" = "Long press a record to edit or delete";
+"calendar.month_records" = "This Month";
+"calendar.month_days" = "Days Active";
+"calendar.avg_per_day" = "Avg/Day";
 
 // MARK: - Records
 "records.mode.calendar" = "Calendar";

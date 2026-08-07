@@ -24,10 +24,8 @@ struct MoodCalendarView: View {
                     // 月份导航
                     monthNavigation
 
-                    // 连续记录
-                    if viewModel.streakDays > 0 {
-                        streakBanner
-                    }
+                    // 月度统计横幅
+                    monthStatsBanner
 
                     // 日历网格
                     calendarGrid
@@ -81,7 +79,7 @@ struct MoodCalendarView: View {
             Button(action: viewModel.goToPreviousMonth) {
                 Image(systemName: "chevron.left")
                     .font(.body.weight(.semibold))
-                    .foregroundColor(Color(hex: "6C5CE7"))
+                    .foregroundColor(Color(hex: "6C5CE7").colorSchemeAdapted)
                     .padding(8)
             }
 
@@ -95,16 +93,16 @@ struct MoodCalendarView: View {
             Button(action: viewModel.goToToday) {
                 Text(L.localized("calendar.today"))
                     .font(.caption.bold())
-                    .foregroundColor(Color(hex: "6C5CE7"))
+                    .foregroundColor(Color(hex: "6C5CE7").colorSchemeAdapted)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 4)
-                    .background(Capsule().fill(Color(hex: "6C5CE7").opacity(0.1)))
+                    .background(Capsule().fill(Color(hex: "6C5CE7").colorSchemeAdapted.opacity(0.1)))
             }
 
             Button(action: viewModel.goToNextMonth) {
                 Image(systemName: "chevron.right")
                     .font(.body.weight(.semibold))
-                    .foregroundColor(Color(hex: "6C5CE7"))
+                    .foregroundColor(Color(hex: "6C5CE7").colorSchemeAdapted)
                     .padding(8)
             }
         }
@@ -113,19 +111,46 @@ struct MoodCalendarView: View {
         .background(Color(UIColor.systemBackground))
     }
 
-    // MARK: - 连续记录横幅
-    private var streakBanner: some View {
-        HStack(spacing: 6) {
-            Text("🔥")
-                .font(.title3)
-            Text(L.localizedInt("calendar.streak", value: viewModel.streakDays))
-                .font(.subheadline.bold())
-                .foregroundColor(Color(hex: "FF6B6B"))
+    // MARK: - 月度统计横幅
+    private var monthStatsBanner: some View {
+        HStack(spacing: 0) {
+            // 本月总记录数
+            VStack(spacing: 4) {
+                Image(systemName: "doc.text.fill")
+                    .font(.system(size: 18))
+                    .foregroundColor(Color(hex: "6C5CE7").colorSchemeAdapted)
+                Text("\(viewModel.currentMonthRecordCount)")
+                    .font(.title3.bold())
+                    .foregroundColor(.primary)
+                Text(L.localized("calendar.month_records"))
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
+            .frame(maxWidth: .infinity)
+
+            // 分隔线
+            Rectangle()
+                .fill(Color(UIColor.separator).opacity(0.3))
+                .frame(width: 1, height: 40)
+
+            // 本月打卡天数
+            VStack(spacing: 4) {
+                Image(systemName: "calendar.badge.checkmark")
+                    .font(.system(size: 18))
+                    .foregroundColor(Color(hex: "00B894").colorSchemeAdapted)
+                Text("\(viewModel.currentMonthActiveDays)")
+                    .font(.title3.bold())
+                    .foregroundColor(.primary)
+                Text(L.localized("calendar.month_days"))
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
+            .frame(maxWidth: .infinity)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 14)
         .frame(maxWidth: .infinity)
-        .background(Color(hex: "FF6B6B").opacity(0.08))
+        .background(Color(UIColor.systemBackground).opacity(0.6))
     }
 
     // MARK: - 日历网格
@@ -189,7 +214,7 @@ struct MoodCalendarView: View {
                 // 选中边框
                 if isSelected {
                     RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color(hex: "6C5CE7"), lineWidth: 2)
+                        .stroke(Color(hex: "6C5CE7").colorSchemeAdapted, lineWidth: 2)
                         .frame(height: 44)
                 }
 
@@ -198,8 +223,8 @@ struct MoodCalendarView: View {
                         .font(isToday ? .caption.bold() : .caption)
                         .foregroundColor(
                             !day.isCurrentMonth ? .secondary :
-                            isToday ? Color(hex: "6C5CE7") :
-                            isSelected ? Color(hex: "6C5CE7") : .primary
+                            isToday ? Color(hex: "6C5CE7").colorSchemeAdapted :
+                            isSelected ? Color(hex: "6C5CE7").colorSchemeAdapted : .primary
                         )
 
                     // 情绪指示点
@@ -237,7 +262,7 @@ struct MoodCalendarView: View {
                 VStack(spacing: 14) {
                     Image(systemName: "heart.text.square")
                         .font(.system(size: 40))
-                        .foregroundColor(Color(hex: "6C5CE7").opacity(0.5))
+                        .foregroundColor(Color(hex: "6C5CE7").colorSchemeAdapted.opacity(0.5))
                     Text(L.localized("calendar.no_records"))
                         .font(.subheadline)
                         .foregroundColor(.secondary)
@@ -254,7 +279,7 @@ struct MoodCalendarView: View {
                         .padding(.vertical, 10)
                         .background(
                             LinearGradient(
-                                colors: [Color(hex: "6C5CE7"), Color(hex: "A29BFE")],
+                                colors: [Color(hex: "6C5CE7").colorSchemeAdapted, Color(hex: "A29BFE").colorSchemeAdapted],
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )

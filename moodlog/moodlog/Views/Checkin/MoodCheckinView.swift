@@ -19,6 +19,9 @@ struct MoodCheckinView: View {
                 // 标题区域
                 headerSection
 
+                // 连续打卡卡片
+                streakCard
+
                 // 情绪选择器
                 MoodSelectorView(viewModel: viewModel)
 
@@ -53,6 +56,9 @@ struct MoodCheckinView: View {
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: viewModel.selectedMoodType != nil)
         .onTapGesture {
             isNoteFocused = false
+        }
+        .onChange(of: dataManager.dataVersion) { _ in
+            viewModel.refreshStats()
         }
         .overlay {
             if viewModel.showSuccessAnimation {
@@ -89,6 +95,99 @@ struct MoodCheckinView: View {
                 .foregroundColor(.secondary)
         }
         .padding(.top, 48)
+    }
+
+    // MARK: - 状态卡片
+    private var streakCard: some View {
+        HStack(spacing: 12) {
+            // 左侧：上次记录
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 4) {
+                    Image(systemName: lastRecordIcon)
+                        .font(.system(size: 18))
+                        .foregroundColor(lastRecordColor)
+                    Text(lastRecordText)
+                        .font(.headline.bold())
+                        .foregroundColor(.primary)
+                }
+                Text(lastRecordSubtitle)
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
+
+            Spacer()
+
+            // 右侧：总记录数
+            VStack(alignment: .trailing, spacing: 4) {
+                HStack(spacing: 4) {
+                    Image(systemName: "chart.bar.fill")
+                        .font(.system(size: 16))
+                        .foregroundColor(Color(hex: "6C5CE7").colorSchemeAdapted)
+                    Text("\(viewModel.totalRecords)")
+                        .font(.headline.bold())
+                        .foregroundColor(.primary)
+                }
+                Text(L.localized("checkin.total_records"))
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(hex: "6C5CE7").colorSchemeAdapted.opacity(0.08))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color(hex: "6C5CE7").colorSchemeAdapted.opacity(0.2), lineWidth: 1)
+        )
+    }
+
+    private var lastRecordIcon: String {
+        if viewModel.totalRecords == 0 {
+            return "heart.fill"
+        } else if viewModel.daysSinceLastRecord == 0 {
+            return "checkmark.circle.fill"
+        } else if viewModel.daysSinceLastRecord <= 3 {
+            return "clock.fill"
+        } else {
+            return "arrow.clockwise"
+        }
+    }
+
+    private var lastRecordColor: Color {
+        if viewModel.totalRecords == 0 {
+            return Color(hex: "6C5CE7").colorSchemeAdapted
+        } else if viewModel.daysSinceLastRecord == 0 {
+            return Color(hex: "00B894").colorSchemeAdapted
+        } else if viewModel.daysSinceLastRecord <= 3 {
+            return Color(hex: "F39C12").colorSchemeAdapted
+        } else {
+            return Color(hex: "5B8FB9").colorSchemeAdapted
+        }
+    }
+
+    private var lastRecordText: String {
+        if viewModel.totalRecords == 0 {
+            return L.localized("checkin.first_record")
+        } else if viewModel.daysSinceLastRecord == 0 {
+            return L.localized("checkin.recorded_today")
+        } else if viewModel.daysSinceLastRecord == 1 {
+            return L.localized("checkin.recorded_yesterday")
+        } else {
+            return String(format: L.localized("checkin.recorded_days_ago"), viewModel.daysSinceLastRecord)
+        }
+    }
+
+    private var lastRecordSubtitle: String {
+        if viewModel.totalRecords == 0 {
+            return L.localized("checkin.record_subtitle_first")
+        } else if viewModel.daysSinceLastRecord == 0 {
+            return L.localized("checkin.record_subtitle_today")
+        } else {
+            return L.localized("checkin.record_subtitle_return")
+        }
     }
 
     // MARK: - 备注
@@ -147,7 +246,7 @@ struct MoodCheckinView: View {
             .padding(.vertical, 16)
             .background(
                 LinearGradient(
-                    colors: [Color(hex: "6C5CE7"), Color(hex: "A29BFE")],
+                    colors: [Color(hex: "6C5CE7").colorSchemeAdapted, Color(hex: "A29BFE").colorSchemeAdapted],
                     startPoint: .leading,
                     endPoint: .trailing
                 )
@@ -288,7 +387,7 @@ struct TagSelectorView: View {
                 Button(action: { viewModel.showAllTags.toggle() }) {
                     Text(viewModel.showAllTags ? L.localized("checkin.collapse") : L.localized("checkin.more"))
                         .font(.caption)
-                        .foregroundColor(Color(hex: "6C5CE7"))
+                        .foregroundColor(Color(hex: "6C5CE7").colorSchemeAdapted)
                 }
             }
 
@@ -336,7 +435,7 @@ struct TagSelectorView: View {
                 emoji: tag.emoji ?? "📋",
                 name: tag.name ?? "",
                 isSelected: viewModel.isTagSelected(tag.name ?? ""),
-                color: Color(hex: "6C5CE7"),
+                color: Color(hex: "6C5CE7").colorSchemeAdapted,
                 onTap: { viewModel.toggleTag(tag.name ?? "") }
             )
         }
@@ -375,7 +474,7 @@ struct TagSelectorView: View {
                         .font(.caption2)
                     Text(selectedCategory.displayName)
                         .font(.caption2)
-                        .foregroundColor(Color(hex: "6C5CE7"))
+                        .foregroundColor(Color(hex: "6C5CE7").colorSchemeAdapted)
                 }
 
                 FlowLayout(data: selectedCategory.presetTags, spacing: 8) { preset in
@@ -383,7 +482,7 @@ struct TagSelectorView: View {
                         emoji: preset.emoji,
                         name: preset.name,
                         isSelected: viewModel.isTagSelected(preset.name),
-                        color: Color(hex: "6C5CE7"),
+                        color: Color(hex: "6C5CE7").colorSchemeAdapted,
                         onTap: { viewModel.toggleTag(preset.name) }
                     )
                 }
@@ -396,7 +495,7 @@ struct TagSelectorView: View {
                             emoji: tag.emoji ?? "📋",
                             name: tag.name ?? "",
                             isSelected: viewModel.isTagSelected(tag.name ?? ""),
-                            color: Color(hex: "6C5CE7"),
+                            color: Color(hex: "6C5CE7").colorSchemeAdapted,
                             onTap: { viewModel.toggleTag(tag.name ?? "") },
                             isCustom: true,
                             onLongPress: {
@@ -423,12 +522,12 @@ struct TagSelectorView: View {
                     Text(L.localized("custom_tag.add"))
                         .font(.caption)
                 }
-                .foregroundColor(Color(hex: "6C5CE7"))
+                .foregroundColor(Color(hex: "6C5CE7").colorSchemeAdapted)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 5)
                 .background(
                     Capsule()
-                        .stroke(Color(hex: "6C5CE7").opacity(0.4), lineWidth: 1)
+                        .stroke(Color(hex: "6C5CE7").colorSchemeAdapted.opacity(0.4), lineWidth: 1)
                 )
             }
             .buttonStyle(.plain)
@@ -484,13 +583,13 @@ struct CategoryPill: View {
             .padding(.vertical, 8)
             .background(
                 Capsule()
-                    .fill(isSelected ? Color(hex: "6C5CE7").opacity(0.12) : Color(UIColor.tertiarySystemGroupedBackground))
+                    .fill(isSelected ? Color(hex: "6C5CE7").colorSchemeAdapted.opacity(0.12) : Color(UIColor.tertiarySystemGroupedBackground))
             )
             .overlay(
                 Capsule()
-                    .stroke(isSelected ? Color(hex: "6C5CE7") : Color.clear, lineWidth: 1.5)
+                    .stroke(isSelected ? Color(hex: "6C5CE7").colorSchemeAdapted : Color.clear, lineWidth: 1.5)
             )
-            .foregroundColor(isSelected ? Color(hex: "6C5CE7") : .primary)
+            .foregroundColor(isSelected ? Color(hex: "6C5CE7").colorSchemeAdapted : .primary)
             .scaleEffect(isSelected ? 1.02 : 1.0)
         }
         .buttonStyle(.plain)
@@ -563,8 +662,8 @@ struct SelectedTagChip: View {
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
-        .background(Capsule().fill(Color(hex: "6C5CE7").opacity(0.1)))
-        .foregroundColor(Color(hex: "6C5CE7"))
+        .background(Capsule().fill(Color(hex: "6C5CE7").colorSchemeAdapted.opacity(0.1)))
+        .foregroundColor(Color(hex: "6C5CE7").colorSchemeAdapted)
     }
 }
 
@@ -717,7 +816,7 @@ struct SuccessOverlayView: View {
             VStack(spacing: 16) {
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 64))
-                    .foregroundColor(Color(hex: "00B894"))
+                    .foregroundColor(Color(hex: "00B894").colorSchemeAdapted)
                     .scaleEffect(showCheckmark ? 1.0 : 0.1)
                     .opacity(showCheckmark ? 1 : 0)
 

@@ -65,7 +65,7 @@ struct EditMoodRecordView: View {
                 Button(action: { dismiss() }) {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 17, weight: .semibold))
-                        .foregroundColor(Color(hex: "6C5CE7"))
+                        .foregroundColor(Color(hex: "6C5CE7").colorSchemeAdapted)
                 }
             }
         }
@@ -234,7 +234,7 @@ struct EditMoodRecordView: View {
             Button(action: { showAllTags.toggle() }) {
                 Text(showAllTags ? L.localized("checkin.collapse") : L.localized("checkin.more"))
                     .font(.caption)
-                    .foregroundColor(Color(hex: "6C5CE7"))
+                    .foregroundColor(Color(hex: "6C5CE7").colorSchemeAdapted)
             }
         }
     }
@@ -290,7 +290,7 @@ struct EditMoodRecordView: View {
                         .font(.caption2)
                     Text(editSelectedCategory.displayName)
                         .font(.caption2)
-                        .foregroundColor(Color(hex: "6C5CE7"))
+                        .foregroundColor(Color(hex: "6C5CE7").colorSchemeAdapted)
                 }
 
                 FlowLayout(data: editSelectedCategory.presetTags, spacing: 8) { preset in
@@ -298,7 +298,7 @@ struct EditMoodRecordView: View {
                         emoji: preset.emoji,
                         name: preset.name,
                         isSelected: selectedTagNames.contains(preset.name),
-                        color: Color(hex: "6C5CE7"),
+                        color: Color(hex: "6C5CE7").colorSchemeAdapted,
                         onTap: { toggleTag(preset.name) }
                     )
                 }
@@ -322,7 +322,7 @@ struct EditMoodRecordView: View {
                         emoji: tag.emoji ?? "📋",
                         name: tag.name ?? "",
                         isSelected: selectedTagNames.contains(tag.name ?? ""),
-                        color: Color(hex: "6C5CE7"),
+                        color: Color(hex: "6C5CE7").colorSchemeAdapted,
                         onTap: { toggleTag(tag.name ?? "") },
                         isCustom: true,
                         onLongPress: {
@@ -350,12 +350,12 @@ struct EditMoodRecordView: View {
                 Text(L.localized("custom_tag.add"))
                     .font(.caption)
             }
-            .foregroundColor(Color(hex: "6C5CE7"))
+            .foregroundColor(Color(hex: "6C5CE7").colorSchemeAdapted)
             .padding(.horizontal, 10)
             .padding(.vertical, 5)
             .background(
                 Capsule()
-                    .stroke(Color(hex: "6C5CE7").opacity(0.4), lineWidth: 1)
+                    .stroke(Color(hex: "6C5CE7").colorSchemeAdapted.opacity(0.4), lineWidth: 1)
             )
         }
         .buttonStyle(.plain)
@@ -369,7 +369,7 @@ struct EditMoodRecordView: View {
                 emoji: tag.emoji ?? "📋",
                 name: tag.name ?? "",
                 isSelected: selectedTagNames.contains(tag.name ?? ""),
-                color: Color(hex: "6C5CE7"),
+                color: Color(hex: "6C5CE7").colorSchemeAdapted,
                 onTap: { toggleTag(tag.name ?? "") }
             )
         }
@@ -447,7 +447,7 @@ struct EditMoodRecordView: View {
             .padding(.vertical, 16)
             .background(
                 LinearGradient(
-                    colors: [Color(hex: "6C5CE7"), Color(hex: "A29BFE")],
+                    colors: [Color(hex: "6C5CE7").colorSchemeAdapted, Color(hex: "A29BFE").colorSchemeAdapted],
                     startPoint: .leading,
                     endPoint: .trailing
                 )

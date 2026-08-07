@@ -112,7 +112,7 @@ struct MoodInsightView: View {
                                     .background(
                                         Capsule().fill(
                                             viewModel.selectedRange == range
-                                                ? Color(hex: "6C5CE7")
+                                                ? Color(hex: "6C5CE7").colorSchemeAdapted
                                                 : Color(UIColor.secondarySystemGroupedBackground)
                                         )
                                     )
@@ -158,7 +158,7 @@ struct MoodInsightView: View {
             }) {
                 Image(systemName: "chevron.left")
                     .font(.body.weight(.semibold))
-                    .foregroundColor(viewModel.canGoPreviousYear ? Color(hex: "6C5CE7") : Color.gray.opacity(0.3))
+                    .foregroundColor(viewModel.canGoPreviousYear ? Color(hex: "6C5CE7").colorSchemeAdapted : Color.gray.opacity(0.3))
             }
             .disabled(!viewModel.canGoPreviousYear)
 
@@ -176,7 +176,7 @@ struct MoodInsightView: View {
             }) {
                 Image(systemName: "chevron.right")
                     .font(.body.weight(.semibold))
-                    .foregroundColor(viewModel.canGoNextYear ? Color(hex: "6C5CE7") : Color.gray.opacity(0.3))
+                    .foregroundColor(viewModel.canGoNextYear ? Color(hex: "6C5CE7").colorSchemeAdapted : Color.gray.opacity(0.3))
             }
             .disabled(!viewModel.canGoNextYear)
         }
@@ -304,7 +304,7 @@ struct MoodInsightView: View {
         VStack(spacing: 10) {
             Image(systemName: image)
                 .font(.system(size: 32))
-                .foregroundColor(Color(hex: "6C5CE7").opacity(0.4))
+                .foregroundColor(Color(hex: "6C5CE7").colorSchemeAdapted.opacity(0.4))
             Text(text)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
@@ -424,7 +424,7 @@ struct TagBarRow: View {
                     .frame(width: 24, height: 24)
                 Text("\(rank)")
                     .font(.system(size: 11, weight: .bold))
-                    .foregroundColor(rank <= 3 ? Color(hex: "6C5CE7") : .secondary)
+                    .foregroundColor(rank <= 3 ? Color(hex: "6C5CE7").colorSchemeAdapted : .secondary)
             }
 
             // 标签名
@@ -443,7 +443,7 @@ struct TagBarRow: View {
                     RoundedRectangle(cornerRadius: 6)
                         .fill(
                             LinearGradient(
-                                colors: [Color(hex: "6C5CE7"), Color(hex: "A29BFE")],
+                                colors: [Color(hex: "6C5CE7").colorSchemeAdapted, Color(hex: "A29BFE").colorSchemeAdapted],
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
@@ -456,7 +456,7 @@ struct TagBarRow: View {
             // 数量
             Text("\(data.count)")
                 .font(.system(size: 12, weight: .bold, design: .rounded))
-                .foregroundColor(Color(hex: "6C5CE7"))
+                .foregroundColor(Color(hex: "6C5CE7").colorSchemeAdapted)
                 .frame(width: 32, alignment: .trailing)
         }
     }

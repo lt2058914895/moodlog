@@ -43,7 +43,24 @@
 "checkin.update" = "更新记录";
 "checkin.update_success" = "更新成功！";
 "checkin.delete_success" = "已删除";
+"checkin.streak_days" = "天连续打卡";
+"checkin.streak_start" = "记录情绪，是自我觉察的第一步";
+"checkin.streak_keepgoing" = "再过%1$d天达成7天连续，开始看见自己的情绪模式";
+"checkin.streak_7plus" = "一周连续记录！持续30天就能画出你的情绪地图";
+"checkin.streak_30plus" = "一个月了！你的情绪规律正逐渐清晰，继续观察自己";
+"checkin.streak_100plus" = "100天！你已经比90%的人更了解自己的内心";
+"checkin.total_records" = "总记录数";
+"checkin.first_record" = "还没有记录";
+"checkin.recorded_today" = "今天已记录";
+"checkin.recorded_yesterday" = "昨天记录的";
+"checkin.recorded_days_ago" = "%1$d天前记录的";
+"checkin.record_subtitle_first" = "随时来记录你的心情吧";
+"checkin.record_subtitle_today" = "今天又了解了自己一点";
+"checkin.record_subtitle_return" = "随时回来，这里一直都在";
 "calendar.long_press_hint" = "长按记录可编辑或删除";
+"calendar.month_records" = "本月记录";
+"calendar.month_days" = "打卡天数";
+"calendar.avg_per_day" = "日均数量";
 
 // MARK: - Records
 "records.mode.calendar" = "日历";

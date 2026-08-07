@@ -55,14 +55,14 @@ enum MoodType: String, CaseIterable, Codable {
 
     var color: Color {
         switch self {
-        case .happy: return Color(hex: "FFD93D")
-        case .sad: return Color(hex: "5B8FB9")
-        case .angry: return Color(hex: "FF4757")
-        case .anxious: return Color(hex: "F39C12")
-        case .neutral: return Color(hex: "95A5A6")
-        case .afraid: return Color(hex: "8E44AD")
-        case .tired: return Color(hex: "8D6E63")
-        case .relaxed: return Color(hex: "2ECC71")
+        case .happy: return Color(hex: "FFD93D").colorSchemeAdapted
+        case .sad: return Color(hex: "5B8FB9").colorSchemeAdapted
+        case .angry: return Color(hex: "FF4757").colorSchemeAdapted
+        case .anxious: return Color(hex: "F39C12").colorSchemeAdapted
+        case .neutral: return Color(hex: "95A5A6").colorSchemeAdapted
+        case .afraid: return Color(hex: "8E44AD").colorSchemeAdapted
+        case .tired: return Color(hex: "8D6E63").colorSchemeAdapted
+        case .relaxed: return Color(hex: "2ECC71").colorSchemeAdapted
         }
     }
 
@@ -268,6 +268,14 @@ extension Color {
             blue: Double(b) / 255,
             opacity: Double(a) / 255
         )
+    }
+
+    /// 返回适配深色模式的颜色（在深/浅模式下自动调整亮度）
+    /// 使用 UIColor 桥接实现自动适配
+    var colorSchemeAdapted: Color {
+        Color(uiColor: UIColor { traitCollection in
+            UIColor(self).resolvedColor(with: traitCollection)
+        })
     }
 }
 
