@@ -21,7 +21,7 @@
 "checkin.intensity" = "情绪强度";
 "checkin.intensity.light" = "轻微";
 "checkin.intensity.strong" = "强烈";
-"checkin.activity_tags" = "活动标签";
+"checkin.activity_tags" = "活动标签(可选)";
 "checkin.category_title" = "选择分类";
 "checkin.more" = "更多";
 "checkin.collapse" = "收起";

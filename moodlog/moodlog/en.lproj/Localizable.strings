@@ -21,7 +21,7 @@
 "checkin.intensity" = "Intensity";
 "checkin.intensity.light" = "Light";
 "checkin.intensity.strong" = "Strong";
-"checkin.activity_tags" = "Activity Tags";
+"checkin.activity_tags" = "Activity Tags (optional)";
 "checkin.category_title" = "Category";
 "checkin.more" = "More";
 "checkin.collapse" = "Collapse";
