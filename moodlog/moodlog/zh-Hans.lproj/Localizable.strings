@@ -125,6 +125,8 @@
 "insight.separator" = "、";
 "insight.greeting" = "这段时间";
 "insight.hero_title" = "你的心情以「%@」为主";
+"insight.hero_spread_two" = "你的心情在「%@」和「%@」之间波动";
+"insight.hero_spread" = "你的情绪状态较为多元";
 "insight.empty_greeting" = "欢迎来到";
 "insight.empty_title" = "心情回顾";
 

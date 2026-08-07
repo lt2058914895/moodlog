@@ -125,6 +125,8 @@
 "insight.separator" = ", ";
 "insight.greeting" = "Lately";
 "insight.hero_title" = "Your mood has been dominated by \"%@\"";
+"insight.hero_spread_two" = "Your mood oscillates between \"%@\" and \"%@\"";
+"insight.hero_spread" = "Your emotional state is diverse";
 "insight.empty_greeting" = "Welcome to";
 "insight.empty_title" = "Mood Journey";
 

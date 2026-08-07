@@ -51,11 +51,26 @@ struct MoodInsightView: View {
             }
             Spacer()
             if viewModel.totalRecords > 0 {
-                Image(viewModel.mostFrequentMood.imageName)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 72, height: 72)
-                    .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
+                if viewModel.isMoodSpread && viewModel.topTwoMoods.count >= 2 {
+                    HStack(spacing: -8) {
+                        Image(viewModel.topTwoMoods[0].imageName)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 56, height: 56)
+                            .shadow(color: .black.opacity(0.12), radius: 6, x: 0, y: 3)
+                        Image(viewModel.topTwoMoods[1].imageName)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 44, height: 44)
+                            .shadow(color: .black.opacity(0.12), radius: 6, x: 0, y: 3)
+                    }
+                } else {
+                    Image(viewModel.mostFrequentMood.imageName)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 72, height: 72)
+                        .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
+                }
             }
         }
         .padding(20)
@@ -71,6 +86,11 @@ struct MoodInsightView: View {
     }
 
     private var heroGradientColors: [Color] {
+        if viewModel.isMoodSpread && viewModel.topTwoMoods.count >= 2 {
+            let m1 = viewModel.topTwoMoods[0].color
+            let m2 = viewModel.topTwoMoods[1].color
+            return [m1.opacity(0.85), m2.opacity(0.7)]
+        }
         let mood = viewModel.mostFrequentMood
         return [
             mood.color.opacity(0.85),
@@ -89,7 +109,15 @@ struct MoodInsightView: View {
         guard viewModel.totalRecords > 0 else {
             return L.localized("insight.empty_title")
         }
-        return String(format: L.localized("insight.hero_title"), viewModel.mostFrequentMood.displayName)
+        if viewModel.isMoodSpread {
+            if viewModel.topTwoMoods.count >= 2 {
+                return String(format: L.localized("insight.hero_spread_two"), viewModel.topTwoMoods[0].displayName, viewModel.topTwoMoods[1].displayName)
+            } else {
+                return L.localized("insight.hero_spread")
+            }
+        } else {
+            return String(format: L.localized("insight.hero_title"), viewModel.mostFrequentMood.displayName)
+        }
     }
 
     // MARK: - 时间段选择

@@ -16,6 +16,9 @@ class InsightViewModel: ObservableObject {
     @Published var totalRecords: Int = 0
     @Published var averageIntensity: Double = 0
     @Published var mostFrequentMood: MoodType = .happy
+    @Published var dominantMoodPercentage: Double = 0
+    @Published var isMoodSpread: Bool = false
+    @Published var topTwoMoods: [MoodType] = []
     @Published var availableYears: [Int] = []
 
     private let dataManager: any MoodDataManaging
@@ -190,12 +193,26 @@ class InsightViewModel: ObservableObject {
         // 情绪分布
         moodDistribution = dataManager.fetchMoodDistribution(from: range.start, to: range.end)
 
-        // 最频繁情绪
-        if let maxMood = moodDistribution.max(by: { $0.value < $1.value }) {
-            mostFrequentMood = maxMood.key
+        // 最频繁情绪 + 分布分析
+        let totalCount = moodDistribution.values.reduce(0, +)
+        if totalCount > 0 {
+            let sortedMoods = moodDistribution.sorted { $0.value > $1.value }
+            mostFrequentMood = sortedMoods[0].key
+            dominantMoodPercentage = Double(sortedMoods[0].value) / Double(totalCount) * 100
+            // 取前两个情绪用于对比
+            topTwoMoods = Array(sortedMoods.prefix(2).map { $0.key })
+            // 如果占比低于 40%，或前两名占比差值小于 10%，认为情绪分布较分散
+            if sortedMoods.count >= 2 {
+                let gap = Double(sortedMoods[0].value - sortedMoods[1].value) / Double(totalCount) * 100
+                isMoodSpread = dominantMoodPercentage < 40 || gap < 10
+            } else {
+                isMoodSpread = false
+            }
         } else {
-            // 无数据时重置为默认值，配合 UI 显示 "--"
             mostFrequentMood = .happy
+            dominantMoodPercentage = 0
+            isMoodSpread = false
+            topTwoMoods = []
         }
 
         // 标签频次
