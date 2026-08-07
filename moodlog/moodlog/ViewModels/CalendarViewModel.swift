@@ -8,6 +8,7 @@
 import Foundation
 
 /// 日历视图ViewModel（按需加载优化版）
+@MainActor
 class CalendarViewModel: ObservableObject {
     @Published var currentMonth: Date = Date()
     @Published var selectedDate: Date? = nil
@@ -22,6 +23,12 @@ class CalendarViewModel: ObservableObject {
     /// 记录列表数据（按天分组）
     @Published var groupedRecords: [(date: Date, records: [MoodRecord])] = []
 
+    /// 是否还有更多记录可加载
+    @Published var hasMoreRecords: Bool = false
+
+    /// 是否正在加载更多记录
+    @Published var isLoadingMore: Bool = false
+
     private let dataManager: any MoodDataManaging
     private let calendar = Calendar.current
 
@@ -30,14 +37,18 @@ class CalendarViewModel: ObservableObject {
     /// 防抖定时器
     private var loadDebounceTimer: Timer?
 
+    /// 分页加载相关
+    private let pageSize: Int = 50
+    private var currentOffset: Int = 0
+
     init(dataManager: any MoodDataManaging = MoodDataManager.shared) {
         self.dataManager = dataManager
         loadMonthlyData()
-        loadGroupedRecords()
+        loadGroupedRecordsInitial()
         // 监听数据变更通知（防抖）
         cancellable = NotificationCenter.default.addObserver(forName: .moodDataDidChange, object: nil, queue: .main) { [weak self] _ in
             self?.debouncedLoadMonthlyData()
-            self?.loadGroupedRecords()
+            self?.loadGroupedRecordsInitial()
         }
     }
 
@@ -231,21 +242,81 @@ class CalendarViewModel: ObservableObject {
         dataManager.fetchStreakDays()
     }
 
-    /// 删除记录
-    func deleteRecord(_ record: MoodRecord) throws {
-        try dataManager.deleteRecord(record)
+    /// 删除记录（异步，不阻塞主线程）
+    func deleteRecord(_ record: MoodRecord) {
+        Task {
+            do {
+                try await dataManager.deleteRecordAsync(record)
+                // 删除后重新加载当前页数据
+                loadGroupedRecordsInitial()
+                loadMonthlyData()
+            } catch {
+                // 删除失败静默处理，UI 已有错误提示
+            }
+        }
     }
 
-    // MARK: - 记录列表（按天分组）
+    // MARK: - 记录列表（按天分组，分页加载）
 
-    /// 加载所有记录并按天分组（倒序）
+    /// 初始加载记录列表（第一页）
+    func loadGroupedRecordsInitial() {
+        currentOffset = 0
+        let records = dataManager.fetchRecords(limit: pageSize, offset: 0)
+        currentOffset = records.count
+        // 如果返回的记录数等于页大小，说明可能还有更多
+        hasMoreRecords = records.count == pageSize
+        groupedRecords = groupRecordsByDate(records)
+    }
+
+    /// 加载更多记录（下一页）
+    func loadMoreRecords() {
+        guard hasMoreRecords, !isLoadingMore else { return }
+        isLoadingMore = true
+
+        let records = dataManager.fetchRecords(limit: pageSize, offset: currentOffset)
+        currentOffset += records.count
+        // 返回记录数不足页大小，说明已到末尾
+        hasMoreRecords = records.count == pageSize
+
+        let newGroups = groupRecordsByDate(records)
+        groupedRecords = mergeRecordGroups(existing: groupedRecords, new: newGroups)
+
+        isLoadingMore = false
+    }
+
+    /// 兼容旧接口：全量加载（仅在数据变更时使用）
     func loadGroupedRecords() {
-        let allRecords = dataManager.fetchAllRecords()
-        let grouped = Dictionary(grouping: allRecords) { record in
+        loadGroupedRecordsInitial()
+    }
+
+    /// 将记录按日期分组
+    private func groupRecordsByDate(_ records: [MoodRecord]) -> [(date: Date, records: [MoodRecord])] {
+        let grouped = Dictionary(grouping: records) { record in
             calendar.startOfDay(for: record.createdAt ?? Date())
         }
-        // 按日期倒序排列
-        groupedRecords = grouped
+        return grouped
+            .map { (date: $0.key, records: $0.value.sorted { ($0.createdAt ?? Date()) > ($1.createdAt ?? Date()) }) }
+            .sorted { $0.date > $1.date }
+    }
+
+    /// 合并两组按日期分组的记录
+    private func mergeRecordGroups(
+        existing: [(date: Date, records: [MoodRecord])],
+        new: [(date: Date, records: [MoodRecord])]
+    ) -> [(date: Date, records: [MoodRecord])] {
+        var merged: [Date: [MoodRecord]] = [:]
+        for group in existing {
+            merged[group.date] = group.records
+        }
+        for group in new {
+            if var existing = merged[group.date] {
+                existing.append(contentsOf: group.records)
+                merged[group.date] = existing
+            } else {
+                merged[group.date] = group.records
+            }
+        }
+        return merged
             .map { (date: $0.key, records: $0.value.sorted { ($0.createdAt ?? Date()) > ($1.createdAt ?? Date()) }) }
             .sorted { $0.date > $1.date }
     }

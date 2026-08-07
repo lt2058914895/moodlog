@@ -50,6 +50,36 @@ class MoodRecordRepository: MoodRecordManaging {
         self.backgroundContext = backgroundContext
     }
 
+    // MARK: - 异步后台上下文执行辅助方法
+
+    /// 在后台上下文异步执行操作（不阻塞主线程）
+    private func performAsync<T>(_ block: @escaping (NSManagedObjectContext) throws -> T) async throws -> T {
+        try await withCheckedThrowingContinuation { continuation in
+            backgroundContext.perform {
+                do {
+                    let result = try block(self.backgroundContext)
+                    continuation.resume(returning: result)
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+
+    /// 在主上下文异步执行操作
+    private func performOnViewContextAsync<T>(_ block: @escaping (NSManagedObjectContext) throws -> T) async throws -> T {
+        try await withCheckedThrowingContinuation { continuation in
+            viewContext.perform {
+                do {
+                    let result = try block(self.viewContext)
+                    continuation.resume(returning: result)
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+
     // MARK: - Create（后台写入）
 
     func createMoodRecord(
@@ -229,6 +259,141 @@ class MoodRecordRepository: MoodRecordManaging {
 
         if let updateError = updateError {
             throw updateError
+        }
+    }
+
+    // MARK: - 异步 CRUD（使用 async/await，不阻塞主线程）
+
+    /// 异步创建情绪记录
+    func createMoodRecordAsync(
+        moodType: MoodType,
+        intensity: Int,
+        tagNames: [String] = [],
+        note: String? = nil
+    ) async throws -> MoodRecord {
+        Self.logger.info("Creating mood record (async): \(moodType.rawValue), intensity: \(intensity)")
+
+        let objectID: NSManagedObjectID = try await performAsync { ctx in
+            let record = MoodRecord(context: ctx)
+            record.id = UUID()
+            record.moodType = moodType.rawValue
+            record.intensity = Int16(intensity)
+            record.note = note
+            record.tagNames = tagNames.joined(separator: ",")
+            record.createdAt = Date()
+            record.updatedAt = Date()
+            record.isSynced = false
+
+            let tags = self.fetchTagsByNames(tagNames, in: ctx)
+            for tag in tags {
+                tag.lastUsedAt = Date()
+                tag.usageCount += 1
+            }
+            record.tags = NSSet(array: tags)
+
+            do {
+                try ctx.save()
+                Self.logger.info("Mood record created successfully (async)")
+                return record.objectID
+            } catch {
+                ctx.rollback()
+                Self.logger.error("Failed to create mood record: \(error.localizedDescription)")
+                throw MoodDataError.createFailed(error.localizedDescription)
+            }
+        }
+
+        // 在主上下文中获取刚创建的记录
+        return try await performOnViewContextAsync { ctx in
+            guard let record = try? ctx.existingObject(with: objectID) as? MoodRecord else {
+                throw MoodDataError.createFailed("Failed to fetch created record")
+            }
+            return record
+        }
+    }
+
+    /// 异步删除单条记录
+    func deleteRecordAsync(_ record: MoodRecord) async throws {
+        Self.logger.info("Deleting mood record (async)")
+        let objectID = record.objectID
+
+        try await performAsync { ctx in
+            do {
+                let bgRecord = ctx.object(with: objectID)
+                ctx.delete(bgRecord)
+                try ctx.save()
+            } catch {
+                Self.logger.error("Failed to delete mood record: \(error.localizedDescription)")
+                throw MoodDataError.deleteFailed(error.localizedDescription)
+            }
+        }
+    }
+
+    /// 异步批量删除记录
+    func deleteRecordsAsync(_ records: [MoodRecord]) async throws {
+        Self.logger.info("Batch deleting \(records.count) records (async)")
+        let objectIDs = records.map { $0.objectID }
+
+        try await performAsync { ctx in
+            do {
+                for objectID in objectIDs {
+                    let bgRecord = ctx.object(with: objectID)
+                    ctx.delete(bgRecord)
+                }
+                try ctx.save()
+            } catch {
+                Self.logger.error("Batch delete failed: \(error.localizedDescription)")
+                throw MoodDataError.deleteFailed(error.localizedDescription)
+            }
+        }
+    }
+
+    /// 异步更新记录
+    func updateMoodRecordAsync(
+        _ record: MoodRecord,
+        moodType: MoodType,
+        intensity: Int,
+        tagNames: [String],
+        note: String?
+    ) async throws {
+        Self.logger.info("Updating mood record (async)")
+        let objectID = record.objectID
+
+        try await performAsync { ctx in
+            do {
+                let bgRecord = ctx.object(with: objectID) as? MoodRecord
+                bgRecord?.moodType = moodType.rawValue
+                bgRecord?.intensity = Int16(intensity)
+                bgRecord?.tagNames = tagNames.joined(separator: ",")
+                bgRecord?.note = note
+                bgRecord?.updatedAt = Date()
+
+                let tags = self.fetchTagsByNames(tagNames, in: ctx)
+                for tag in tags {
+                    tag.lastUsedAt = Date()
+                    tag.usageCount += 1
+                }
+                bgRecord?.tags = NSSet(array: tags)
+
+                try ctx.save()
+            } catch {
+                Self.logger.error("Failed to update mood record: \(error.localizedDescription)")
+                throw MoodDataError.updateFailed(error.localizedDescription)
+            }
+        }
+    }
+
+    /// 异步分页查询记录（按创建时间倒序）
+    func fetchRecords(limit: Int, offset: Int) -> [MoodRecord] {
+        let request: NSFetchRequest<MoodRecord> = MoodRecord.fetchRequest()
+        request.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: false)]
+        request.fetchLimit = limit
+        request.fetchOffset = offset
+        request.fetchBatchSize = 20
+        do {
+            return try viewContext.fetch(request)
+        } catch {
+            Self.logger.error("Fetch records (limit: \(limit), offset: \(offset)) failed: \(error.localizedDescription)")
+            return []
         }
     }
 

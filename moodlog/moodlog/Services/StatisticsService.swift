@@ -117,25 +117,35 @@ class StatisticsService: StatisticsProviding {
             return cached
         }
 
-        let request: NSFetchRequest<MoodRecord> = MoodRecord.fetchRequest()
+        // 使用轻量字典查询：仅加载 tagNames 字符串字段进行内存聚合
+        // 比加载完整 MoodRecord 对象节省大量内存和时间
+        let result = fetchTopTagsLightweight(from: startDate, to: endDate, limit: limit)
+        cache.cacheSet(key, data: result)
+        return result
+    }
+
+    /// 轻量查询：仅加载 tagNames 字符串进行聚合
+    private func fetchTopTagsLightweight(from startDate: Date, to endDate: Date, limit: Int) -> [(name: String, count: Int)] {
+        let request: NSFetchRequest<NSDictionary> = NSFetchRequest(entityName: "MoodRecord")
         request.predicate = NSPredicate(
             format: "createdAt >= %@ AND createdAt < %@",
             startDate as CVarArg,
             endDate as CVarArg
         )
+        request.resultType = .dictionaryResultType
+
+        let tagNamesDesc = NSExpressionDescription()
+        tagNamesDesc.name = "tagNamesValue"
+        tagNamesDesc.expression = NSExpression(forKeyPath: "tagNames")
+        tagNamesDesc.expressionResultType = .stringAttributeType
+
+        request.propertiesToFetch = [tagNamesDesc]
+
         var tagCount: [String: Int] = [:]
         do {
-            let records = try viewContext.fetch(request)
-            for record in records {
-                // 优先从关系中获取标签
-                if let tags = record.tags as? Set<ActivityTag>, !tags.isEmpty {
-                    for tag in tags {
-                        if let name = tag.name {
-                            tagCount[name, default: 0] += 1
-                        }
-                    }
-                } else if let tagNamesStr = record.tagNames {
-                    // 降级：从 tagNames 字符串解析
+            let results = try viewContext.fetch(request) as? [[String: Any]] ?? []
+            for dict in results {
+                if let tagNamesStr = dict["tagNamesValue"] as? String {
                     let names = tagNamesStr.components(separatedBy: ",").filter { !$0.isEmpty }
                     for name in names {
                         tagCount[name, default: 0] += 1
@@ -143,12 +153,10 @@ class StatisticsService: StatisticsProviding {
                 }
             }
         } catch {
-            Self.logger.error("Fetch top tags failed: \(error.localizedDescription)")
+            Self.logger.error("Lightweight top tags query failed: \(error.localizedDescription)")
         }
 
-        let result = tagCount.sorted { $0.value > $1.value }.prefix(limit).map { (name: $0.key, count: $0.value) }
-        cache.cacheSet(key, data: result)
-        return result
+        return tagCount.sorted { $0.value > $1.value }.prefix(limit).map { (name: $0.key, count: $0.value) }
     }
 
     // MARK: - 可用年份
@@ -167,7 +175,6 @@ class StatisticsService: StatisticsProviding {
         dateDesc.expressionResultType = .dateAttributeType
 
         request.propertiesToFetch = [dateDesc]
-        request.fetchBatchSize = 100
 
         let calendar = Calendar.current
         let currentYear = calendar.component(.year, from: Date())
@@ -196,7 +203,8 @@ class StatisticsService: StatisticsProviding {
         }
 
         let result = years.sorted(by: >)
-        cache.cacheSet(CacheKey.availableYears, data: result)
+        // 可用年份极少变化，使用1小时长缓存
+        cache.cacheSet(CacheKey.availableYears, data: result, expiry: 3600)
         return result
     }
 
@@ -215,7 +223,6 @@ class StatisticsService: StatisticsProviding {
         dateDesc.expressionResultType = .dateAttributeType
         request.propertiesToFetch = [dateDesc]
         request.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: false)]
-        request.fetchBatchSize = 100
 
         let calendar = Calendar.current
         var streak = 0
@@ -279,7 +286,6 @@ class StatisticsService: StatisticsProviding {
         dateDesc.expressionResultType = .dateAttributeType
 
         request.propertiesToFetch = [dateDesc]
-        request.fetchBatchSize = 100
 
         var result: [Date: Int] = [:]
         do {
@@ -330,7 +336,6 @@ class StatisticsService: StatisticsProviding {
 
         request.propertiesToFetch = [dateDesc, moodDesc, intensityDesc]
         request.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: false)]
-        request.fetchBatchSize = 100
 
         var result: [Date: MoodType] = [:]
         do {
@@ -379,7 +384,6 @@ class StatisticsService: StatisticsProviding {
         intensityDesc.expressionResultType = .integer16AttributeType
 
         request.propertiesToFetch = [dateDesc, intensityDesc]
-        request.fetchBatchSize = 100
 
         var dailyData: [Date: [Int]] = [:]
         do {

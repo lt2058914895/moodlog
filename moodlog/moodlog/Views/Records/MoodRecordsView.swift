@@ -121,22 +121,46 @@ struct MoodRecordsView: View {
                 List {
                     ForEach(viewModel.groupedRecords, id: \.date) { group in
                         Section {
-                            ForEach(group.records, id: \.id) { record in
+                            ForEach(Array(group.records.enumerated()), id: \.element.id) { index, record in
                                 MoodRecordListRow(record: record, onEdit: {
                                     recordToEdit = record
                                 }, onDelete: {
                                     recordToDelete = record
                                     showDeleteConfirmation = true
                                 })
+                                .onAppear {
+                                    // 滚动到最后3条记录时触发加载更多
+                                    if index >= group.records.count - 3 {
+                                        triggerLoadMoreIfNeeded()
+                                    }
+                                }
                             }
                         } header: {
                             recordsSectionHeader(group.date, count: group.records.count)
+                        }
+                    }
+
+                    // 底部加载更多指示器
+                    if viewModel.isLoadingMore {
+                        Section {
+                            HStack {
+                                Spacer()
+                                ProgressView()
+                                    .padding(.vertical, 8)
+                                Spacer()
+                            }
                         }
                     }
                 }
                 .listStyle(.insetGrouped)
             }
         }
+    }
+
+    /// 触发分页加载（防重复）
+    private func triggerLoadMoreIfNeeded() {
+        guard viewModel.hasMoreRecords, !viewModel.isLoadingMore else { return }
+        viewModel.loadMoreRecords()
     }
 
     // MARK: - 日历模式
@@ -431,16 +455,7 @@ struct MoodRecordsView: View {
     }
 
     private func deleteRecord(_ record: MoodRecord) {
-        do {
-            try viewModel.deleteRecord(record)
-            if viewMode == .list {
-                viewModel.loadGroupedRecords()
-            } else {
-                viewModel.loadMonthlyData()
-            }
-        } catch {
-            errorMessage = error.localizedDescription
-        }
+        viewModel.deleteRecord(record)
     }
 }
 

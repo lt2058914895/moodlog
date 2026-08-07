@@ -3,7 +3,6 @@
     <entity name="MoodRecord" representedClassName="MoodRecord" syncable="YES" codeGenerationType="class">
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="moodType" optional="YES" attributeType="String" defaultValueString="happy" usesScalarValueType="NO"/>
-        <attribute name="moodSubType" optional="YES" attributeType="String" usesScalarValueType="NO"/>
         <attribute name="intensity" attributeType="Integer 16" defaultValueString="5" usesScalarValueType="YES"/>
         <attribute name="note" optional="YES" attributeType="String" usesScalarValueType="NO"/>
         <attribute name="tagNames" optional="YES" attributeType="String" usesScalarValueType="NO"/>

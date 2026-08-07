@@ -21,7 +21,7 @@
 "checkin.intensity" = "Intensity";
 "checkin.intensity.light" = "Light";
 "checkin.intensity.strong" = "Strong";
-"checkin.activity_tags" = "Activity Tags (optional)";
+"checkin.activity_tags" = "Activity Tags";
 "checkin.category_title" = "Category";
 "checkin.more" = "More";
 "checkin.collapse" = "Collapse";
@@ -30,11 +30,6 @@
 "checkin.note_title" = "Note (optional)";
 "checkin.submit" = "Record Mood";
 "checkin.success" = "Saved your moment";
-"checkin.encourage.1" = "Every day is worth recording";
-"checkin.encourage.2" = "Your feelings matter";
-"checkin.encourage.3" = "Keep going, you're doing great";
-"checkin.encourage.4" = "Every record is self-care";
-"checkin.encourage.5" = "Take it easy, everything will be fine";
 "checkin.select_mood_first" = "Pick today's mood first";
 "checkin.alert_title" = "Notice";
 "checkin.alert_ok" = "OK";
@@ -126,22 +121,11 @@
 "custom_tag.name_required" = "Please enter a tag name";
 "custom_tag.name_too_long" = "Tag name cannot exceed 10 characters";
 "custom_tag.name_exists" = "This tag already exists";
-"custom_tag.name_exists_in_category" = "tag already exists in";
-"custom_tag.unknown_category" = "Unknown Category";
-"custom_tag.got_it" = "Got it";
 "custom_tag.created" = "Tag created";
 "custom_tag.delete_confirm" = "Delete custom tag %@?";
-"custom_tag.delete_confirm_prefix" = "Delete custom";
-"custom_tag.delete_confirm_suffix" = "tag?";
-"custom_tag.create_title" = "Create Tag";
 "custom_tag.delete" = "Delete Tag";
 "custom_tag.my_tags" = "My Custom Tags";
 "custom_tag.preview" = "Preview";
-"custom_tag.confirm_create" = "Confirm Creation";
-"custom_tag.confirm_create_message_prefix" = "Create";
-"custom_tag.confirm_create_message_suffix" = "tag?";
-"custom_tag.cancel" = "Cancel";
-"custom_tag.confirm" = "Confirm";
 
 // MARK: - App Name
 "app.name" = "MoodLog";

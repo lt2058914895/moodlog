@@ -72,12 +72,7 @@ struct MoodCalendarView: View {
     }
 
     private func deleteRecord(_ record: MoodRecord) {
-        do {
-            try viewModel.deleteRecord(record)
-            viewModel.loadMonthlyData()
-        } catch {
-            errorMessage = error.localizedDescription
-        }
+        viewModel.deleteRecord(record)
     }
 
     // MARK: - 月份导航

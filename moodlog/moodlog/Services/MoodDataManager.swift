@@ -48,9 +48,16 @@ protocol MoodDataManaging: ObservableObject {
     func fetchAllRecords() -> [MoodRecord]
     func fetchRecords(from startDate: Date, to endDate: Date) -> [MoodRecord]
     func fetchRecords(for date: Date) -> [MoodRecord]
+    func fetchRecords(limit: Int, offset: Int) -> [MoodRecord]
     func deleteRecord(_ record: MoodRecord) throws
     func deleteRecords(_ records: [MoodRecord]) throws
     func updateMoodRecord(_ record: MoodRecord, moodType: MoodType, intensity: Int, tagNames: [String], note: String?) throws
+
+    // MoodRecord Async CRUD（异步，不阻塞主线程）
+    func createMoodRecordAsync(moodType: MoodType, intensity: Int, tagNames: [String], note: String?) async throws -> MoodRecord
+    func deleteRecordAsync(_ record: MoodRecord) async throws
+    func deleteRecordsAsync(_ records: [MoodRecord]) async throws
+    func updateMoodRecordAsync(_ record: MoodRecord, moodType: MoodType, intensity: Int, tagNames: [String], note: String?) async throws
 
     // Tag
     func getOrCreateTag(name: String, category: TagCategory, emoji: String, isCustom: Bool) -> ActivityTag
@@ -187,6 +194,75 @@ class MoodDataManager: MoodDataManaging {
             lastError = moodError
             throw moodError
         }
+    }
+
+    // MARK: - MoodRecord Async CRUD（异步委托）
+
+    func createMoodRecordAsync(moodType: MoodType, intensity: Int, tagNames: [String], note: String?) async throws -> MoodRecord {
+        do {
+            let record = try await recordRepository.createMoodRecordAsync(
+                moodType: moodType, intensity: intensity, tagNames: tagNames, note: note
+            )
+            cacheManager.clearCache()
+            notifyDataChange()
+            return record
+        } catch let error as MoodDataError {
+            lastError = error
+            throw error
+        } catch {
+            let moodError = MoodDataError.createFailed(error.localizedDescription)
+            lastError = moodError
+            throw moodError
+        }
+    }
+
+    func deleteRecordAsync(_ record: MoodRecord) async throws {
+        do {
+            try await recordRepository.deleteRecordAsync(record)
+            cacheManager.clearCache()
+            notifyDataChange()
+        } catch let error as MoodDataError {
+            lastError = error
+            throw error
+        } catch {
+            let moodError = MoodDataError.deleteFailed(error.localizedDescription)
+            lastError = moodError
+            throw moodError
+        }
+    }
+
+    func deleteRecordsAsync(_ records: [MoodRecord]) async throws {
+        do {
+            try await recordRepository.deleteRecordsAsync(records)
+            cacheManager.clearCache()
+            notifyDataChange()
+        } catch let error as MoodDataError {
+            lastError = error
+            throw error
+        } catch {
+            let moodError = MoodDataError.deleteFailed(error.localizedDescription)
+            lastError = moodError
+            throw moodError
+        }
+    }
+
+    func updateMoodRecordAsync(_ record: MoodRecord, moodType: MoodType, intensity: Int, tagNames: [String], note: String?) async throws {
+        do {
+            try await recordRepository.updateMoodRecordAsync(record, moodType: moodType, intensity: intensity, tagNames: tagNames, note: note)
+            cacheManager.clearCache()
+            notifyDataChange()
+        } catch let error as MoodDataError {
+            lastError = error
+            throw error
+        } catch {
+            let moodError = MoodDataError.updateFailed(error.localizedDescription)
+            lastError = moodError
+            throw moodError
+        }
+    }
+
+    func fetchRecords(limit: Int, offset: Int) -> [MoodRecord] {
+        recordRepository.fetchRecords(limit: limit, offset: offset)
     }
 
     // MARK: - Tag（委托）

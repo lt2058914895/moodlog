@@ -28,6 +28,7 @@ enum CacheKey {
 /// 缓存管理协议
 protocol CacheManaging {
     func cacheSet(_ key: String, data: Any)
+    func cacheSet(_ key: String, data: Any, expiry: TimeInterval)
     func cacheGet<T>(_ key: String, type: T.Type) -> T?
     func clearCache()
 }
@@ -35,6 +36,10 @@ protocol CacheManaging {
 /// 缓存管理器
 class CacheManager: CacheManaging {
     private let cache = NSCache<NSString, CacheWrapper>()
+
+    /// 默认缓存过期时间（5分钟）
+    /// 数据变更时缓存会被主动清除，此处仅控制无变更场景下的过期
+    static let defaultExpiry: TimeInterval = 300
 
     init(countLimit: Int = 50) {
         cache.countLimit = countLimit
@@ -45,9 +50,9 @@ class CacheManager: CacheManaging {
         let data: Any
         let expiry: Date
 
-        init(data: Any) {
+        init(data: Any, expiry: TimeInterval) {
             self.data = data
-            self.expiry = Date().addingTimeInterval(30)
+            self.expiry = Date().addingTimeInterval(expiry)
         }
 
         var isExpired: Bool {
@@ -56,7 +61,11 @@ class CacheManager: CacheManaging {
     }
 
     func cacheSet(_ key: String, data: Any) {
-        cache.setObject(CacheWrapper(data: data), forKey: key as NSString)
+        cacheSet(key, data: data, expiry: CacheManager.defaultExpiry)
+    }
+
+    func cacheSet(_ key: String, data: Any, expiry: TimeInterval) {
+        cache.setObject(CacheWrapper(data: data, expiry: expiry), forKey: key as NSString)
     }
 
     func cacheGet<T>(_ key: String, type: T.Type) -> T? {

@@ -21,7 +21,7 @@
 "checkin.intensity" = "情绪强度";
 "checkin.intensity.light" = "轻微";
 "checkin.intensity.strong" = "强烈";
-"checkin.activity_tags" = "活动标签(可选)";
+"checkin.activity_tags" = "活动标签";
 "checkin.category_title" = "选择分类";
 "checkin.more" = "更多";
 "checkin.collapse" = "收起";
@@ -30,11 +30,6 @@
 "checkin.note_title" = "添加备注(可选)";
 "checkin.submit" = "记录情绪";
 "checkin.success" = "已记下此刻的心情";
-"checkin.encourage.1" = "每一天都值得被记录";
-"checkin.encourage.2" = "你的感受很重要";
-"checkin.encourage.3" = "坚持记录，遇见更好的自己";
-"checkin.encourage.4" = "每一次记录都是对自己的关爱";
-"checkin.encourage.5" = "慢慢来，一切都会好的";
 "checkin.select_mood_first" = "先选一个今天的心情吧";
 "checkin.alert_title" = "提示";
 "checkin.alert_ok" = "确定";
@@ -126,22 +121,11 @@
 "custom_tag.name_required" = "请输入标签名称";
 "custom_tag.name_too_long" = "标签名称不能超过10个字";
 "custom_tag.name_exists" = "该标签已存在";
-"custom_tag.name_exists_in_category" = "标签已存在于";
-"custom_tag.unknown_category" = "未知分类";
-"custom_tag.got_it" = "知道了";
 "custom_tag.created" = "标签创建成功";
 "custom_tag.delete_confirm" = "确定删除自定义标签 %@ 吗？";
-"custom_tag.delete_confirm_prefix" = "确定删除自定义";
-"custom_tag.delete_confirm_suffix" = "标签吗？";
-"custom_tag.create_title" = "创建标签";
 "custom_tag.delete" = "删除标签";
 "custom_tag.my_tags" = "我的自定义标签";
 "custom_tag.preview" = "预览";
-"custom_tag.confirm_create" = "确认创建";
-"custom_tag.confirm_create_message_prefix" = "确定创建";
-"custom_tag.confirm_create_message_suffix" = "标签吗？";
-"custom_tag.cancel" = "取消";
-"custom_tag.confirm" = "确定";
 
 // MARK: - App Name
 "app.name" = "心迹";

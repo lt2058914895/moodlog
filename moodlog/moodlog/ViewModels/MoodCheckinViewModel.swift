@@ -10,6 +10,7 @@ import CoreData
 import Foundation
 
 /// 情绪记录ViewModel
+@MainActor
 class MoodCheckinViewModel: ObservableObject {
     @Published var selectedMoodType: MoodType?
     @Published var intensity: Int = 5
@@ -18,6 +19,7 @@ class MoodCheckinViewModel: ObservableObject {
     @Published var showAllTags: Bool = false
     @Published var showSuccessAnimation: Bool = false
     @Published var errorMessage: String?
+    @Published var isSubmitting: Bool = false
 
     private let dataManager: any MoodDataManaging
 
@@ -50,44 +52,61 @@ class MoodCheckinViewModel: ObservableObject {
 
     // MARK: - 记录操作
 
-    /// 提交情绪记录
+    /// 提交情绪记录（异步，不阻塞主线程）
     func submitRecord() {
         guard let moodType = selectedMoodType else {
             errorMessage = L.localized("checkin.select_mood_first")
             return
         }
 
-        do {
-            let noteText = note.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : note
-            _ = try dataManager.createMoodRecord(
-                moodType: moodType,
-                intensity: intensity,
-                tagNames: selectedTagNames,
-                note: noteText
-            )
+        guard !isSubmitting else { return }
+        isSubmitting = true
 
-            // 成功动画
-            showSuccessAnimation = true
+        let noteText = note.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : note
+        let tags = selectedTagNames
+        let currentIntensity = intensity
 
-            // 重置表单
-            resetForm()
-        } catch {
-            errorMessage = String(format: L.localized("checkin.save_failed"), error.localizedDescription)
+        Task {
+            do {
+                _ = try await dataManager.createMoodRecordAsync(
+                    moodType: moodType,
+                    intensity: currentIntensity,
+                    tagNames: tags,
+                    note: noteText
+                )
+                // 成功动画 + 重置表单
+                showSuccessAnimation = true
+                resetForm()
+                isSubmitting = false
+            } catch {
+                errorMessage = String(format: L.localized("checkin.save_failed"), error.localizedDescription)
+                isSubmitting = false
+            }
         }
     }
 
-    /// 快速记录（使用上次标签+强度）
+    /// 快速记录（使用上次标签+强度，异步）
     func quickCheckin(moodType: MoodType) {
-        do {
-            _ = try dataManager.createMoodRecord(
-                moodType: moodType,
-                intensity: intensity,
-                tagNames: selectedTagNames,
-                note: nil
-            )
-            showSuccessAnimation = true
-        } catch {
-            errorMessage = String(format: L.localized("checkin.quick_failed"), error.localizedDescription)
+        guard !isSubmitting else { return }
+        isSubmitting = true
+
+        let tags = selectedTagNames
+        let currentIntensity = intensity
+
+        Task {
+            do {
+                _ = try await dataManager.createMoodRecordAsync(
+                    moodType: moodType,
+                    intensity: currentIntensity,
+                    tagNames: tags,
+                    note: nil
+                )
+                showSuccessAnimation = true
+                isSubmitting = false
+            } catch {
+                errorMessage = String(format: L.localized("checkin.quick_failed"), error.localizedDescription)
+                isSubmitting = false
+            }
         }
     }
 

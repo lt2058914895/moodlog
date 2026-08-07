@@ -19,6 +19,7 @@ struct EditMoodRecordView: View {
     @State private var showAllTags: Bool = false
     @State private var showSuccessAnimation: Bool = false
     @State private var errorMessage: String?
+    @State private var isUpdating: Bool = false
     @FocusState private var isNoteFocused: Bool
 
     @StateObject private var dataManager = MoodDataManager.shared
@@ -187,135 +188,16 @@ struct EditMoodRecordView: View {
 
     private var editTagSelector: some View {
         VStack(spacing: 12) {
-            HStack {
-                Text(L.localized("checkin.activity_tags"))
-                    .font(.subheadline.bold())
-                Spacer()
-                Button(action: { showAllTags.toggle() }) {
-                    Text(showAllTags ? L.localized("checkin.collapse") : L.localized("checkin.more"))
-                        .font(.caption)
-                        .foregroundColor(Color(hex: "6C5CE7"))
-                }
-            }
+            editTagHeader
 
             if showAllTags {
-                // 分类Tab切换
-                VStack(spacing: 0) {
-                    // 一级分类
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(L.localized("checkin.category_title"))
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-
-                        FlowLayout(data: Array(TagCategory.allCases), spacing: 8) { category in
-                            CategoryPill(
-                                emoji: category.emoji,
-                                name: category.displayName,
-                                isSelected: editSelectedCategory == category,
-                                onTap: { editSelectedCategory = category }
-                            )
-                        }
-                    }
-                    .padding(.bottom, 12)
-
-                    // 分隔线
-                    Rectangle()
-                        .fill(Color(UIColor.separator).opacity(0.5))
-                        .frame(height: 0.5)
-                        .padding(.horizontal, -4)
-
-                    // 二级标签
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack(spacing: 4) {
-                            Text(editSelectedCategory.emoji)
-                                .font(.caption2)
-                            Text(editSelectedCategory.displayName)
-                                .font(.caption2)
-                                .foregroundColor(Color(hex: "6C5CE7"))
-                        }
-
-                        FlowLayout(data: editSelectedCategory.presetTags, spacing: 8) { preset in
-                            TagChip(
-                                emoji: preset.emoji,
-                                name: preset.name,
-                                isSelected: selectedTagNames.contains(preset.name),
-                                color: Color(hex: "6C5CE7"),
-                                onTap: { toggleTag(preset.name) }
-                            )
-                        }
-
-                        // 该分类下的自定义标签
-                        let categoryCustomTags = customTags.filter { $0.category == editSelectedCategory.rawValue }
-                        if !categoryCustomTags.isEmpty {
-                            FlowLayout(data: categoryCustomTags, spacing: 8) { tag in
-                                TagChip(
-                                    emoji: tag.emoji ?? "📋",
-                                    name: tag.name ?? "",
-                                    isSelected: selectedTagNames.contains(tag.name ?? ""),
-                                    color: Color(hex: "6C5CE7"),
-                                    onTap: { toggleTag(tag.name ?? "") },
-                                    isCustom: true,
-                                    onDelete: {
-                                        tagToDelete = tag
-                                        showDeleteConfirm = true
-                                    }
-                                )
-                            }
-                        }
-                    }
-                    .padding(.top, 12)
-
-                    // 自定义标签按钮 - push 进入创建页
-                    NavigationLink(isActive: $showCustomTagCreation) {
-                        CustomTagCreationView(dataManager: dataManager) { tagName in
-                            frequentTags = dataManager.fetchFrequentTags()
-                            customTags = dataManager.fetchCustomTags()
-                            toggleTag(tagName)
-                        }
-                    } label: {
-                        HStack(spacing: 4) {
-                            Image(systemName: "plus.circle")
-                                .font(.caption)
-                            Text(L.localized("custom_tag.add"))
-                                .font(.caption)
-                        }
-                        .foregroundColor(Color(hex: "6C5CE7"))
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
-                        .background(
-                            Capsule()
-                                .stroke(Color(hex: "6C5CE7").opacity(0.4), lineWidth: 1)
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    .padding(.top, 8)
-                }
-                .animation(.easeInOut(duration: 0.2), value: editSelectedCategory)
+                expandedTagsContent
             } else {
-                FlowLayout(data: frequentTags, spacing: 8) { tag in
-                    TagChip(
-                        emoji: tag.emoji ?? "📋",
-                        name: tag.name ?? "",
-                        isSelected: selectedTagNames.contains(tag.name ?? ""),
-                        color: Color(hex: "6C5CE7"),
-                        onTap: { toggleTag(tag.name ?? "") }
-                    )
-                }
+                frequentTagsContent
             }
 
             if !selectedTagNames.isEmpty {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(L.localizedInt("checkin.selected_count", value: selectedTagNames.count))
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
-
-                    FlowLayout(data: selectedTagNames, spacing: 6) { name in
-                        SelectedTagChip(emoji: editTagEmojiMap[name] ?? "📋", name: name) {
-                            toggleTag(name)
-                        }
-                    }
-                }
-                .padding(.top, 4)
+                selectedTagsSummary
             }
         }
         .padding(16)
@@ -340,6 +222,156 @@ struct EditMoodRecordView: View {
             Button(L.localized("checkin.cancel"), role: .cancel) {}
         } message: { tag in
             Text(L.localized("custom_tag.delete_confirm_prefix") + "「\(tag.emoji ?? "📋") \(tag.name ?? "")」" + L.localized("custom_tag.delete_confirm_suffix"))
+        }
+    }
+
+    /// 标签区头部（标题+展开/收起按钮）
+    private var editTagHeader: some View {
+        HStack {
+            Text(L.localized("checkin.activity_tags"))
+                .font(.subheadline.bold())
+            Spacer()
+            Button(action: { showAllTags.toggle() }) {
+                Text(showAllTags ? L.localized("checkin.collapse") : L.localized("checkin.more"))
+                    .font(.caption)
+                    .foregroundColor(Color(hex: "6C5CE7"))
+            }
+        }
+    }
+
+    /// 已选标签摘要
+    private var selectedTagsSummary: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(L.localizedInt("checkin.selected_count", value: selectedTagNames.count))
+                .font(.caption2)
+                .foregroundColor(.secondary)
+
+            FlowLayout(data: selectedTagNames, spacing: 6) { name in
+                SelectedTagChip(name: name) {
+                    toggleTag(name)
+                }
+            }
+        }
+        .padding(.top, 4)
+    }
+
+    // MARK: - 标签选择子视图（拆分以加速编译）
+
+    /// 展开模式：分类浏览标签
+    private var expandedTagsContent: some View {
+        VStack(spacing: 0) {
+            // 一级分类
+            VStack(alignment: .leading, spacing: 8) {
+                Text(L.localized("checkin.category_title"))
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+
+                FlowLayout(data: Array(TagCategory.allCases), spacing: 8) { category in
+                    CategoryPill(
+                        emoji: category.emoji,
+                        name: category.displayName,
+                        isSelected: editSelectedCategory == category,
+                        onTap: { editSelectedCategory = category }
+                    )
+                }
+            }
+            .padding(.bottom, 12)
+
+            // 分隔线
+            Rectangle()
+                .fill(Color(UIColor.separator).opacity(0.5))
+                .frame(height: 0.5)
+                .padding(.horizontal, -4)
+
+            // 二级标签
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 4) {
+                    Text(editSelectedCategory.emoji)
+                        .font(.caption2)
+                    Text(editSelectedCategory.displayName)
+                        .font(.caption2)
+                        .foregroundColor(Color(hex: "6C5CE7"))
+                }
+
+                FlowLayout(data: editSelectedCategory.presetTags, spacing: 8) { preset in
+                    TagChip(
+                        emoji: preset.emoji,
+                        name: preset.name,
+                        isSelected: selectedTagNames.contains(preset.name),
+                        color: Color(hex: "6C5CE7"),
+                        onTap: { toggleTag(preset.name) }
+                    )
+                }
+
+                customTagsForCategory
+            }
+            .padding(.top, 12)
+
+            addCustomTagButton
+        }
+        .animation(.easeInOut(duration: 0.2), value: editSelectedCategory)
+    }
+
+    /// 当前分类下的自定义标签
+    private var customTagsForCategory: some View {
+        let categoryCustomTags = customTags.filter { $0.category == editSelectedCategory.rawValue }
+        return Group {
+            if !categoryCustomTags.isEmpty {
+                FlowLayout(data: categoryCustomTags, spacing: 8) { tag in
+                    TagChip(
+                        emoji: tag.emoji ?? "📋",
+                        name: tag.name ?? "",
+                        isSelected: selectedTagNames.contains(tag.name ?? ""),
+                        color: Color(hex: "6C5CE7"),
+                        onTap: { toggleTag(tag.name ?? "") },
+                        isCustom: true,
+                        onLongPress: {
+                            tagToDelete = tag
+                            showDeleteConfirm = true
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+    /// 添加自定义标签按钮
+    private var addCustomTagButton: some View {
+        NavigationLink(isActive: $showCustomTagCreation) {
+            CustomTagCreationView(dataManager: dataManager) { tagName in
+                frequentTags = dataManager.fetchFrequentTags()
+                customTags = dataManager.fetchCustomTags()
+                toggleTag(tagName)
+            }
+        } label: {
+            HStack(spacing: 4) {
+                Image(systemName: "plus.circle")
+                    .font(.caption)
+                Text(L.localized("custom_tag.add"))
+                    .font(.caption)
+            }
+            .foregroundColor(Color(hex: "6C5CE7"))
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(
+                Capsule()
+                    .stroke(Color(hex: "6C5CE7").opacity(0.4), lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+        .padding(.top, 8)
+    }
+
+    /// 常用标签模式
+    private var frequentTagsContent: some View {
+        FlowLayout(data: frequentTags, spacing: 8) { tag in
+            TagChip(
+                emoji: tag.emoji ?? "📋",
+                name: tag.name ?? "",
+                isSelected: selectedTagNames.contains(tag.name ?? ""),
+                color: Color(hex: "6C5CE7"),
+                onTap: { toggleTag(tag.name ?? "") }
+            )
         }
     }
 
@@ -437,18 +469,29 @@ struct EditMoodRecordView: View {
     }
 
     private func updateRecord() {
-        do {
-            let noteText = note.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : note
-            try dataManager.updateMoodRecord(
-                record,
-                moodType: selectedMoodType,
-                intensity: intensity,
-                tagNames: selectedTagNames,
-                note: noteText
-            )
-            showSuccessAnimation = true
-        } catch {
-            errorMessage = String(format: L.localized("checkin.save_failed"), error.localizedDescription)
+        guard !isUpdating else { return }
+        isUpdating = true
+
+        let noteText = note.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : note
+        let moodType = selectedMoodType
+        let currentIntensity = intensity
+        let tags = selectedTagNames
+
+        Task {
+            do {
+                try await dataManager.updateMoodRecordAsync(
+                    record,
+                    moodType: moodType,
+                    intensity: currentIntensity,
+                    tagNames: tags,
+                    note: noteText
+                )
+                showSuccessAnimation = true
+                isUpdating = false
+            } catch {
+                errorMessage = String(format: L.localized("checkin.save_failed"), error.localizedDescription)
+                isUpdating = false
+            }
         }
     }
 }

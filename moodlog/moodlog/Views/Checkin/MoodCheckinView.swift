@@ -325,7 +325,7 @@ struct TagSelectorView: View {
             }
             Button(L.localized("checkin.cancel"), role: .cancel) {}
         } message: { tag in
-            Text(L.localized("custom_tag.delete_confirm_prefix") + "「\(tag.emoji ?? "📋") \(tag.name ?? "")」" + L.localized("custom_tag.delete_confirm_suffix"))
+            Text(String(format: L.localized("custom_tag.delete_confirm"), tag.name ?? ""))
         }
     }
 
@@ -399,7 +399,7 @@ struct TagSelectorView: View {
                             color: Color(hex: "6C5CE7"),
                             onTap: { viewModel.toggleTag(tag.name ?? "") },
                             isCustom: true,
-                            onDelete: {
+                            onLongPress: {
                                 tagToDelete = tag
                                 showDeleteConfirm = true
                             }
@@ -440,32 +440,15 @@ struct TagSelectorView: View {
     // MARK: - 删除自定义标签
     private func deleteCustomTag(_ tag: ActivityTag) {
         do {
-            let tagName = tag.name ?? ""
             try dataManager.deleteCustomTag(tag)
             customTags = dataManager.fetchCustomTags()
             frequentTags = dataManager.fetchFrequentTags()
-            // 如果该标签已被选中，从已选列表中移除
-            if viewModel.selectedTagNames.contains(tagName) {
-                viewModel.toggleTag(tagName)
-            }
         } catch {
             // 静默处理
         }
     }
 
     // MARK: - 已选标签预览
-    /// 标签名 → emoji 映射
-    private var tagEmojiMap: [String: String] {
-        var map: [String: String] = [:]
-        for tag in frequentTags { map[tag.name ?? ""] = tag.emoji ?? "📋" }
-        for tag in customTags { map[tag.name ?? ""] = tag.emoji ?? "📋" }
-        // 补充预设标签
-        for category in TagCategory.allCases {
-            for preset in category.presetTags { map[preset.name] = preset.emoji }
-        }
-        return map
-    }
-
     private var selectedTagsPreview: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(L.localizedInt("checkin.selected_count", value: viewModel.selectedTagNames.count))
@@ -473,7 +456,7 @@ struct TagSelectorView: View {
                 .foregroundColor(.secondary)
 
             FlowLayout(data: viewModel.selectedTagNames, spacing: 6) { name in
-                SelectedTagChip(emoji: tagEmojiMap[name] ?? "📋", name: name) {
+                SelectedTagChip(name: name) {
                     viewModel.toggleTag(name)
                 }
             }
@@ -523,57 +506,53 @@ struct TagChip: View {
     let color: Color
     let onTap: () -> Void
     var isCustom: Bool = false
-    var onDelete: (() -> Void)? = nil
+    var onLongPress: (() -> Void)? = nil
 
     var body: some View {
-        ZStack(alignment: .topTrailing) {
-            Button(action: onTap) {
-                HStack(spacing: 4) {
-                    Text(emoji)
-                        .font(.system(size: 11))
-                    Text(name)
-                        .font(.caption)
-                        .fontWeight(isSelected ? .medium : .regular)
-                }
-                .padding(.horizontal, 10)
-                .padding(.vertical, 5)
-                .background(
-                    Capsule()
-                        .fill(isSelected ? color.opacity(0.12) : Color(UIColor.tertiarySystemGroupedBackground))
-                )
-                .overlay(
-                    Capsule()
-                        .stroke(isSelected ? color.opacity(0.6) : Color.clear, lineWidth: 1)
-                )
-                .foregroundColor(isSelected ? color : .secondary)
-            }
-            .buttonStyle(.plain)
-
-            if isCustom, let onDelete = onDelete {
-                Button(action: onDelete) {
+        Button(action: onTap) {
+            HStack(spacing: 4) {
+                Text(emoji)
+                    .font(.system(size: 11))
+                Text(name)
+                    .font(.caption)
+                    .fontWeight(isSelected ? .medium : .regular)
+                if isCustom {
                     Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 14))
-                        .foregroundColor(.white)
-                        .background(Circle().fill(Color.red.opacity(0.7)))
-                        .frame(width: 18, height: 18)
+                        .font(.system(size: 8))
+                        .foregroundColor(.secondary.opacity(0.6))
                 }
-                .offset(x: 6, y: -6)
-                .buttonStyle(.plain)
             }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(
+                Capsule()
+                    .fill(isSelected ? color.opacity(0.12) : Color(UIColor.tertiarySystemGroupedBackground))
+            )
+            .overlay(
+                Capsule()
+                    .stroke(isSelected ? color.opacity(0.6) : Color.clear, lineWidth: 1)
+            )
+            .foregroundColor(isSelected ? color : .secondary)
         }
+        .buttonStyle(.plain)
+        .simultaneousGesture(
+            LongPressGesture(minimumDuration: 0.5)
+                .onEnded { _ in
+                    if isCustom, let onLongPress = onLongPress {
+                        onLongPress()
+                    }
+                }
+        )
     }
 }
 
 // MARK: - 已选标签芯片
 struct SelectedTagChip: View {
-    let emoji: String
     let name: String
     let onRemove: () -> Void
 
     var body: some View {
         HStack(spacing: 4) {
-            Text(emoji)
-                .font(.system(size: 12))
             Text(name)
                 .font(.caption2)
             Button(action: onRemove) {
@@ -744,7 +723,7 @@ struct SuccessOverlayView: View {
 
                 Text(L.localized("checkin.success"))
                     .font(.title3.bold())
-                    .foregroundColor(.primary)
+                    .foregroundColor(.white)
                     .opacity(showText ? 1 : 0)
             }
             .padding(40)
