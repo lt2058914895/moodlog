@@ -286,7 +286,7 @@ struct MoodRecordsView: View {
     // MARK: - 星期标题
     private var weekdayHeader: some View {
         HStack(spacing: 0) {
-            ForEach([L.localized("calendar.weekday_mon"), L.localized("calendar.weekday_tue"), L.localized("calendar.weekday_wed"), L.localized("calendar.weekday_thu"), L.localized("calendar.weekday_fri"), L.localized("calendar.weekday_sat"), L.localized("calendar.weekday_sun")], id: \.self) { weekday in
+            ForEach(viewModel.weekdaySymbols, id: \.self) { weekday in
                 Text(weekday)
                     .font(.caption2)
                     .foregroundColor(.secondary)

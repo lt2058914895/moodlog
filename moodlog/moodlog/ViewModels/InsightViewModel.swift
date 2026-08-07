@@ -21,14 +21,22 @@ class InsightViewModel: ObservableObject {
     private let dataManager: any MoodDataManaging
     private let calendar: Calendar = {
         var cal = Calendar.current
-        // 根据用户 locale 设置每周第一天
-        // 中文地区默认周一起始（firstWeekday = 2），英文地区默认周日起始（firstWeekday = 1）
-        let localeId = Locale.current.identifier
-        if localeId.hasPrefix("zh") {
-            cal.firstWeekday = 2
+        // 根据用户地区设置每周第一天
+        // 周一起始是 ISO 8601 标准及全球多数国家的惯例，
+        // 仅少数地区（北美、日本、中东等）以周日为一周起始
+        let region: String
+        if #available(iOS 16, *) {
+            region = Locale.current.region?.identifier ?? ""
         } else {
-            cal.firstWeekday = 1
+            region = Locale.current.regionCode ?? ""
         }
+        let sundayFirstRegions: Set<String> = [
+            "US", "CA", "MX",     // 北美
+            "JP", "KR",           // 东亚
+            "IN", "PH", "TH", "PK", "BD", "LK", "MM", "KH", // 南亚/东南亚
+            "IL", "SA", "AE", "KW", "BH", "QA", "OM", "EG", "JO", "LB", "IQ" // 中东
+        ]
+        cal.firstWeekday = sundayFirstRegions.contains(region) ? 1 : 2
         return cal
     }()
 
