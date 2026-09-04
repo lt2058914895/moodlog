@@ -227,6 +227,7 @@
 "profile.export_failed" = "Export failed, please retry";
 "profile.share_card" = "Mood Card";
 "profile.share_card_desc" = "Turn your moods into beautiful share posters";
+"profile.share_card_cta" = "Tap to Create";
 "profile.version" = "Version %@";
 "profile.tagline" = "Record every emotion, focus on self-awareness";
 "profile.section_data" = "Data Management";

@@ -227,6 +227,7 @@
 "profile.export_failed" = "导出失败，请重试";
 "profile.share_card" = "情绪卡片";
 "profile.share_card_desc" = "把情绪做成精美的分享海报";
+"profile.share_card_cta" = "点击生成";
 "profile.version" = "版本 %@";
 "profile.tagline" = "记录每一种情绪，聚焦自我觉察";
 "profile.section_data" = "数据管理";

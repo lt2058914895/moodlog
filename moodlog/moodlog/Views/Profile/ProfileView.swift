@@ -91,6 +91,18 @@ struct ProfileView: View {
                             .font(.caption)
                             .foregroundColor(.white.opacity(0.85))
                             .multilineTextAlignment(.leading)
+
+                        HStack(spacing: 5) {
+                            Image(systemName: "sparkles")
+                                .font(.system(size: 10, weight: .bold))
+                            Text(L.localized("profile.share_card_cta"))
+                                .font(.system(size: 11, weight: .bold))
+                        }
+                        .foregroundColor(Color("AccentColor"))
+                        .padding(.horizontal, 9)
+                        .padding(.vertical, 5)
+                        .background(Capsule().fill(Color.white.opacity(0.92)))
+                        .padding(.top, 3)
                     }
                     Spacer()
                     miniCardStack
@@ -136,6 +148,14 @@ struct ProfileView: View {
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 34, height: 34)
                 )
+                .overlay(alignment: .topTrailing) {
+                    Image(systemName: "arrow.up.right")
+                        .font(.system(size: 8, weight: .bold))
+                        .foregroundColor(Color("AccentColor"))
+                        .padding(4)
+                        .background(Circle().fill(Color.white))
+                        .offset(x: 4, y: -4)
+                }
         }
     }
 
