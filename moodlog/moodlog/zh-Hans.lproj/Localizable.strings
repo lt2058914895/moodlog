@@ -198,7 +198,7 @@
 "share.records" = "记录";
 "share.streak" = "连续";
 "share.share_rate" = "主导占比";
-"share.tagline" = "Lumi · 记录每一种情绪";
+"share.tagline" = "心情猫 · 记录每一种情绪";
 "share.save_share" = "保存并分享";
 "share.nav_title" = "情绪卡片";
 "share.close" = "关闭";
@@ -214,4 +214,4 @@
 "profile.tagline" = "记录每一种情绪，聚焦自我觉察";
 
 // MARK: - App Name
-"app.name" = "Lumi";
+"app.name" = "心情猫";

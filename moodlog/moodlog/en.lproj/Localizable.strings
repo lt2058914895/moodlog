@@ -198,7 +198,7 @@
 "share.records" = "Records";
 "share.streak" = "Streak";
 "share.share_rate" = "Dominant";
-"share.tagline" = "Lumi · Record every emotion";
+"share.tagline" = "心情猫 · Record every emotion";
 "share.save_share" = "Save & Share";
 "share.nav_title" = "Mood Card";
 "share.close" = "Close";
@@ -214,4 +214,4 @@
 "profile.tagline" = "Record every emotion, focus on self-awareness";
 
 // MARK: - App Name
-"app.name" = "Lumi";
+"app.name" = "心情猫";
