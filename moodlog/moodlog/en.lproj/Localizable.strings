@@ -139,7 +139,7 @@
 "error.tag_creation_failed" = "Failed to create tag: %@";
 "error.invalid_data" = "Invalid data: %@";
 
-// MARK: - Stage 2: Onboarding / Achievement / Share / Profile
+// MARK: - Stage 2: Onboarding / Share / Profile
 "tab.profile" = "Me";
 "onboarding.page1_title" = "Record Every Emotion";
 "onboarding.page1_desc" = "8 emotions, one tap, a 10-second check-in — begin self-awareness";
@@ -152,22 +152,12 @@
 "onboarding.next" = "Next";
 "onboarding.skip" = "Skip";
 "onboarding.start" = "Get Started";
-"achievement.title" = "Achievements";
-"achievement.summary_count" = "%1$d / %2$d";
-"achievement.summary_desc" = "Keep recording to unlock more badges";
-"achievement.progress" = "%d / %d";
-"achievement.first_record.title" = "First Record";
-"achievement.streak_7.title" = "One Week";
-"achievement.streak_30.title" = "Monthly Pro";
-"achievement.streak_100.title" = "100 Days";
-"achievement.records_50.title" = "Collector";
-"achievement.records_200.title" = "Library";
 "share.hero_prefix" = "Lately";
 "share.hero_prefix_today" = "Today";
 "share.hero_title" = "Your mood has been dominated by \"%@\"";
 "share.hero_spread_two" = "Your mood oscillates between \"%@\" and \"%@\"";
 "share.records" = "Records";
-"share.tagline" = "心情猫 · Record every emotion";
+"share.tagline" = "情绪猫 · Record every emotion";
 "share.nav_title" = "Mood Card";
 "share.close" = "Close";
 "share.save_album" = "Save";
@@ -184,7 +174,13 @@
 "share.period.quarter" = "This Quarter";
 "share.period.year" = "This Year";
 "profile.title" = "Me";
-"profile.achievements" = "Achievements";
+"profile.library_title" = "Mood Library";
+"profile.library_subtitle" = "Every record becomes a page in your mood library";
+"profile.library_status_building" = "Collecting";
+"profile.library_status_complete" = "Complete";
+"profile.library_goal_building" = "%2$d more books until opening at %1$d total";
+"profile.library_goal_complete" = "200 books collected — your library is open";
+"profile.library_not_open_hint" = "Your mood library isn't open yet. %d more records needed";
 "profile.export_format" = "Export as %@";
 "profile.export_failed" = "Export failed, please retry";
 "profile.share_card" = "Mood Card";
@@ -197,7 +193,7 @@
 "profile.share_app" = "Share App";
 "profile.rate_app" = "Rate on App Store";
 "profile.feedback" = "Send Feedback";
-"profile.share_app_text" = "Check out 心情猫, a mood-tracking app that turns your feelings into clear self-awareness: %@";
+"profile.share_app_text" = "Check out 情绪猫, a mood-tracking app that turns your feelings into clear self-awareness: %@";
 
 // MARK: - App Name
-"app.name" = "心情猫";
+"app.name" = "情绪猫";

@@ -2,7 +2,7 @@
 //  ProfileView.swift
 //  moodlog
 //
-//  "我的"页：成就 / 数据导出 / 分享卡片 / 支持
+//  "我的"页：情绪图书馆 / 数据导出 / 分享卡片 / 支持
 //
 
 import SwiftUI
@@ -19,21 +19,29 @@ private enum AppLinks {
 
 struct ProfileView: View {
     @StateObject private var exportService = DataExportService()
-    @StateObject private var achievementService = AchievementService()
 
     @Environment(\.openURL) private var openURL
 
     @State private var showShareSheet = false
     @State private var exportFormat: ExportFormat?
     @State private var exportToast: String?
+    @State private var libraryToast: String?
     @State private var heroMood: MoodType = .happy
+    @State private var libraryRecordCount = 0
+    @State private var libraryMoodCounts: [MoodType: Int] = [:]
+
+    private let libraryGoal = 200
+
+    private var libraryProgress: Double {
+        min(max(Double(libraryRecordCount) / Double(libraryGoal), 0), 1)
+    }
 
     var body: some View {
         NavigationView {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 20) {
                     moodCard
-                    achievementsCard
+                    emotionLibraryCard
                     dataSection
                     supportSection
                     footerView
@@ -54,6 +62,22 @@ struct ProfileView: View {
                         .foregroundColor(Color(UIColor.systemBackground))
                         .transition(.move(edge: .top).combined(with: .opacity))
                         .padding(.top, 8)
+                }
+            }
+            .overlay(alignment: .center) {
+                if let toast = libraryToast {
+                    Text(toast)
+                        .font(.subheadline)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 18)
+                        .padding(.vertical, 12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                .fill(Color(UIColor.label).opacity(0.9))
+                        )
+                        .foregroundColor(Color(UIColor.systemBackground))
+                        .transition(.opacity)
+                        .padding(.horizontal, 40)
                 }
             }
             .onChange(of: exportFormat) { fmt in
@@ -159,22 +183,139 @@ struct ProfileView: View {
         }
     }
 
-    // MARK: - 成就
+    // MARK: - 情绪图书馆
 
-    private var achievementsCard: some View {
-        NavigationLink {
-            AchievementView()
-        } label: {
-            settingRow(icon: "trophy.fill",
-                       iconColor: Color("WarningColor"),
-                       title: L.localized("profile.achievements"),
-                       subtitle: String(format: L.localized("achievement.summary_count"),
-                                        achievementService.earnedCount, achievementService.totalCount),
-                       showChevron: true)
+    private var emotionLibraryCard: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(alignment: .top, spacing: 12) {
+                VStack(alignment: .leading, spacing: 5) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "books.vertical.fill")
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundColor(Color("AccentColor"))
+                        Text(L.localized("profile.library_title"))
+                            .font(.headline)
+                            .foregroundColor(.primary)
+                    }
+
+                    Text(L.localized("profile.library_subtitle"))
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.leading)
+                }
+
+                Spacer()
+
+                Text(libraryStatusLabel)
+                    .font(.caption2.bold())
+                    .foregroundColor(libraryIsComplete ? Color("SuccessColor") : Color("AccentColor"))
+                    .padding(.horizontal, 9)
+                    .padding(.vertical, 5)
+                    .background(
+                        Capsule().fill((libraryIsComplete ? Color("SuccessColor") : Color("AccentColor")).opacity(0.12))
+                    )
+            }
+
+            HStack(alignment: .bottom, spacing: 18) {
+                VStack(alignment: .leading, spacing: 9) {
+                    HStack(alignment: .firstTextBaseline, spacing: 4) {
+                        Text("\(libraryRecordCount)")
+                            .font(.system(size: 24, weight: .bold, design: .rounded))
+                            .foregroundColor(.primary)
+                        Text("/ \(libraryGoal)")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundColor(.secondary)
+                    }
+
+                    GeometryReader { proxy in
+                        ZStack(alignment: .leading) {
+                            Capsule()
+                                .fill(Color("AccentColor").opacity(0.12))
+                            Capsule()
+                                .fill(Color("AccentColor"))
+                                .frame(width: max(6, proxy.size.width * libraryProgress))
+                        }
+                    }
+                    .frame(height: 6)
+
+                    Text(libraryGoalHint)
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                libraryShelf
+            }
         }
-        .buttonStyle(.plain)
+        .padding(18)
         .background(Color(UIColor.secondarySystemGroupedBackground))
-        .cornerRadius(16)
+        .cornerRadius(20)
+        .overlay(
+            RoundedRectangle(cornerRadius: 20)
+                .stroke(Color("AccentColor").opacity(0.08), lineWidth: 1)
+        )
+        .contentShape(Rectangle())
+        .onTapGesture {
+            guard !libraryIsComplete else { return }
+            libraryToast = String(
+                format: L.localized("profile.library_not_open_hint"),
+                libraryGoal - libraryRecordCount
+            )
+            clearLibraryToast()
+        }
+        .task { loadLibraryData() }
+        .onReceive(NotificationCenter.default.publisher(for: .moodDataDidChange)) { _ in
+            loadLibraryData()
+        }
+    }
+
+    private var libraryIsComplete: Bool {
+        libraryRecordCount >= libraryGoal
+    }
+
+    private var libraryStatusLabel: String {
+        L.localized(libraryIsComplete ? "profile.library_status_complete" : "profile.library_status_building")
+    }
+
+    private var libraryGoalHint: String {
+        if libraryIsComplete {
+            return L.localized("profile.library_goal_complete")
+        }
+        return String(
+            format: L.localized("profile.library_goal_building"),
+            libraryGoal,
+            libraryGoal - libraryRecordCount
+        )
+    }
+
+    private var libraryShelf: some View {
+        let maximumCount = libraryMoodCounts.values.max() ?? 0
+
+        return VStack(spacing: 6) {
+            HStack(alignment: .bottom, spacing: 4) {
+                ForEach(MoodType.allCases, id: \.self) { mood in
+                    let count = libraryMoodCounts[mood] ?? 0
+                    let height: CGFloat = count == 0
+                        ? 26
+                        : 32 + CGFloat(count) / CGFloat(max(maximumCount, 1)) * 22
+
+                    RoundedRectangle(cornerRadius: 3, style: .continuous)
+                        .fill(count > 0 ? mood.color.opacity(0.88) : Color(UIColor.systemGray5))
+                        .frame(width: 9, height: height)
+                }
+            }
+
+            RoundedRectangle(cornerRadius: 2, style: .continuous)
+                .fill(Color("AccentColor").opacity(0.18))
+                .frame(height: 4)
+        }
+    }
+
+    private func loadLibraryData() {
+        let manager = MoodDataManager.shared
+        libraryRecordCount = manager.fetchRecordCount()
+        libraryMoodCounts = manager.fetchMoodDistribution(from: .distantPast, to: Date())
     }
 
     // MARK: - 数据管理
@@ -336,6 +477,10 @@ struct ProfileView: View {
 
     private func clearToast() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) { exportToast = nil }
+    }
+
+    private func clearLibraryToast() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) { libraryToast = nil }
     }
 }
 

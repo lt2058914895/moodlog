@@ -139,7 +139,7 @@
 "error.tag_creation_failed" = "创建标签失败：%@";
 "error.invalid_data" = "数据无效：%@";
 
-// MARK: - Stage 2: Onboarding / Achievement / Share / Profile
+// MARK: - Stage 2: Onboarding / Share / Profile
 "tab.profile" = "我的";
 "onboarding.page1_title" = "记录每一种情绪";
 "onboarding.page1_desc" = "8 种情绪一步选择，10 秒完成打卡，开启自我觉察";
@@ -152,22 +152,12 @@
 "onboarding.next" = "下一步";
 "onboarding.skip" = "跳过";
 "onboarding.start" = "立即开始";
-"achievement.title" = "成就";
-"achievement.summary_count" = "%1$d / %2$d";
-"achievement.summary_desc" = "坚持记录，解锁更多徽章";
-"achievement.progress" = "%d / %d";
-"achievement.first_record.title" = "初次记录";
-"achievement.streak_7.title" = "坚持一周";
-"achievement.streak_30.title" = "月度达人";
-"achievement.streak_100.title" = "百日坚持";
-"achievement.records_50.title" = "情绪收藏家";
-"achievement.records_200.title" = "情绪图书馆";
 "share.hero_prefix" = "这段时间";
 "share.hero_prefix_today" = "今日";
 "share.hero_title" = "你的心情以「%@」为主";
 "share.hero_spread_two" = "你的心情在「%@」和「%@」之间波动";
 "share.records" = "记录";
-"share.tagline" = "心情猫 · 记录每一种情绪";
+"share.tagline" = "情绪猫 · 记录每一种情绪";
 "share.nav_title" = "情绪卡片";
 "share.close" = "关闭";
 "share.save_album" = "保存相册";
@@ -184,7 +174,13 @@
 "share.period.quarter" = "本季";
 "share.period.year" = "年度";
 "profile.title" = "我的";
-"profile.achievements" = "成就徽章";
+"profile.library_title" = "情绪图书馆";
+"profile.library_subtitle" = "每一条记录，都是一本情绪之书";
+"profile.library_status_building" = "收录中";
+"profile.library_status_complete" = "已开馆";
+"profile.library_goal_building" = "满 %1$d 本正式开馆，还需收录 %2$d 本";
+"profile.library_goal_complete" = "已收录满 200 本，情绪图书馆正式开馆";
+"profile.library_not_open_hint" = "您的情绪图书馆还未开馆，还需收录%d本";
 "profile.export_format" = "导出为 %@";
 "profile.export_failed" = "导出失败，请重试";
 "profile.share_card" = "情绪卡片";
@@ -197,7 +193,7 @@
 "profile.share_app" = "分享 App";
 "profile.rate_app" = "去 App Store 评分";
 "profile.feedback" = "问题反馈";
-"profile.share_app_text" = "推荐给你「心情猫」——一款情绪记录 App，帮你把感受变成清晰的自我认知：%@";
+"profile.share_app_text" = "推荐给你「情绪猫」——一款情绪记录 App，帮你把感受变成清晰的自我认知：%@";
 
 // MARK: - App Name
-"app.name" = "心情猫";
+"app.name" = "情绪猫";
