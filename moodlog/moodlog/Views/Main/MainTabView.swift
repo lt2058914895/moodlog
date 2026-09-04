@@ -49,7 +49,7 @@ struct MainTabView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             // 心情
-            NavigationView {
+            NavigationStack {
                 MoodCheckinView()
                     .navigationBarTitleDisplayMode(.inline)
                     .navigationBarHidden(true)
@@ -61,7 +61,7 @@ struct MainTabView: View {
             .tag(Tab.checkin)
 
             // 记录
-            NavigationView {
+            NavigationStack {
                 MoodRecordsView(onNavigateToCheckin: {
                     selectedTab = .checkin
                 })

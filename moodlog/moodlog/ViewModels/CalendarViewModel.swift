@@ -47,8 +47,10 @@ class CalendarViewModel: ObservableObject {
         loadGroupedRecordsInitial()
         // 监听数据变更通知（防抖）
         cancellable = NotificationCenter.default.addObserver(forName: .moodDataDidChange, object: nil, queue: .main) { [weak self] _ in
-            self?.debouncedLoadMonthlyData()
-            self?.loadGroupedRecordsInitial()
+            Task { @MainActor [weak self] in
+                self?.debouncedLoadMonthlyData()
+                self?.loadGroupedRecordsInitial()
+            }
         }
     }
 
@@ -63,7 +65,9 @@ class CalendarViewModel: ObservableObject {
     private func debouncedLoadMonthlyData() {
         loadDebounceTimer?.invalidate()
         loadDebounceTimer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: false) { [weak self] _ in
-            self?.loadMonthlyData()
+            Task { @MainActor [weak self] in
+                self?.loadMonthlyData()
+            }
         }
     }
 

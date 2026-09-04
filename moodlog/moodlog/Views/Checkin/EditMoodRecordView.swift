@@ -337,12 +337,8 @@ struct EditMoodRecordView: View {
 
     /// 添加自定义标签按钮
     private var addCustomTagButton: some View {
-        NavigationLink(isActive: $showCustomTagCreation) {
-            CustomTagCreationView(dataManager: dataManager) { tagName in
-                frequentTags = dataManager.fetchFrequentTags()
-                customTags = dataManager.fetchCustomTags()
-                toggleTag(tagName)
-            }
+        Button {
+            showCustomTagCreation = true
         } label: {
             HStack(spacing: 4) {
                 Image(systemName: "plus.circle")
@@ -357,6 +353,13 @@ struct EditMoodRecordView: View {
                 Capsule()
                     .stroke(Color("AccentColor").opacity(0.4), lineWidth: 1)
             )
+        }
+        .navigationDestination(isPresented: $showCustomTagCreation) {
+            CustomTagCreationView(dataManager: dataManager) { tagName in
+                frequentTags = dataManager.fetchFrequentTags()
+                customTags = dataManager.fetchCustomTags()
+                toggleTag(tagName)
+            }
         }
         .buttonStyle(.plain)
         .padding(.top, 8)

@@ -107,7 +107,6 @@ class MoodRecordRepository: MoodRecordManaging {
             record.note = note
             record.createdAt = Date()
             record.updatedAt = Date()
-            record.isSynced = false
 
             // 建立标签关系并更新使用时间
             let tags = getOrCreateTagsByNames(tagNames, in: backgroundContext)
@@ -312,7 +311,6 @@ class MoodRecordRepository: MoodRecordManaging {
             record.note = note
             record.createdAt = Date()
             record.updatedAt = Date()
-            record.isSynced = false
 
             let tags = self.getOrCreateTagsByNames(tagNames, in: ctx)
             for tag in tags {
@@ -428,15 +426,11 @@ class MoodRecordRepository: MoodRecordManaging {
 
     // MARK: - 辅助方法
 
-    /// 从记录中获取标签名称列表（tags 关系为唯一数据源；tagNames 字符串仅为历史数据只读兜底）
+    /// 从记录中获取标签名称列表（tags 关系为唯一数据源）
     static func tagNamesFromRecord(_ record: MoodRecord) -> [String] {
         // 统一走 tags 关系
-        if let tags = record.tags as? Set<ActivityTag>, !tags.isEmpty {
-            return tags.compactMap { $0.name }.sorted()
-        }
-        // 历史数据兜底：旧记录仅写了 tagNames 字符串、尚未回填关系
-        guard let tagNamesStr = record.tagNames else { return [] }
-        return tagNamesStr.components(separatedBy: ",").filter { !$0.isEmpty }
+        guard let tags = record.tags as? Set<ActivityTag> else { return [] }
+        return tags.compactMap { $0.name }.sorted()
     }
 
     /// 在指定上下文中按名称 getOrCreate ActivityTag（保证 tags 关系完整，不依赖标签预初始化）

@@ -149,12 +149,8 @@ struct TagSelectorView: View {
             .padding(.top, 12)
 
             // 自定义标签按钮 - push 进入创建页
-            NavigationLink(isActive: $showCustomTagCreation) {
-                CustomTagCreationView(dataManager: dataManager) { tagName in
-                    frequentTags = dataManager.fetchFrequentTags()
-                    customTags = dataManager.fetchCustomTags()
-                    viewModel.toggleTag(tagName)
-                }
+            Button {
+                showCustomTagCreation = true
             } label: {
                 HStack(spacing: 4) {
                     Image(systemName: "plus.circle")
@@ -169,6 +165,13 @@ struct TagSelectorView: View {
                     Capsule()
                         .stroke(Color("AccentColor").opacity(0.4), lineWidth: 1)
                 )
+            }
+            .navigationDestination(isPresented: $showCustomTagCreation) {
+                CustomTagCreationView(dataManager: dataManager) { tagName in
+                    frequentTags = dataManager.fetchFrequentTags()
+                    customTags = dataManager.fetchCustomTags()
+                    viewModel.toggleTag(tagName)
+                }
             }
             .buttonStyle(.plain)
             .padding(.top, 8)

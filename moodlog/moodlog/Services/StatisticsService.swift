@@ -117,14 +117,13 @@ class StatisticsService: StatisticsProviding {
             return cached
         }
 
-        // 使用轻量字典查询：仅加载 tagNames 字符串字段进行内存聚合
-        // 比加载完整 MoodRecord 对象节省大量内存和时间
+        // 通过 tags 关系聚合，避免在 UI 层加载完整记录字段
         let result = fetchTopTagsLightweight(from: startDate, to: endDate, limit: limit)
         cache.cacheSet(key, data: result)
         return result
     }
 
-    /// 标签频次聚合：通过 tags 关系统计（tagNames 字符串仅作历史数据只读兜底）
+    /// 标签频次聚合：通过 tags 关系统计
     private func fetchTopTagsLightweight(from startDate: Date, to endDate: Date, limit: Int) -> [(name: String, count: Int)] {
         let request: NSFetchRequest<MoodRecord> = MoodRecord.fetchRequest()
         request.predicate = NSPredicate(
@@ -140,7 +139,6 @@ class StatisticsService: StatisticsProviding {
         do {
             let records = try viewContext.fetch(request)
             for record in records {
-                // tagNamesFromRecord 统一走 tags 关系；历史记录仅有字符串时兜底
                 for name in MoodRecordRepository.tagNamesFromRecord(record) {
                     tagCount[name, default: 0] += 1
                 }

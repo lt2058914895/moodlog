@@ -295,7 +295,7 @@ struct MoodShareSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 24) {
                     Picker("", selection: $period) {

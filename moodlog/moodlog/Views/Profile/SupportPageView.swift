@@ -101,7 +101,7 @@ struct SupportPageView: View {
 }
 
 #Preview {
-    NavigationView {
+    NavigationStack {
         SupportPageView(url: URL(string: "https://example.com")!)
     }
 }

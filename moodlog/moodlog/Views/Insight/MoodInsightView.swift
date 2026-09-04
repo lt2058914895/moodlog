@@ -355,7 +355,6 @@ struct MoodDonutChart: View {
     var body: some View {
         GeometryReader { geometry in
             let size = min(geometry.size.width, geometry.size.height)
-            let center = CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 2)
             let outerRadius = size / 2 - 8
             let innerRadius = outerRadius * innerRatio
             let total = data.reduce(0) { $0 + $1.value }
@@ -493,7 +492,7 @@ struct TagBarRow: View {
 }
 
 #Preview {
-    NavigationView {
+    NavigationStack {
         MoodInsightView()
     }
 }

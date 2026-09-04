@@ -5,10 +5,8 @@
         <attribute name="moodType" optional="YES" attributeType="String" defaultValueString="happy" usesScalarValueType="NO"/>
         <attribute name="intensity" attributeType="Integer 16" defaultValueString="5" usesScalarValueType="YES"/>
         <attribute name="note" optional="YES" attributeType="String" usesScalarValueType="NO"/>
-        <attribute name="tagNames" optional="YES" attributeType="String" usesScalarValueType="NO"/>
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="isSynced" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <relationship name="tags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ActivityTag" inverseName="records" inverseEntity="ActivityTag"/>
         <uniquenessConstraints>
             <uniquenessConstraint>

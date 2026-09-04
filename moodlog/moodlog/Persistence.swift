@@ -35,7 +35,6 @@ struct PersistenceController {
             record.intensity = mood.intensity
             record.createdAt = Calendar.current.date(byAdding: .hour, value: -index * 3, to: Date())
             record.updatedAt = record.createdAt
-            record.isSynced = false
         }
 
         do {
