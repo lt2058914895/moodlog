@@ -217,7 +217,7 @@
 "profile.share_app" = "Share App";
 "profile.rate_app" = "Rate on App Store";
 "profile.feedback" = "Send Feedback";
-"profile.share_app_text" = "Check out 心情猫, a local mood-tracking app: %@";
+"profile.share_app_text" = "Check out 心情猫, a mood-tracking app that turns your feelings into clear self-awareness: %@";
 
 // MARK: - App Name
 "app.name" = "心情猫";

@@ -164,8 +164,8 @@ struct ProfileView: View {
                 }
                 .buttonStyle(.plain)
                 rowDivider
-                Button {
-                    openURL(AppLinks.support)
+                NavigationLink {
+                    SupportPageView(url: AppLinks.support)
                 } label: {
                     settingRow(icon: "envelope",
                                iconColor: Color("SuccessColor"),

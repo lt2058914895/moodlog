@@ -217,7 +217,7 @@
 "profile.share_app" = "分享 App";
 "profile.rate_app" = "去 App Store 评分";
 "profile.feedback" = "问题反馈";
-"profile.share_app_text" = "推荐给你「心情猫」——一款本地情绪记录 App：%@";
+"profile.share_app_text" = "推荐给你「心情猫」——一款情绪记录 App，帮你把感受变成清晰的自我认知：%@";
 
 // MARK: - App Name
 "app.name" = "心情猫";
