@@ -73,6 +73,8 @@ struct MoodShareData {
     let dateRangeText: String
     let totalRecords: Int
     let dominantMood: MoodType
+    let isMoodSpread: Bool
+    let isToday: Bool
     let moodEntries: [MoodShareMoodEntry]
 }
 
@@ -120,7 +122,7 @@ struct MoodShareCardView: View {
     var body: some View {
         ZStack {
             LinearGradient(
-                colors: [data.dominantMood.color.opacity(0.95), Color("AccentColor").opacity(0.9)],
+                colors: heroGradientColors,
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
@@ -137,43 +139,82 @@ struct MoodShareCardView: View {
 
             VStack(spacing: 0) {
                 VStack(spacing: 6) {
-                    Label(L.localized("share.card_title"), systemImage: "sparkles")
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundColor(.white.opacity(0.85))
                     Text(data.dateRangeText)
                         .font(.system(size: 22, weight: .bold))
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(.white)
+                    Text(periodPrefix)
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(.white.opacity(0.82))
+                    Text(narrativeTitle)
+                        .font(.system(size: 19, weight: .bold))
+                        .multilineTextAlignment(.center)
                         .foregroundColor(.white)
                 }
 
-                VStack(spacing: 6) {
-                    Image(data.dominantMood.imageName)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 96, height: 96)
-                        .shadow(color: .black.opacity(0.25), radius: 8, y: 4)
-                    Text(data.dominantMood.displayName)
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundColor(.white)
+                Group {
+                    if data.isMoodSpread, data.moodEntries.count >= 2 {
+                        HStack(spacing: 14) {
+                            Image(data.moodEntries[0].mood.imageName)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 64, height: 64)
+                                .shadow(color: .black.opacity(0.22), radius: 8, y: 4)
+
+                            Image(systemName: "waveform.path.ecg")
+                                .font(.system(size: 28, weight: .semibold))
+                                .foregroundColor(.white.opacity(0.45))
+                                .frame(width: 44, height: 26)
+
+                            Image(data.moodEntries[1].mood.imageName)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 64, height: 64)
+                                .shadow(color: .black.opacity(0.18), radius: 6, y: 3)
+                        }
+                    } else {
+                        Image(data.dominantMood.imageName)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 96, height: 96)
+                            .shadow(color: .black.opacity(0.25), radius: 8, y: 4)
+                    }
                 }
                 .padding(.top, 16)
 
-                VStack(spacing: 10) {
-                    ForEach(data.moodEntries, id: \.mood) { entry in
-                        moodBar(entry)
+                VStack(spacing: 12) {
+                    HStack(alignment: .firstTextBaseline) {
+                        Text(L.localized("share.records"))
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundColor(.white.opacity(0.72))
+                        Text("\(data.totalRecords)")
+                            .font(.system(size: 16, weight: .bold, design: .rounded))
+                            .foregroundColor(.white)
+                        Spacer()
+                        Circle()
+                            .fill(Color.white.opacity(0.65))
+                            .frame(width: 5, height: 5)
+                        Circle()
+                            .fill(Color.white.opacity(0.4))
+                            .frame(width: 5, height: 5)
+                    }
+
+                    VStack(spacing: 9) {
+                        ForEach(data.moodEntries, id: \.mood) { entry in
+                            moodBar(entry)
+                        }
                     }
                 }
+                .padding(15)
+                .background(
+                    RoundedRectangle(cornerRadius: 22, style: .continuous)
+                        .fill(Color.white.opacity(0.13))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                                .stroke(Color.white.opacity(0.16), lineWidth: 1)
+                        )
+                )
                 .padding(.top, 20)
-
-                Text("\(L.localized("share.records")) · \(data.totalRecords)")
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-                    .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(Color.white.opacity(0.14))
-                    )
-                    .padding(.top, 20)
 
                 Text(L.localized("share.tagline"))
                     .font(.system(size: 12, weight: .medium))
@@ -185,6 +226,33 @@ struct MoodShareCardView: View {
         .frame(width: 340, height: 460)
         .clipShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
         .shadow(color: .black.opacity(0.18), radius: 20, x: 0, y: 10)
+    }
+
+    private var heroGradientColors: [Color] {
+        if data.isMoodSpread, data.moodEntries.count >= 2 {
+            return [
+                data.moodEntries[0].mood.color.opacity(0.92),
+                data.moodEntries[1].mood.color.opacity(0.86)
+            ]
+        }
+        return [data.dominantMood.color.opacity(0.95), Color("AccentColor").opacity(0.9)]
+    }
+
+    private var narrativeTitle: String {
+        if data.isMoodSpread, data.moodEntries.count >= 2 {
+            return String(
+                format: L.localized("share.hero_spread_two"),
+                data.moodEntries[0].mood.displayName,
+                data.moodEntries[1].mood.displayName
+            )
+        }
+        return String(format: L.localized("share.hero_title"), data.dominantMood.displayName)
+    }
+
+    private var periodPrefix: String {
+        data.isToday
+            ? L.localized("share.hero_prefix_today")
+            : L.localized("share.hero_prefix")
     }
 
     private func moodBar(_ entry: MoodShareMoodEntry) -> some View {
@@ -375,6 +443,25 @@ struct MoodShareSheet: View {
                 return MoodShareMoodEntry(mood: mood, percentage: pct)
             }
 
+        let sortedMoods = dist
+            .filter { $0.value > 0 }
+            .sorted { $0.value > $1.value }
+        let dominantPercentage: Double
+        if total > 0, let topMoodCount = sortedMoods.first?.value {
+            dominantPercentage = Double(topMoodCount) / Double(total) * 100
+        } else {
+            dominantPercentage = 0
+        }
+        let isMoodSpread: Bool
+        if sortedMoods.count >= 2 {
+            let gap = Double(sortedMoods[0].value - sortedMoods[1].value) / Double(total) * 100
+            isMoodSpread = dominantPercentage < 40 || gap < 10
+        } else {
+            isMoodSpread = false
+        }
+
+        let isToday = period == .today
+
         let fmt = DateFormatter()
         fmt.locale = Locale.current
         fmt.dateFormat = DateFormatter.dateFormat(fromTemplate: "MMMMdd", options: 0, locale: Locale.current)
@@ -389,6 +476,8 @@ struct MoodShareSheet: View {
             dateRangeText: rangeText,
             totalRecords: total,
             dominantMood: entries.first?.mood ?? .happy,
+            isMoodSpread: isMoodSpread,
+            isToday: isToday,
             moodEntries: entries
         )
     }

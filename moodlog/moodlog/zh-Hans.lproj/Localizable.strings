@@ -124,6 +124,7 @@
 "insight.mood_times" = "%@ %d次";
 "insight.separator" = "、";
 "insight.greeting" = "这段时间";
+"insight.greeting_today" = "今日";
 "insight.hero_title" = "你的心情以「%@」为主";
 "insight.hero_spread_two" = "你的心情在「%@」和「%@」之间波动";
 "insight.hero_spread" = "你的情绪状态较为多元";
@@ -193,7 +194,10 @@
 "achievement.records_50.desc" = "累计记录 50 条";
 "achievement.records_200.title" = "情绪图书馆";
 "achievement.records_200.desc" = "累计记录 200 条";
-"share.card_title" = "情绪回顾";
+"share.hero_prefix" = "这段时间";
+"share.hero_prefix_today" = "今日";
+"share.hero_title" = "你的心情以「%@」为主";
+"share.hero_spread_two" = "你的心情在「%@」和「%@」之间波动";
 "share.dominant" = "主导情绪 %d%%";
 "share.records" = "记录";
 "share.streak" = "连续";

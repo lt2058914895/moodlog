@@ -124,6 +124,7 @@
 "insight.mood_times" = "%@ %d times";
 "insight.separator" = ", ";
 "insight.greeting" = "Lately";
+"insight.greeting_today" = "Today";
 "insight.hero_title" = "Your mood has been dominated by \"%@\"";
 "insight.hero_spread_two" = "Your mood oscillates between \"%@\" and \"%@\"";
 "insight.hero_spread" = "Your emotional state is diverse";
@@ -193,7 +194,10 @@
 "achievement.records_50.desc" = "50 total records";
 "achievement.records_200.title" = "Library";
 "achievement.records_200.desc" = "200 total records";
-"share.card_title" = "Mood Recap";
+"share.hero_prefix" = "Lately";
+"share.hero_prefix_today" = "Today";
+"share.hero_title" = "Your mood has been dominated by \"%@\"";
+"share.hero_spread_two" = "Your mood oscillates between \"%@\" and \"%@\"";
 "share.dominant" = "Dominant %d%%";
 "share.records" = "Records";
 "share.streak" = "Streak";

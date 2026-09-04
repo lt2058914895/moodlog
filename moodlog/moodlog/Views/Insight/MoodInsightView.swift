@@ -102,7 +102,9 @@ struct MoodInsightView: View {
         guard viewModel.totalRecords > 0 else {
             return L.localized("insight.empty_greeting")
         }
-        return L.localized("insight.greeting")
+        return viewModel.selectedRange == .today
+            ? L.localized("insight.greeting_today")
+            : L.localized("insight.greeting")
     }
 
     private var heroTitle: String {
