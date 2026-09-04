@@ -22,26 +22,7 @@ class InsightViewModel: ObservableObject {
     @Published var availableYears: [Int] = []
 
     private let dataManager: any MoodDataManaging
-    private let calendar: Calendar = {
-        var cal = Calendar.current
-        // 根据用户地区设置每周第一天
-        // 周一起始是 ISO 8601 标准及全球多数国家的惯例，
-        // 仅少数地区（北美、日本、中东等）以周日为一周起始
-        let region: String
-        if #available(iOS 16, *) {
-            region = Locale.current.region?.identifier ?? ""
-        } else {
-            region = Locale.current.regionCode ?? ""
-        }
-        let sundayFirstRegions: Set<String> = [
-            "US", "CA", "MX",     // 北美
-            "JP", "KR",           // 东亚
-            "IN", "PH", "TH", "PK", "BD", "LK", "MM", "KH", // 南亚/东南亚
-            "IL", "SA", "AE", "KW", "BH", "QA", "OM", "EG", "JO", "LB", "IQ" // 中东
-        ]
-        cal.firstWeekday = sundayFirstRegions.contains(region) ? 1 : 2
-        return cal
-    }()
+    private let calendar = InsightTimeRange.sharedCalendar
 
     private var cancellable: Any?
 
@@ -104,45 +85,7 @@ class InsightViewModel: ObservableObject {
     // MARK: - 时间范围
 
     var dateRange: (start: Date, end: Date) {
-        let now = Date()
-        switch selectedRange {
-        case .today:
-            let start = calendar.startOfDay(for: now)
-            return (start, now.endOfDay)
-        case .week:
-            // 使用 dateInterval 自动适应用户地区（中国周一为起始，美国周日为起始）
-            if let weekInterval = calendar.dateInterval(of: .weekOfYear, for: now) {
-                return (weekInterval.start, now.endOfDay)
-            }
-            return (calendar.startOfDay(for: now), now.endOfDay)
-        case .month:
-            let components = calendar.dateComponents([.year, .month], from: now)
-            let start = calendar.date(from: components)!
-            return (start, now.endOfDay)
-        case .quarter:
-            let month = calendar.component(.month, from: now)
-            let quarterStartMonth = ((month - 1) / 3) * 3 + 1
-            var components = calendar.dateComponents([.year], from: now)
-            components.month = quarterStartMonth
-            components.day = 1
-            let start = calendar.date(from: components)!
-            return (start, now.endOfDay)
-        case .year:
-            var components = DateComponents()
-            components.year = selectedYear
-            components.month = 1
-            components.day = 1
-            let start = calendar.date(from: components)!
-            if selectedYear == currentYear {
-                // 今年：1.1 到今日
-                return (start, now.endOfDay)
-            } else {
-                // 往年：整年
-                components.year = selectedYear + 1
-                let end = calendar.date(from: components)!
-                return (start, end)
-            }
-        }
+        selectedRange.dateRange(at: Date(), year: selectedYear)
     }
 
     // MARK: - 日期范围标题
@@ -292,4 +235,65 @@ struct TagBarData: Identifiable {
     let name: String
     let count: Int
     let ratio: Double
+}
+
+// MARK: - 时间区间（回顾页与分享卡片共用的单一实现）
+
+extension InsightTimeRange {
+    /// 按用户地区设置每周第一天（周一起始是 ISO 8601 标准及全球多数国家的惯例，
+    /// 仅少数地区（北美、日本、中东等）以周日为一周起始）
+    static let sharedCalendar: Calendar = {
+        var cal = Calendar.current
+        let region = Locale.current.region?.identifier ?? ""
+        let sundayFirstRegions: Set<String> = [
+            "US", "CA", "MX",     // 北美
+            "JP", "KR",           // 东亚
+            "IN", "PH", "TH", "PK", "BD", "LK", "MM", "KH", // 南亚/东南亚
+            "IL", "SA", "AE", "KW", "BH", "QA", "OM", "EG", "JO", "LB", "IQ" // 中东
+        ]
+        cal.firstWeekday = sundayFirstRegions.contains(region) ? 1 : 2
+        return cal
+    }()
+
+    /// 日期区间口径：今年各时段均取起点到今日；往年整年
+    func dateRange(at date: Date = Date(), year: Int? = nil) -> (start: Date, end: Date) {
+        let calendar = Self.sharedCalendar
+        let now = date
+        let end = now.endOfDay
+        switch self {
+        case .today:
+            return (calendar.startOfDay(for: now), end)
+        case .week:
+            if let weekInterval = calendar.dateInterval(of: .weekOfYear, for: now) {
+                return (weekInterval.start, end)
+            }
+            return (calendar.startOfDay(for: now), end)
+        case .month:
+            let components = calendar.dateComponents([.year, .month], from: now)
+            let start = calendar.date(from: components)!
+            return (start, end)
+        case .quarter:
+            let month = calendar.component(.month, from: now)
+            let quarterStartMonth = ((month - 1) / 3) * 3 + 1
+            var components = calendar.dateComponents([.year], from: now)
+            components.month = quarterStartMonth
+            components.day = 1
+            let start = calendar.date(from: components)!
+            return (start, end)
+        case .year:
+            let selectedYear = year ?? calendar.component(.year, from: now)
+            var components = DateComponents()
+            components.year = selectedYear
+            components.month = 1
+            components.day = 1
+            let start = calendar.date(from: components)!
+            if selectedYear == calendar.component(.year, from: now) {
+                return (start, end)
+            } else {
+                components.year = selectedYear + 1
+                let endOfYear = calendar.date(from: components)!
+                return (start, endOfYear)
+            }
+        }
+    }
 }

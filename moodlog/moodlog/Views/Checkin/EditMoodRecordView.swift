@@ -400,35 +400,13 @@ struct EditMoodRecordView: View {
                 Spacer()
             }
 
-            if #available(iOS 16.0, *) {
-                TextField("", text: $note, prompt: Text(L.localized("checkin.note_placeholder")).foregroundColor(.secondary), axis: .vertical)
-                    .font(.subheadline)
-                    .lineLimit(3...6)
-                    .padding(12)
-                    .background(Color(UIColor.tertiarySystemGroupedBackground))
-                    .cornerRadius(10)
-                    .focused($isNoteFocused)
-            } else {
-                ZStack(alignment: .topLeading) {
-                    TextEditor(text: $note)
-                        .font(.subheadline)
-                        .frame(minHeight: 80)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color(UIColor.tertiarySystemGroupedBackground))
-                        .cornerRadius(10)
-                        .focused($isNoteFocused)
-
-                    if note.isEmpty {
-                        Text(L.localized("checkin.note_placeholder"))
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 12)
-                            .allowsHitTesting(false)
-                    }
-                }
-            }
+            TextField("", text: $note, prompt: Text(L.localized("checkin.note_placeholder")).foregroundColor(.secondary), axis: .vertical)
+                .font(.subheadline)
+                .lineLimit(3...6)
+                .padding(12)
+                .background(Color(UIColor.tertiarySystemGroupedBackground))
+                .cornerRadius(10)
+                .focused($isNoteFocused)
         }
         .padding(16)
         .background(Color(UIColor.secondarySystemGroupedBackground))

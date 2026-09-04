@@ -131,12 +131,7 @@ class CalendarViewModel: ObservableObject {
     /// 周一起始是 ISO 8601 标准及全球多数国家的惯例，
     /// 仅少数地区（北美、日本、中东等）以周日为一周起始
     private var firstWeekday: Int {
-        let region: String
-        if #available(iOS 16, *) {
-            region = Locale.current.region?.identifier ?? ""
-        } else {
-            region = Locale.current.regionCode ?? ""
-        }
+        let region = Locale.current.region?.identifier ?? ""
         // 周日起始的地区：北美、日本、韩国、印度、中东、菲律宾、泰国等
         let sundayFirstRegions: Set<String> = [
             "US", "CA", "MX",     // 北美

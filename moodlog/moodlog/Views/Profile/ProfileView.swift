@@ -18,7 +18,6 @@ private enum AppLinks {
 }
 
 struct ProfileView: View {
-    @StateObject private var dataManager = MoodDataManager.shared
     @StateObject private var exportService = DataExportService()
     @StateObject private var achievementService = AchievementService()
 
@@ -27,12 +26,13 @@ struct ProfileView: View {
     @State private var showShareSheet = false
     @State private var exportFormat: ExportFormat?
     @State private var exportToast: String?
+    @State private var heroMood: MoodType = .happy
 
     var body: some View {
         NavigationView {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 20) {
-                    headerCard
+                    moodCard
                     achievementsCard
                     dataSection
                     supportSection
@@ -64,31 +64,79 @@ struct ProfileView: View {
         }
     }
 
-    // MARK: - 头部
+    // MARK: - 情绪卡片
 
-    private var headerCard: some View {
-        HStack(spacing: 16) {
+    private var moodCard: some View {
+        Button { showShareSheet = true } label: {
             ZStack {
+                LinearGradient(colors: [Color("AccentColor"), Color("AccentLightColor")],
+                               startPoint: .topLeading, endPoint: .bottomTrailing)
+
                 Circle()
-                    .fill(LinearGradient(colors: [Color("AccentColor"), Color("AccentLightColor")],
-                                         startPoint: .topLeading, endPoint: .bottomTrailing))
-                    .frame(width: 64, height: 64)
-                Image(systemName: "cat.fill")
-                    .font(.system(size: 32))
-                    .foregroundColor(.white)
+                    .fill(Color.white.opacity(0.1))
+                    .frame(width: 150, height: 150)
+                    .offset(x: 140, y: -55)
+
+                Circle()
+                    .fill(Color.white.opacity(0.08))
+                    .frame(width: 120, height: 120)
+                    .offset(x: -135, y: 65)
+
+                HStack(spacing: 16) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(L.localized("profile.share_card"))
+                            .font(.title3.bold())
+                            .foregroundColor(.white)
+                        Text(L.localized("profile.share_card_desc"))
+                            .font(.caption)
+                            .foregroundColor(.white.opacity(0.85))
+                            .multilineTextAlignment(.leading)
+                    }
+                    Spacer()
+                    miniCardStack
+                }
+                .padding(.horizontal, 20)
             }
-            VStack(alignment: .leading, spacing: 4) {
-                Text(L.localized("app.name"))
-                    .font(.title2.bold())
-                Text(String(format: L.localized("profile.records_total"), dataManager.fetchRecordCount()))
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-            Spacer()
+            .frame(height: 104)
+            .contentShape(Rectangle())
         }
-        .padding(20)
-        .background(Color(UIColor.secondarySystemGroupedBackground))
+        .buttonStyle(.plain)
         .cornerRadius(20)
+        .shadow(color: Color("AccentColor").opacity(0.3), radius: 12, y: 6)
+        .task {
+            let range = InsightTimeRange.week.dateRange()
+            let distribution = MoodDataManager.shared.fetchMoodDistribution(from: range.start, to: range.end)
+            if let top = distribution.max(by: { $0.value < $1.value }), top.value > 0 {
+                heroMood = top.key
+            }
+        }
+    }
+
+    private var miniCardStack: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color.white.opacity(0.25))
+                .frame(width: 52, height: 64)
+                .rotationEffect(.degrees(-10))
+                .offset(x: -8, y: 3)
+
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color.white.opacity(0.45))
+                .frame(width: 52, height: 64)
+                .rotationEffect(.degrees(9))
+                .offset(x: 9, y: -3)
+
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color.white)
+                .frame(width: 52, height: 64)
+                .shadow(color: .black.opacity(0.15), radius: 5, y: 3)
+                .overlay(
+                    Image(heroMood.imageName)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 34, height: 34)
+                )
+        }
     }
 
     // MARK: - 成就
@@ -126,15 +174,6 @@ struct ProfileView: View {
                         rowDivider
                     }
                 }
-                rowDivider
-                Button { showShareSheet = true } label: {
-                    settingRow(icon: "square.and.arrow.up",
-                               iconColor: Color("AccentColor"),
-                               title: L.localized("profile.share_card"),
-                               subtitle: L.localized("profile.share_card_desc"),
-                               showChevron: true)
-                }
-                .buttonStyle(.plain)
             }
         }
     }
