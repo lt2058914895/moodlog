@@ -88,13 +88,13 @@ struct MoodRecordsView: View {
                         .padding(.vertical, 10)
                         .background(
                             viewMode == mode
-                                ? Color(hex: "6C5CE7").colorSchemeAdapted
+                                ? Color("AccentColor")
                                 : Color.clear
                         )
                         .foregroundColor(
                             viewMode == mode
                                 ? .white
-                                : Color(hex: "6C5CE7").colorSchemeAdapted
+                                : Color("AccentColor")
                         )
                         .cornerRadius(10)
                 }
@@ -189,7 +189,7 @@ struct MoodRecordsView: View {
         HStack {
             Text(viewModel.sectionDateTitle(date))
                 .font(.subheadline.bold())
-                .foregroundColor(Color(hex: "6C5CE7").colorSchemeAdapted)
+                .foregroundColor(Color("AccentColor"))
             Spacer()
             Text(L.localizedInt("calendar.records_count", value: count))
                 .font(.caption2)
@@ -203,7 +203,7 @@ struct MoodRecordsView: View {
             Spacer()
             Image(systemName: "heart.text.square")
                 .font(.system(size: 56))
-                .foregroundColor(Color(hex: "6C5CE7").colorSchemeAdapted.opacity(0.6))
+                .foregroundColor(Color("AccentColor").opacity(0.6))
             Text(L.localized("records.empty"))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
@@ -222,7 +222,7 @@ struct MoodRecordsView: View {
                 .padding(.vertical, 14)
                 .background(
                     LinearGradient(
-                        colors: [Color(hex: "6C5CE7").colorSchemeAdapted, Color(hex: "A29BFE").colorSchemeAdapted],
+                        colors: [Color("AccentColor"), Color("AccentLightColor")],
                         startPoint: .leading,
                         endPoint: .trailing
                     )
@@ -241,7 +241,7 @@ struct MoodRecordsView: View {
             Button(action: viewModel.goToPreviousMonth) {
                 Image(systemName: "chevron.left")
                     .font(.body.weight(.semibold))
-                    .foregroundColor(Color(hex: "6C5CE7").colorSchemeAdapted)
+                    .foregroundColor(Color("AccentColor"))
                     .padding(8)
             }
 
@@ -255,16 +255,16 @@ struct MoodRecordsView: View {
             Button(action: viewModel.goToToday) {
                 Text(L.localized("calendar.today"))
                     .font(.caption.bold())
-                    .foregroundColor(Color(hex: "6C5CE7").colorSchemeAdapted)
+                    .foregroundColor(Color("AccentColor"))
                     .padding(.horizontal, 12)
                     .padding(.vertical, 4)
-                    .background(Capsule().fill(Color(hex: "6C5CE7").colorSchemeAdapted.opacity(0.1)))
+                    .background(Capsule().fill(Color("AccentColor").opacity(0.1)))
             }
 
             Button(action: viewModel.goToNextMonth) {
                 Image(systemName: "chevron.right")
                     .font(.body.weight(.semibold))
-                    .foregroundColor(Color(hex: "6C5CE7").colorSchemeAdapted)
+                    .foregroundColor(Color("AccentColor"))
                     .padding(8)
             }
         }
@@ -280,7 +280,7 @@ struct MoodRecordsView: View {
             VStack(spacing: 4) {
                 Image(systemName: "doc.text.fill")
                     .font(.system(size: 18))
-                    .foregroundColor(Color(hex: "6C5CE7").colorSchemeAdapted)
+                    .foregroundColor(Color("AccentColor"))
                 Text("\(viewModel.currentMonthRecordCount)")
                     .font(.title3.bold())
                     .foregroundColor(.primary)
@@ -299,7 +299,7 @@ struct MoodRecordsView: View {
             VStack(spacing: 4) {
                 Image(systemName: "calendar.badge.checkmark")
                     .font(.system(size: 18))
-                    .foregroundColor(Color(hex: "00B894").colorSchemeAdapted)
+                    .foregroundColor(Color("SuccessColor"))
                 Text("\(viewModel.currentMonthActiveDays)")
                     .font(.title3.bold())
                     .foregroundColor(.primary)
@@ -372,7 +372,7 @@ struct MoodRecordsView: View {
 
                 if isSelected {
                     RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color(hex: "6C5CE7").colorSchemeAdapted, lineWidth: 2)
+                        .stroke(Color("AccentColor"), lineWidth: 2)
                         .frame(height: 44)
                 }
 
@@ -381,8 +381,8 @@ struct MoodRecordsView: View {
                         .font(isToday ? .caption.bold() : .caption)
                         .foregroundColor(
                             !day.isCurrentMonth ? .secondary :
-                            isToday ? Color(hex: "6C5CE7").colorSchemeAdapted :
-                            isSelected ? Color(hex: "6C5CE7").colorSchemeAdapted : .primary
+                            isToday ? Color("AccentColor") :
+                            isSelected ? Color("AccentColor") : .primary
                         )
 
                     if hasRecords, day.isCurrentMonth {
@@ -419,7 +419,7 @@ struct MoodRecordsView: View {
                 VStack(spacing: 14) {
                     Image(systemName: "heart.text.square")
                         .font(.system(size: 40))
-                        .foregroundColor(Color(hex: "6C5CE7").colorSchemeAdapted.opacity(0.5))
+                        .foregroundColor(Color("AccentColor").opacity(0.5))
                     Text(L.localized("calendar.no_records"))
                         .font(.subheadline)
                         .foregroundColor(.secondary)
@@ -436,7 +436,7 @@ struct MoodRecordsView: View {
                         .padding(.vertical, 10)
                         .background(
                             LinearGradient(
-                                colors: [Color(hex: "6C5CE7").colorSchemeAdapted, Color(hex: "A29BFE").colorSchemeAdapted],
+                                colors: [Color("AccentColor"), Color("AccentLightColor")],
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )

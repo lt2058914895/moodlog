@@ -26,12 +26,12 @@ enum MoodDataError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .createFailed(let detail): return "创建记录失败：\(detail)"
-        case .deleteFailed(let detail): return "删除记录失败：\(detail)"
-        case .updateFailed(let detail): return "更新记录失败：\(detail)"
-        case .fetchFailed(let detail): return "查询数据失败：\(detail)"
-        case .tagCreationFailed(let detail): return "创建标签失败：\(detail)"
-        case .invalidData(let detail): return "数据无效：\(detail)"
+        case .createFailed(let detail): return String(format: L.localized("error.create_failed"), detail)
+        case .deleteFailed(let detail): return String(format: L.localized("error.delete_failed"), detail)
+        case .updateFailed(let detail): return String(format: L.localized("error.update_failed"), detail)
+        case .fetchFailed(let detail): return String(format: L.localized("error.fetch_failed"), detail)
+        case .tagCreationFailed(let detail): return String(format: L.localized("error.tag_creation_failed"), detail)
+        case .invalidData(let detail): return String(format: L.localized("error.invalid_data"), detail)
         }
     }
 }
@@ -40,7 +40,6 @@ enum MoodDataError: LocalizedError {
 
 /// 数据管理组合协议（面向 ViewModel 的统一接口）
 protocol MoodDataManaging: ObservableObject {
-    var dataVersion: Int { get set }
     var lastError: MoodDataError? { get set }
 
     // MoodRecord CRUD
@@ -49,6 +48,10 @@ protocol MoodDataManaging: ObservableObject {
     func fetchRecords(from startDate: Date, to endDate: Date) -> [MoodRecord]
     func fetchRecords(for date: Date) -> [MoodRecord]
     func fetchRecords(limit: Int, offset: Int) -> [MoodRecord]
+    /// 记录总数（count 查询，不加载对象）
+    func fetchRecordCount() -> Int
+    /// 最近一条记录时间（fetchLimit=1）
+    func fetchLatestRecordDate() -> Date?
     func deleteRecord(_ record: MoodRecord) throws
     func deleteRecords(_ records: [MoodRecord]) throws
     func updateMoodRecord(_ record: MoodRecord, moodType: MoodType, intensity: Int, tagNames: [String], note: String?) throws
@@ -91,7 +94,6 @@ protocol MoodDataManaging: ObservableObject {
 class MoodDataManager: MoodDataManaging {
     static let shared = MoodDataManager()
 
-    @Published var dataVersion: Int = 0
     @Published var lastError: MoodDataError?
 
     let container: NSPersistentContainer
@@ -148,6 +150,8 @@ class MoodDataManager: MoodDataManaging {
     }
 
     func fetchAllRecords() -> [MoodRecord] { recordRepository.fetchAllRecords() }
+    func fetchRecordCount() -> Int { recordRepository.fetchRecordCount() }
+    func fetchLatestRecordDate() -> Date? { recordRepository.fetchLatestRecordDate() }
     func fetchRecords(from startDate: Date, to endDate: Date) -> [MoodRecord] { recordRepository.fetchRecords(from: startDate, to: endDate) }
     func fetchRecords(for date: Date) -> [MoodRecord] { recordRepository.fetchRecords(for: date) }
 
@@ -328,10 +332,9 @@ class MoodDataManager: MoodDataManaging {
         return "📋"
     }
 
-    /// 发送数据变更通知
+    /// 发送数据变更通知（统一走 NotificationCenter）
     private func notifyDataChange() {
-        DispatchQueue.main.async { [weak self] in
-            self?.dataVersion += 1
+        DispatchQueue.main.async {
             NotificationCenter.default.post(name: .moodDataDidChange, object: nil)
         }
     }

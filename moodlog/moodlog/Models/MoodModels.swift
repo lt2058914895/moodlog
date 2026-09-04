@@ -234,6 +234,22 @@ struct PresetTag: Hashable {
         }
         return map
     }()
+
+    /// 根据标签名查找所属分类（预设标签）
+    static func category(for name: String) -> TagCategory? {
+        allPresetTagCategories[name]
+    }
+
+    /// 所有预设标签的 名称→分类 映射（懒加载缓存）
+    private static let allPresetTagCategories: [String: TagCategory] = {
+        var map: [String: TagCategory] = [:]
+        for category in TagCategory.allCases {
+            for tag in category.presetTags {
+                map[tag.name] = category
+            }
+        }
+        return map
+    }()
 }
 
 // MARK: - 情绪记录UI模型

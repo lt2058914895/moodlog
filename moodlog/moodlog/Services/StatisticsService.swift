@@ -124,36 +124,29 @@ class StatisticsService: StatisticsProviding {
         return result
     }
 
-    /// 轻量查询：仅加载 tagNames 字符串进行聚合
+    /// 标签频次聚合：通过 tags 关系统计（tagNames 字符串仅作历史数据只读兜底）
     private func fetchTopTagsLightweight(from startDate: Date, to endDate: Date, limit: Int) -> [(name: String, count: Int)] {
-        let request: NSFetchRequest<NSDictionary> = NSFetchRequest(entityName: "MoodRecord")
+        let request: NSFetchRequest<MoodRecord> = MoodRecord.fetchRequest()
         request.predicate = NSPredicate(
             format: "createdAt >= %@ AND createdAt < %@",
             startDate as CVarArg,
             endDate as CVarArg
         )
-        request.resultType = .dictionaryResultType
-
-        let tagNamesDesc = NSExpressionDescription()
-        tagNamesDesc.name = "tagNamesValue"
-        tagNamesDesc.expression = NSExpression(forKeyPath: "tagNames")
-        tagNamesDesc.expressionResultType = .stringAttributeType
-
-        request.propertiesToFetch = [tagNamesDesc]
+        // 预取 tags 关系，避免逐条触发 faults（N+1 查询）
+        request.relationshipKeyPathsForPrefetching = ["tags"]
+        request.fetchBatchSize = 50
 
         var tagCount: [String: Int] = [:]
         do {
-            let results = try viewContext.fetch(request) as? [[String: Any]] ?? []
-            for dict in results {
-                if let tagNamesStr = dict["tagNamesValue"] as? String {
-                    let names = tagNamesStr.components(separatedBy: ",").filter { !$0.isEmpty }
-                    for name in names {
-                        tagCount[name, default: 0] += 1
-                    }
+            let records = try viewContext.fetch(request)
+            for record in records {
+                // tagNamesFromRecord 统一走 tags 关系；历史记录仅有字符串时兜底
+                for name in MoodRecordRepository.tagNamesFromRecord(record) {
+                    tagCount[name, default: 0] += 1
                 }
             }
         } catch {
-            Self.logger.error("Lightweight top tags query failed: \(error.localizedDescription)")
+            Self.logger.error("Top tags query failed: \(error.localizedDescription)")
         }
 
         return tagCount.sorted { $0.value > $1.value }.prefix(limit).map { (name: $0.key, count: $0.value) }

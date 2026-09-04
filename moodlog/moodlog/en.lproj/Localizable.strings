@@ -156,5 +156,13 @@
 "custom_tag.my_tags" = "My Custom Tags";
 "custom_tag.preview" = "Preview";
 
+// MARK: - Errors
+"error.create_failed" = "Failed to create record: %@";
+"error.delete_failed" = "Failed to delete record: %@";
+"error.update_failed" = "Failed to update record: %@";
+"error.fetch_failed" = "Failed to fetch data: %@";
+"error.tag_creation_failed" = "Failed to create tag: %@";
+"error.invalid_data" = "Invalid data: %@";
+
 // MARK: - App Name
 "app.name" = "Lumi";

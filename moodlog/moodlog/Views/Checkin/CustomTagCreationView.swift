@@ -76,7 +76,7 @@ struct CustomTagCreationView: View {
                 Button(action: { dismiss() }) {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 17, weight: .semibold))
-                        .foregroundColor(Color(hex: "6C5CE7").colorSchemeAdapted)
+                        .foregroundColor(Color("AccentColor"))
                 }
             }
         }
@@ -177,7 +177,7 @@ struct CustomTagCreationView: View {
                                 .padding(.vertical, 4)
                                 .background(
                                     RoundedRectangle(cornerRadius: 8)
-                                        .fill(selectedEmoji == emoji ? Color(hex: "6C5CE7").colorSchemeAdapted.opacity(0.15) : Color.clear)
+                                        .fill(selectedEmoji == emoji ? Color("AccentColor").opacity(0.15) : Color.clear)
                                 )
                         }
                         .buttonStyle(.plain)
@@ -201,17 +201,17 @@ struct CustomTagCreationView: View {
                     .font(.system(size: 14))
                 Text(tagName.isEmpty ? L.localized("custom_tag.name_placeholder") : tagName)
                     .font(.caption)
-                    .foregroundColor(tagName.isEmpty ? .secondary : Color(hex: "6C5CE7").colorSchemeAdapted)
+                    .foregroundColor(tagName.isEmpty ? .secondary : Color("AccentColor"))
             }
             .padding(.horizontal, 10)
             .padding(.vertical, 5)
             .background(
                 Capsule()
-                    .fill(tagName.isEmpty ? Color(UIColor.tertiarySystemGroupedBackground) : Color(hex: "6C5CE7").colorSchemeAdapted.opacity(0.12))
+                    .fill(tagName.isEmpty ? Color(UIColor.tertiarySystemGroupedBackground) : Color("AccentColor").opacity(0.12))
             )
             .overlay(
                 Capsule()
-                    .stroke(tagName.isEmpty ? Color.clear : Color(hex: "6C5CE7").colorSchemeAdapted.opacity(0.6), lineWidth: 1)
+                    .stroke(tagName.isEmpty ? Color.clear : Color("AccentColor").opacity(0.6), lineWidth: 1)
             )
             Spacer()
         }
@@ -236,7 +236,7 @@ struct CustomTagCreationView: View {
             .padding(.vertical, 16)
             .background(
                 LinearGradient(
-                    colors: [Color(hex: "6C5CE7").colorSchemeAdapted, Color(hex: "A29BFE").colorSchemeAdapted],
+                    colors: [Color("AccentColor"), Color("AccentLightColor")],
                     startPoint: .leading,
                     endPoint: .trailing
                 )

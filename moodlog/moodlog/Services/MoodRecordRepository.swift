@@ -33,6 +33,11 @@ protocol MoodRecordManaging {
 
     /// 辅助方法
     static func tagNamesFromRecord(_ record: MoodRecord) -> [String]
+
+    /// 轻量查询：记录总数（不加载任何对象到内存）
+    func fetchRecordCount() -> Int
+    /// 轻量查询：最近一条记录的时间（fetchLimit=1，不遍历全部记录）
+    func fetchLatestRecordDate() -> Date?
 }
 
 /// 情绪记录 CRUD 仓储（使用 backgroundContext 写入，避免主线程阻塞）
@@ -100,13 +105,12 @@ class MoodRecordRepository: MoodRecordManaging {
             record.moodType = moodType.rawValue
             record.intensity = Int16(intensity)
             record.note = note
-            record.tagNames = tagNames.joined(separator: ",")
             record.createdAt = Date()
             record.updatedAt = Date()
             record.isSynced = false
 
             // 建立标签关系并更新使用时间
-            let tags = fetchTagsByNames(tagNames, in: backgroundContext)
+            let tags = getOrCreateTagsByNames(tagNames, in: backgroundContext)
             for tag in tags {
                 tag.lastUsedAt = Date()
                 tag.usageCount += 1
@@ -147,6 +151,34 @@ class MoodRecordRepository: MoodRecordManaging {
         } catch {
             Self.logger.error("Fetch all records failed: \(error.localizedDescription)")
             return []
+        }
+    }
+
+    // MARK: - 轻量查询（避免全量加载）
+
+    /// 记录总数（count 查询，不加载任何对象到内存）
+    func fetchRecordCount() -> Int {
+        let request: NSFetchRequest<MoodRecord> = MoodRecord.fetchRequest()
+        do {
+            let count = try viewContext.count(for: request)
+            return max(count, 0)
+        } catch {
+            Self.logger.error("Count records failed: \(error.localizedDescription)")
+            return 0
+        }
+    }
+
+    /// 最近一条记录的时间（fetchLimit=1 降序，不遍历全部记录）
+    func fetchLatestRecordDate() -> Date? {
+        let request: NSFetchRequest<MoodRecord> = MoodRecord.fetchRequest()
+        request.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: false)]
+        request.fetchLimit = 1
+        request.fetchBatchSize = 1
+        do {
+            return try viewContext.fetch(request).first?.createdAt
+        } catch {
+            Self.logger.error("Fetch latest record date failed: \(error.localizedDescription)")
+            return nil
         }
     }
 
@@ -238,12 +270,11 @@ class MoodRecordRepository: MoodRecordManaging {
                 let bgRecord = backgroundContext.object(with: objectID) as? MoodRecord
                 bgRecord?.moodType = moodType.rawValue
                 bgRecord?.intensity = Int16(intensity)
-                bgRecord?.tagNames = tagNames.joined(separator: ",")
                 bgRecord?.note = note
                 bgRecord?.updatedAt = Date()
 
                 // 更新标签关系并更新使用时间
-                let tags = fetchTagsByNames(tagNames, in: backgroundContext)
+                let tags = getOrCreateTagsByNames(tagNames, in: backgroundContext)
                 for tag in tags {
                     tag.lastUsedAt = Date()
                     tag.usageCount += 1
@@ -279,12 +310,11 @@ class MoodRecordRepository: MoodRecordManaging {
             record.moodType = moodType.rawValue
             record.intensity = Int16(intensity)
             record.note = note
-            record.tagNames = tagNames.joined(separator: ",")
             record.createdAt = Date()
             record.updatedAt = Date()
             record.isSynced = false
 
-            let tags = self.fetchTagsByNames(tagNames, in: ctx)
+            let tags = self.getOrCreateTagsByNames(tagNames, in: ctx)
             for tag in tags {
                 tag.lastUsedAt = Date()
                 tag.usageCount += 1
@@ -363,11 +393,10 @@ class MoodRecordRepository: MoodRecordManaging {
                 let bgRecord = ctx.object(with: objectID) as? MoodRecord
                 bgRecord?.moodType = moodType.rawValue
                 bgRecord?.intensity = Int16(intensity)
-                bgRecord?.tagNames = tagNames.joined(separator: ",")
                 bgRecord?.note = note
                 bgRecord?.updatedAt = Date()
 
-                let tags = self.fetchTagsByNames(tagNames, in: ctx)
+                let tags = self.getOrCreateTagsByNames(tagNames, in: ctx)
                 for tag in tags {
                     tag.lastUsedAt = Date()
                     tag.usageCount += 1
@@ -399,27 +428,41 @@ class MoodRecordRepository: MoodRecordManaging {
 
     // MARK: - 辅助方法
 
-    /// 从记录中获取标签名称列表（优先使用关系，降级使用 tagNames 字符串）
+    /// 从记录中获取标签名称列表（tags 关系为唯一数据源；tagNames 字符串仅为历史数据只读兜底）
     static func tagNamesFromRecord(_ record: MoodRecord) -> [String] {
-        // 优先从关系中获取
+        // 统一走 tags 关系
         if let tags = record.tags as? Set<ActivityTag>, !tags.isEmpty {
             return tags.compactMap { $0.name }.sorted()
         }
-        // 降级：从 tagNames 字符串解析
+        // 历史数据兜底：旧记录仅写了 tagNames 字符串、尚未回填关系
         guard let tagNamesStr = record.tagNames else { return [] }
         return tagNamesStr.components(separatedBy: ",").filter { !$0.isEmpty }
     }
 
-    /// 在指定上下文中按名称批量查找 ActivityTag
-    private func fetchTagsByNames(_ names: [String], in context: NSManagedObjectContext) -> [ActivityTag] {
+    /// 在指定上下文中按名称 getOrCreate ActivityTag（保证 tags 关系完整，不依赖标签预初始化）
+    private func getOrCreateTagsByNames(_ names: [String], in context: NSManagedObjectContext) -> [ActivityTag] {
         guard !names.isEmpty else { return [] }
         let request: NSFetchRequest<ActivityTag> = ActivityTag.fetchRequest()
         request.predicate = NSPredicate(format: "name IN %@", names)
-        request.fetchBatchSize = names.count
         do {
-            return try context.fetch(request)
+            let existing = try context.fetch(request)
+            let existingNames = Set(existing.compactMap { $0.name })
+            var result = existing
+            // 不存在的名称创建为标签（预设标签带正确 emoji/分类，其余用默认值）
+            for name in names where !existingNames.contains(name) {
+                let tag = ActivityTag(context: context)
+                tag.id = UUID()
+                tag.name = name
+                tag.category = (PresetTag.category(for: name) ?? .lifeEvent).rawValue
+                tag.emoji = PresetTag.emoji(for: name) ?? "📋"
+                tag.isCustom = false
+                tag.usageCount = 0
+                tag.createdAt = Date()
+                result.append(tag)
+            }
+            return result
         } catch {
-            Self.logger.error("Fetch tags by names failed: \(error.localizedDescription)")
+            Self.logger.error("Get-or-create tags by names failed: \(error.localizedDescription)")
             return []
         }
     }

@@ -156,5 +156,13 @@
 "custom_tag.my_tags" = "我的自定义标签";
 "custom_tag.preview" = "预览";
 
+// MARK: - Errors
+"error.create_failed" = "创建记录失败：%@";
+"error.delete_failed" = "删除记录失败：%@";
+"error.update_failed" = "更新记录失败：%@";
+"error.fetch_failed" = "查询数据失败：%@";
+"error.tag_creation_failed" = "创建标签失败：%@";
+"error.invalid_data" = "数据无效：%@";
+
 // MARK: - App Name
 "app.name" = "Lumi";

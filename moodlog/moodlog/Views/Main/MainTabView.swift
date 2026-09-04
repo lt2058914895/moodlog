@@ -78,7 +78,7 @@ struct MainTabView: View {
                 }
                 .tag(Tab.insight)
         }
-        .tint(Color(hex: "6C5CE7").colorSchemeAdapted)
+        .tint(Color("AccentColor"))
         .onAppear {
             // 首次启动初始化预设标签
             dataManager.initializePresetTagsIfNeeded()

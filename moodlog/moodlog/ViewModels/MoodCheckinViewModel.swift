@@ -31,19 +31,15 @@ class MoodCheckinViewModel: ObservableObject {
         loadStats()
     }
 
-    /// 加载统计数据
+    /// 加载统计数据（轻量查询：count + fetchLimit=1，不加载全部记录）
     private func loadStats() {
-        totalRecords = dataManager.fetchAllRecords().count
+        totalRecords = dataManager.fetchRecordCount()
         streakDays = dataManager.fetchStreakDays()
         daysSinceLastRecord = calculateDaysSinceLastRecord()
     }
 
     private func calculateDaysSinceLastRecord() -> Int {
-        let records = dataManager.fetchAllRecords()
-        guard let lastRecord = records.max(by: { ($0.createdAt ?? Date.distantPast) < ($1.createdAt ?? Date.distantPast) }),
-              let lastDate = lastRecord.createdAt else {
-            return 0
-        }
+        guard let lastDate = dataManager.fetchLatestRecordDate() else { return 0 }
         let calendar = Calendar.current
         return calendar.dateComponents([.day], from: calendar.startOfDay(for: lastDate), to: calendar.startOfDay(for: Date())).day ?? 0
     }

@@ -31,6 +31,11 @@
 		C2C65F312FEE4B2F006AD954 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C2C65F332FEE4B2F006AD954 /* Localizable.strings */; };
 		DD0000012FED4D95001B6443 /* CustomTagCreationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0000022FED4D95001B6443 /* CustomTagCreationView.swift */; };
 		EE0000022FED4D95001B6443 /* MoodRecordsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0000012FED4D95001B6443 /* MoodRecordsView.swift */; };
+		FF0000012FED4D95001B6443 /* MoodSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0000022FED4D95001B6443 /* MoodSelectorView.swift */; };
+		FF0000032FED4D95001B6443 /* IntensitySliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0000042FED4D95001B6443 /* IntensitySliderView.swift */; };
+		FF0000052FED4D95001B6443 /* TagSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0000062FED4D95001B6443 /* TagSelectorView.swift */; };
+		FF0000072FED4D95001B6443 /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0000082FED4D95001B6443 /* FlowLayout.swift */; };
+		FF0000092FED4D95001B6443 /* SuccessOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF00000A2FED4D95001B6443 /* SuccessOverlayView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -60,6 +65,11 @@
 		C2C65F342FEE4B31006AD954 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		DD0000022FED4D95001B6443 /* CustomTagCreationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTagCreationView.swift; sourceTree = "<group>"; };
 		EE0000012FED4D95001B6443 /* MoodRecordsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodRecordsView.swift; sourceTree = "<group>"; };
+		FF0000022FED4D95001B6443 /* MoodSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodSelectorView.swift; sourceTree = "<group>"; };
+		FF0000042FED4D95001B6443 /* IntensitySliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntensitySliderView.swift; sourceTree = "<group>"; };
+		FF0000062FED4D95001B6443 /* TagSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagSelectorView.swift; sourceTree = "<group>"; };
+		FF0000082FED4D95001B6443 /* FlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowLayout.swift; sourceTree = "<group>"; };
+		FF00000A2FED4D95001B6443 /* SuccessOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuccessOverlayView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,6 +118,11 @@
 			isa = PBXGroup;
 			children = (
 				AA00000C2FED4D95001B6443 /* MoodCheckinView.swift */,
+				FF0000022FED4D95001B6443 /* MoodSelectorView.swift */,
+				FF0000042FED4D95001B6443 /* IntensitySliderView.swift */,
+				FF0000062FED4D95001B6443 /* TagSelectorView.swift */,
+				FF0000082FED4D95001B6443 /* FlowLayout.swift */,
+				FF00000A2FED4D95001B6443 /* SuccessOverlayView.swift */,
 				AA0000162FED4D95001B6443 /* EditMoodRecordView.swift */,
 				DD0000022FED4D95001B6443 /* CustomTagCreationView.swift */,
 			);
@@ -282,6 +297,11 @@
 				AA0000072FED4D95001B6443 /* CalendarViewModel.swift in Sources */,
 				AA0000092FED4D95001B6443 /* InsightViewModel.swift in Sources */,
 				AA00000B2FED4D95001B6443 /* MoodCheckinView.swift in Sources */,
+				FF0000012FED4D95001B6443 /* MoodSelectorView.swift in Sources */,
+				FF0000032FED4D95001B6443 /* IntensitySliderView.swift in Sources */,
+				FF0000052FED4D95001B6443 /* TagSelectorView.swift in Sources */,
+				FF0000072FED4D95001B6443 /* FlowLayout.swift in Sources */,
+				FF0000092FED4D95001B6443 /* SuccessOverlayView.swift in Sources */,
 				AA00000D2FED4D95001B6443 /* MoodCalendarView.swift in Sources */,
 				AA00000F2FED4D95001B6443 /* MoodInsightView.swift in Sources */,
 				AA0000112FED4D95001B6443 /* MainTabView.swift in Sources */,
