@@ -164,5 +164,54 @@
 "error.tag_creation_failed" = "创建标签失败：%@";
 "error.invalid_data" = "数据无效：%@";
 
+// MARK: - Stage 2: Onboarding / Achievement / Share / Profile
+"tab.profile" = "我的";
+"onboarding.page1_title" = "记录每一种情绪";
+"onboarding.page1_desc" = "8 种情绪一步选择，10 秒完成打卡，开启自我觉察";
+"onboarding.page2_title" = "丰富的活动标签";
+"onboarding.page2_desc" = "用标签标记触发情绪的事件，更懂情绪的来龙去脉";
+"onboarding.page3_title" = "数据洞察";
+"onboarding.page3_desc" = "情绪分布、标签频次一目了然，发现属于你的情绪规律";
+"onboarding.page4_title" = "开始你的情绪之旅";
+"onboarding.page4_desc" = "每一次记录，都是对自己的温柔陪伴";
+"onboarding.next" = "下一步";
+"onboarding.skip" = "跳过";
+"onboarding.start" = "立即开始";
+"achievement.title" = "成就";
+"achievement.summary_count" = "%1$d / %2$d";
+"achievement.summary_desc" = "坚持记录，解锁更多徽章";
+"achievement.progress" = "%d / %d";
+"achievement.first_record.title" = "初次记录";
+"achievement.first_record.desc" = "记录你的第一条情绪";
+"achievement.streak_7.title" = "坚持一周";
+"achievement.streak_7.desc" = "连续打卡 7 天";
+"achievement.streak_30.title" = "月度达人";
+"achievement.streak_30.desc" = "连续打卡 30 天";
+"achievement.streak_100.title" = "百日坚持";
+"achievement.streak_100.desc" = "连续打卡 100 天";
+"achievement.records_50.title" = "情绪收藏家";
+"achievement.records_50.desc" = "累计记录 50 条";
+"achievement.records_200.title" = "情绪图书馆";
+"achievement.records_200.desc" = "累计记录 200 条";
+"share.card_title" = "本周情绪回顾";
+"share.dominant" = "主导情绪 %d%%";
+"share.records" = "记录";
+"share.streak" = "连续";
+"share.share_rate" = "主导占比";
+"share.tagline" = "Lumi · 记录每一种情绪";
+"share.save_share" = "保存并分享";
+"share.nav_title" = "情绪卡片";
+"share.close" = "关闭";
+"profile.title" = "我的";
+"profile.records_total" = "共 %d 条记录";
+"profile.achievements" = "成就徽章";
+"profile.export" = "数据导出";
+"profile.export_format" = "导出为 %@";
+"profile.export_failed" = "导出失败，请重试";
+"profile.share_card" = "本周情绪卡片";
+"profile.share_card_desc" = "生成精美分享图（去敏感化）";
+"profile.version" = "版本 %@";
+"profile.tagline" = "记录每一种情绪，聚焦自我觉察";
+
 // MARK: - App Name
 "app.name" = "Lumi";

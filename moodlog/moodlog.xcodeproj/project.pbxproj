@@ -36,6 +36,13 @@
 		FF0000052FED4D95001B6443 /* TagSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0000062FED4D95001B6443 /* TagSelectorView.swift */; };
 		FF0000072FED4D95001B6443 /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0000082FED4D95001B6443 /* FlowLayout.swift */; };
 		FF0000092FED4D95001B6443 /* SuccessOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF00000A2FED4D95001B6443 /* SuccessOverlayView.swift */; };
+		GG0000012FED4D95001B6443 /* Achievement.swift in Sources */ = {isa = PBXBuildFile; fileRef = GG0000022FED4D95001B6443 /* Achievement.swift */; };
+		GG0000032FED4D95001B6443 /* AchievementService.swift in Sources */ = {isa = PBXBuildFile; fileRef = GG0000042FED4D95001B6443 /* AchievementService.swift */; };
+		GG0000052FED4D95001B6443 /* DataExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = GG0000062FED4D95001B6443 /* DataExportService.swift */; };
+		GG0000072FED4D95001B6443 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = GG0000082FED4D95001B6443 /* OnboardingView.swift */; };
+		GG0000092FED4D95001B6443 /* AchievementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = GG00000A2FED4D95001B6443 /* AchievementView.swift */; };
+		GG00000B2FED4D95001B6443 /* MoodShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = GG00000C2FED4D95001B6443 /* MoodShareView.swift */; };
+		GG00000D2FED4D95001B6443 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = GG00000E2FED4D95001B6443 /* ProfileView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -70,6 +77,13 @@
 		FF0000062FED4D95001B6443 /* TagSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagSelectorView.swift; sourceTree = "<group>"; };
 		FF0000082FED4D95001B6443 /* FlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowLayout.swift; sourceTree = "<group>"; };
 		FF00000A2FED4D95001B6443 /* SuccessOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuccessOverlayView.swift; sourceTree = "<group>"; };
+		GG0000022FED4D95001B6443 /* Achievement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Achievement.swift; sourceTree = "<group>"; };
+		GG0000042FED4D95001B6443 /* AchievementService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementService.swift; sourceTree = "<group>"; };
+		GG0000062FED4D95001B6443 /* DataExportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataExportService.swift; sourceTree = "<group>"; };
+		GG0000082FED4D95001B6443 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		GG00000A2FED4D95001B6443 /* AchievementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementView.swift; sourceTree = "<group>"; };
+		GG00000C2FED4D95001B6443 /* MoodShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodShareView.swift; sourceTree = "<group>"; };
+		GG00000E2FED4D95001B6443 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +101,7 @@
 			isa = PBXGroup;
 			children = (
 				AA0000022FED4D95001B6443 /* MoodModels.swift */,
+				GG0000022FED4D95001B6443 /* Achievement.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -100,6 +115,8 @@
 				BB0000032FED4D95001B6443 /* MoodRecordRepository.swift */,
 				BB0000052FED4D95001B6443 /* TagRepository.swift */,
 				BB0000072FED4D95001B6443 /* StatisticsService.swift */,
+				GG0000042FED4D95001B6443 /* AchievementService.swift */,
+				GG0000062FED4D95001B6443 /* DataExportService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -161,6 +178,10 @@
 				AA1000052FED4D95001B6443 /* Calendar */,
 				AA1000062FED4D95001B6443 /* Insight */,
 				AA1000072FED4D95001B6443 /* Main */,
+				GG1000012FED4D95001B6443 /* Onboarding */,
+				GG1000022FED4D95001B6443 /* Achievement */,
+				GG1000032FED4D95001B6443 /* Share */,
+				GG1000042FED4D95001B6443 /* Profile */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -213,6 +234,38 @@
 				EE0000012FED4D95001B6443 /* MoodRecordsView.swift */,
 			);
 			path = Records;
+			sourceTree = "<group>";
+		};
+		GG1000012FED4D95001B6443 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				GG0000082FED4D95001B6443 /* OnboardingView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		GG1000022FED4D95001B6443 /* Achievement */ = {
+			isa = PBXGroup;
+			children = (
+				GG00000A2FED4D95001B6443 /* AchievementView.swift */,
+			);
+			path = Achievement;
+			sourceTree = "<group>";
+		};
+		GG1000032FED4D95001B6443 /* Share */ = {
+			isa = PBXGroup;
+			children = (
+				GG00000C2FED4D95001B6443 /* MoodShareView.swift */,
+			);
+			path = Share;
+			sourceTree = "<group>";
+		};
+		GG1000042FED4D95001B6443 /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				GG00000E2FED4D95001B6443 /* ProfileView.swift */,
+			);
+			path = Profile;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -313,6 +366,13 @@
 				BB0000062FED4D95001B6443 /* TagRepository.swift in Sources */,
 				BB0000082FED4D95001B6443 /* StatisticsService.swift in Sources */,
 				EE0000022FED4D95001B6443 /* MoodRecordsView.swift in Sources */,
+				GG0000012FED4D95001B6443 /* Achievement.swift in Sources */,
+				GG0000032FED4D95001B6443 /* AchievementService.swift in Sources */,
+				GG0000052FED4D95001B6443 /* DataExportService.swift in Sources */,
+				GG0000072FED4D95001B6443 /* OnboardingView.swift in Sources */,
+				GG0000092FED4D95001B6443 /* AchievementView.swift in Sources */,
+				GG00000B2FED4D95001B6443 /* MoodShareView.swift in Sources */,
+				GG00000D2FED4D95001B6443 /* ProfileView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

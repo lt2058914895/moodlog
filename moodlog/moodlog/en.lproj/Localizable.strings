@@ -164,5 +164,54 @@
 "error.tag_creation_failed" = "Failed to create tag: %@";
 "error.invalid_data" = "Invalid data: %@";
 
+// MARK: - Stage 2: Onboarding / Achievement / Share / Profile
+"tab.profile" = "Me";
+"onboarding.page1_title" = "Record Every Emotion";
+"onboarding.page1_desc" = "8 emotions, one tap, a 10-second check-in — begin self-awareness";
+"onboarding.page2_title" = "Rich Activity Tags";
+"onboarding.page2_desc" = "Tag the events behind your emotions to understand the why";
+"onboarding.page3_title" = "Data Insights";
+"onboarding.page3_desc" = "Mood distribution and tag frequency at a glance — find your patterns";
+"onboarding.page4_title" = "Begin Your Journey";
+"onboarding.page4_desc" = "Every record is a gentle companion to yourself";
+"onboarding.next" = "Next";
+"onboarding.skip" = "Skip";
+"onboarding.start" = "Get Started";
+"achievement.title" = "Achievements";
+"achievement.summary_count" = "%1$d / %2$d";
+"achievement.summary_desc" = "Keep recording to unlock more badges";
+"achievement.progress" = "%d / %d";
+"achievement.first_record.title" = "First Record";
+"achievement.first_record.desc" = "Log your first mood";
+"achievement.streak_7.title" = "One Week";
+"achievement.streak_7.desc" = "7-day check-in streak";
+"achievement.streak_30.title" = "Monthly Pro";
+"achievement.streak_30.desc" = "30-day check-in streak";
+"achievement.streak_100.title" = "100 Days";
+"achievement.streak_100.desc" = "100-day check-in streak";
+"achievement.records_50.title" = "Collector";
+"achievement.records_50.desc" = "50 total records";
+"achievement.records_200.title" = "Library";
+"achievement.records_200.desc" = "200 total records";
+"share.card_title" = "Weekly Mood Recap";
+"share.dominant" = "Dominant %d%%";
+"share.records" = "Records";
+"share.streak" = "Streak";
+"share.share_rate" = "Dominant";
+"share.tagline" = "Lumi · Record every emotion";
+"share.save_share" = "Save & Share";
+"share.nav_title" = "Mood Card";
+"share.close" = "Close";
+"profile.title" = "Me";
+"profile.records_total" = "%d records";
+"profile.achievements" = "Achievements";
+"profile.export" = "Data Export";
+"profile.export_format" = "Export as %@";
+"profile.export_failed" = "Export failed, please retry";
+"profile.share_card" = "Weekly Mood Card";
+"profile.share_card_desc" = "Generate a shareable image (anonymized)";
+"profile.version" = "Version %@";
+"profile.tagline" = "Record every emotion, focus on self-awareness";
+
 // MARK: - App Name
 "app.name" = "Lumi";

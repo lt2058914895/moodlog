@@ -16,12 +16,14 @@ struct MainTabView: View {
         case checkin = 0
         case records = 1
         case insight = 2
+        case profile = 3
 
         var title: String {
             switch self {
             case .checkin: return L.localized("tab.checkin")
             case .records: return L.localized("tab.records")
             case .insight: return L.localized("tab.insight")
+            case .profile: return L.localized("tab.profile")
             }
         }
 
@@ -30,6 +32,7 @@ struct MainTabView: View {
             case .checkin: return "heart.circle"
             case .records: return "list.bullet.clipboard"
             case .insight: return "chart.bar"
+            case .profile: return "person.circle"
             }
         }
 
@@ -38,6 +41,7 @@ struct MainTabView: View {
             case .checkin: return "heart.circle.fill"
             case .records: return "list.bullet.clipboard.fill"
             case .insight: return "chart.bar.fill"
+            case .profile: return "person.circle.fill"
             }
         }
     }
@@ -77,6 +81,14 @@ struct MainTabView: View {
                     Text(Tab.insight.title)
                 }
                 .tag(Tab.insight)
+
+            // 我的
+            ProfileView()
+                .tabItem {
+                    Image(systemName: selectedTab == .profile ? Tab.profile.selectedIcon : Tab.profile.icon)
+                    Text(Tab.profile.title)
+                }
+                .tag(Tab.profile)
         }
         .tint(Color("AccentColor"))
         .onAppear {
