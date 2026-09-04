@@ -212,6 +212,12 @@
 "profile.share_card_desc" = "生成精美分享图（去敏感化）";
 "profile.version" = "版本 %@";
 "profile.tagline" = "记录每一种情绪，聚焦自我觉察";
+"profile.section_data" = "数据管理";
+"profile.section_support" = "支持与反馈";
+"profile.share_app" = "分享 App";
+"profile.rate_app" = "去 App Store 评分";
+"profile.feedback" = "问题反馈";
+"profile.share_app_text" = "推荐给你「心情猫」——一款本地情绪记录 App：%@";
 
 // MARK: - App Name
 "app.name" = "心情猫";

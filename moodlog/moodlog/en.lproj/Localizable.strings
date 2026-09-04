@@ -212,6 +212,12 @@
 "profile.share_card_desc" = "Generate a shareable image (anonymized)";
 "profile.version" = "Version %@";
 "profile.tagline" = "Record every emotion, focus on self-awareness";
+"profile.section_data" = "Data Management";
+"profile.section_support" = "Support & Feedback";
+"profile.share_app" = "Share App";
+"profile.rate_app" = "Rate on App Store";
+"profile.feedback" = "Send Feedback";
+"profile.share_app_text" = "Check out 心情猫, a local mood-tracking app: %@";
 
 // MARK: - App Name
 "app.name" = "心情猫";

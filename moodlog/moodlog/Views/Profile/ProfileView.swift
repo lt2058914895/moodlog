@@ -2,15 +2,27 @@
 //  ProfileView.swift
 //  moodlog
 //
-//  阶段二："我的"页，托管数据导出 / 成就 / 分享卡片
+//  "我的"页：成就 / 数据导出 / 分享卡片 / 支持
 //
 
 import SwiftUI
+
+/// App 对外链接常量
+private enum AppLinks {
+    /// 技术支持页面地址
+    static let support = URL(string: "https://lt2058914895.github.io/moodlog/support.html")!
+    /// App Store 地址
+    static let appStore = URL(string: "https://apps.apple.com/app/id6791829175")!
+    /// App Store 评分页（直接跳转撰写评价）
+    static let appStoreReview = URL(string: "itms-apps://apps.apple.com/app/id6791829175?action=write-review")!
+}
 
 struct ProfileView: View {
     @StateObject private var dataManager = MoodDataManager.shared
     @StateObject private var exportService = DataExportService()
     @StateObject private var achievementService = AchievementService()
+
+    @Environment(\.openURL) private var openURL
 
     @State private var showShareSheet = false
     @State private var exportFormat: ExportFormat?
@@ -19,11 +31,12 @@ struct ProfileView: View {
     var body: some View {
         NavigationView {
             ScrollView(showsIndicators: false) {
-                VStack(spacing: 16) {
+                VStack(spacing: 20) {
                     headerCard
                     achievementsCard
-                    exportCard
-                    aboutCard
+                    dataSection
+                    supportSection
+                    footerView
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 40)
@@ -56,10 +69,13 @@ struct ProfileView: View {
     private var headerCard: some View {
         HStack(spacing: 16) {
             ZStack {
-                Circle().fill(Color("AccentColor").opacity(0.15)).frame(width: 64, height: 64)
-                Image(systemName: "person.crop.circle.fill")
-                    .font(.system(size: 36))
-                    .foregroundColor(Color("AccentColor"))
+                Circle()
+                    .fill(LinearGradient(colors: [Color("AccentColor"), Color("AccentLightColor")],
+                                         startPoint: .topLeading, endPoint: .bottomTrailing))
+                    .frame(width: 64, height: 64)
+                Image(systemName: "cat.fill")
+                    .font(.system(size: 32))
+                    .foregroundColor(.white)
             }
             VStack(alignment: .leading, spacing: 4) {
                 Text(L.localized("app.name"))
@@ -81,114 +97,175 @@ struct ProfileView: View {
         NavigationLink {
             AchievementView()
         } label: {
-            HStack(spacing: 16) {
-                Image(systemName: "trophy.fill")
-                    .font(.system(size: 22))
-                    .foregroundColor(Color("WarningColor"))
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(L.localized("profile.achievements"))
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                    Text(String(format: L.localized("achievement.summary_count"),
-                                achievementService.earnedCount, achievementService.totalCount))
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-                Spacer()
-                Image(systemName: "chevron.right").font(.caption).foregroundColor(.secondary)
-            }
-            .padding(16)
-            .background(Color(UIColor.secondarySystemGroupedBackground))
-            .cornerRadius(16)
+            settingRow(icon: "trophy.fill",
+                       iconColor: Color("WarningColor"),
+                       title: L.localized("profile.achievements"),
+                       subtitle: String(format: L.localized("achievement.summary_count"),
+                                        achievementService.earnedCount, achievementService.totalCount),
+                       showChevron: true)
         }
         .buttonStyle(.plain)
-    }
-
-    // MARK: - 数据导出
-
-    private var exportCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Label(L.localized("profile.export"), systemImage: "square.and.arrow.down.on.square")
-                .font(.headline)
-
-            ForEach(ExportFormat.allCases, id: \.self) { fmt in
-                Button { exportFormat = fmt } label: {
-                    HStack {
-                        Image(systemName: fmt == .csv ? "tablecells" : "curlybraces")
-                            .foregroundColor(Color("AccentColor"))
-                        Text(String(format: L.localized("profile.export_format"), fmt.displayName))
-                            .foregroundColor(.primary)
-                        Spacer()
-                        Image(systemName: "chevron.right").font(.caption).foregroundColor(.secondary)
-                    }
-                    .padding(.vertical, 8)
-                }
-                .buttonStyle(.plain)
-            }
-        }
-        .padding(16)
         .background(Color(UIColor.secondarySystemGroupedBackground))
         .cornerRadius(16)
     }
 
-    // MARK: - 分享卡片
+    // MARK: - 数据管理
 
-    private var shareCard: some View {
-        Button { showShareSheet = true } label: {
-            HStack(spacing: 16) {
-                Image(systemName: "square.and.arrow.up")
-                    .font(.system(size: 22))
-                    .foregroundColor(Color("AccentColor"))
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(L.localized("profile.share_card"))
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                    Text(L.localized("profile.share_card_desc"))
+    private var dataSection: some View {
+        sectionContainer(title: L.localized("profile.section_data")) {
+            VStack(spacing: 0) {
+                ForEach(ExportFormat.allCases, id: \.self) { fmt in
+                    Button { exportFormat = fmt } label: {
+                        settingRow(icon: fmt == .csv ? "tablecells" : "curlybraces",
+                                   iconColor: Color("AccentColor"),
+                                   title: String(format: L.localized("profile.export_format"), fmt.displayName),
+                                   showChevron: true)
+                    }
+                    .buttonStyle(.plain)
+                    if fmt != ExportFormat.allCases.last {
+                        rowDivider
+                    }
+                }
+                rowDivider
+                Button { showShareSheet = true } label: {
+                    settingRow(icon: "square.and.arrow.up",
+                               iconColor: Color("AccentColor"),
+                               title: L.localized("profile.share_card"),
+                               subtitle: L.localized("profile.share_card_desc"),
+                               showChevron: true)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+
+    // MARK: - 支持与反馈
+
+    private var supportSection: some View {
+        sectionContainer(title: L.localized("profile.section_support")) {
+            VStack(spacing: 0) {
+                Button {
+                    presentShareSheet(items: [appShareText])
+                } label: {
+                    settingRow(icon: "square.and.arrow.up.on.square",
+                               iconColor: Color("InfoColor"),
+                               title: L.localized("profile.share_app"),
+                               showChevron: true)
+                }
+                .buttonStyle(.plain)
+                rowDivider
+                Button {
+                    requestAppReview()
+                } label: {
+                    settingRow(icon: "star.bubble",
+                               iconColor: Color("WarningColor"),
+                               title: L.localized("profile.rate_app"),
+                               showChevron: true)
+                }
+                .buttonStyle(.plain)
+                rowDivider
+                Button {
+                    openURL(AppLinks.support)
+                } label: {
+                    settingRow(icon: "envelope",
+                               iconColor: Color("SuccessColor"),
+                               title: L.localized("profile.feedback"),
+                               showChevron: true)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+
+    // MARK: - 页脚
+
+    private var footerView: some View {
+        VStack(spacing: 4) {
+            Text(String(format: L.localized("profile.version"), appVersionString))
+                .font(.caption2)
+            Text(L.localized("profile.tagline"))
+                .font(.caption2)
+        }
+        .foregroundColor(.secondary)
+        .padding(.top, 4)
+    }
+
+    // MARK: - 通用组件
+
+    private func sectionContainer<Content: View>(title: String,
+                                                 @ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title)
+                .font(.subheadline.bold())
+                .foregroundColor(.secondary)
+                .padding(.horizontal, 4)
+            content()
+                .background(Color(UIColor.secondarySystemGroupedBackground))
+                .cornerRadius(16)
+        }
+    }
+
+    private func settingRow(icon: String,
+                            iconColor: Color,
+                            title: String,
+                            subtitle: String? = nil,
+                            showChevron: Bool = false) -> some View {
+        HStack(spacing: 14) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(iconColor.opacity(0.15))
+                    .frame(width: 32, height: 32)
+                Image(systemName: icon)
+                    .font(.system(size: 16))
+                    .foregroundColor(iconColor)
+            }
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.body)
+                    .foregroundColor(.primary)
+                if let subtitle = subtitle {
+                    Text(subtitle)
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
-                Spacer()
-                Image(systemName: "chevron.right").font(.caption).foregroundColor(.secondary)
             }
-            .padding(16)
-            .background(Color(UIColor.secondarySystemGroupedBackground))
-            .cornerRadius(16)
+            Spacer()
+            if showChevron {
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
         }
-        .buttonStyle(.plain)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .contentShape(Rectangle())
     }
 
-    private var aboutCard: some View {
-        VStack(spacing: 8) {
-            shareCard
-            HStack {
-                Text(String(format: L.localized("profile.version"), appVersionString))
-                    .font(.caption2)
-                Spacer()
-                Text(L.localized("profile.tagline"))
-                    .font(.caption2)
-            }
-            .foregroundColor(.secondary)
-            .padding(.horizontal, 16)
-        }
+    private var rowDivider: some View {
+        Divider().padding(.leading, 62)
+    }
+
+    // MARK: - 数据
+
+    private var appShareText: String {
+        String(format: L.localized("profile.share_app_text"), AppLinks.appStore.absoluteString)
     }
 
     private var appVersionString: String {
-        let v = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
-        return v
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
     }
 
-    // MARK: - 导出执行
+    // MARK: - 操作
+
+    private func requestAppReview() {
+        openURL(AppLinks.appStoreReview)
+    }
 
     private func performExport(_ fmt: ExportFormat) {
         let content = exportService.exportAllRecords(format: fmt)
         let filename = "moodlog_export_\(Int(Date().timeIntervalSince1970)).\(fmt.fileExtension)"
         let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
-        let data: Data
-        if fmt == .json {
-            data = Data(content.utf8)
-        } else {
-            data = Data(content.utf8)
-        }
+        let data = Data(content.utf8)
         do {
             try data.write(to: tempURL, options: .atomic)
             presentShareSheet(items: [tempURL])
