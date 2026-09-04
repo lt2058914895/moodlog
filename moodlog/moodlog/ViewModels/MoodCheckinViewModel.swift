@@ -12,6 +12,8 @@ import Foundation
 /// 情绪记录ViewModel
 @MainActor
 class MoodCheckinViewModel: ObservableObject {
+    static let dailyRecordLimit = 10
+
     @Published var selectedMoodType: MoodType?
     @Published var intensity: Int = 5
     @Published var selectedTagNames: [String] = []
@@ -22,6 +24,7 @@ class MoodCheckinViewModel: ObservableObject {
     @Published var isSubmitting: Bool = false
     @Published var streakDays: Int = 0
     @Published var totalRecords: Int = 0
+    @Published var todayRecordCount: Int = 0
     @Published var daysSinceLastRecord: Int = 0
 
     private let dataManager: any MoodDataManaging
@@ -34,8 +37,13 @@ class MoodCheckinViewModel: ObservableObject {
     /// 加载统计数据（轻量查询：count + fetchLimit=1，不加载全部记录）
     private func loadStats() {
         totalRecords = dataManager.fetchRecordCount()
+        todayRecordCount = dataManager.fetchRecordCount(for: Date())
         streakDays = dataManager.fetchStreakDays()
         daysSinceLastRecord = calculateDaysSinceLastRecord()
+    }
+
+    var hasReachedDailyRecordLimit: Bool {
+        todayRecordCount >= Self.dailyRecordLimit
     }
 
     private func calculateDaysSinceLastRecord() -> Int {
@@ -76,6 +84,10 @@ class MoodCheckinViewModel: ObservableObject {
 
     /// 提交情绪记录（异步，不阻塞主线程）
     func submitRecord() {
+        guard !hasReachedDailyRecordLimit else {
+            errorMessage = L.localized("checkin.daily_limit_hint")
+            return
+        }
         guard let moodType = selectedMoodType else {
             errorMessage = L.localized("checkin.select_mood_first")
             return
@@ -110,6 +122,10 @@ class MoodCheckinViewModel: ObservableObject {
 
     /// 快速记录（使用上次标签+强度，异步）
     func quickCheckin(moodType: MoodType) {
+        guard !hasReachedDailyRecordLimit else {
+            errorMessage = L.localized("checkin.daily_limit_hint")
+            return
+        }
         guard !isSubmitting else { return }
         isSubmitting = true
 

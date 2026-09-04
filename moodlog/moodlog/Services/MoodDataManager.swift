@@ -50,6 +50,8 @@ protocol MoodDataManaging: ObservableObject {
     func fetchRecords(limit: Int, offset: Int) -> [MoodRecord]
     /// 记录总数（count 查询，不加载对象）
     func fetchRecordCount() -> Int
+    /// 指定日期记录数（count 查询，不加载对象）
+    func fetchRecordCount(for date: Date) -> Int
     /// 最近一条记录时间（fetchLimit=1）
     func fetchLatestRecordDate() -> Date?
     func deleteRecord(_ record: MoodRecord) throws
@@ -151,6 +153,7 @@ class MoodDataManager: MoodDataManaging {
 
     func fetchAllRecords() -> [MoodRecord] { recordRepository.fetchAllRecords() }
     func fetchRecordCount() -> Int { recordRepository.fetchRecordCount() }
+    func fetchRecordCount(for date: Date) -> Int { recordRepository.fetchRecordCount(for: date) }
     func fetchLatestRecordDate() -> Date? { recordRepository.fetchLatestRecordDate() }
     func fetchRecords(from startDate: Date, to endDate: Date) -> [MoodRecord] { recordRepository.fetchRecords(from: startDate, to: endDate) }
     func fetchRecords(for date: Date) -> [MoodRecord] { recordRepository.fetchRecords(for: date) }

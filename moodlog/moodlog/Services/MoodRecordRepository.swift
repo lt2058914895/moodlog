@@ -36,6 +36,8 @@ protocol MoodRecordManaging {
 
     /// 轻量查询：记录总数（不加载任何对象到内存）
     func fetchRecordCount() -> Int
+    /// 轻量查询：指定日期记录数（count 查询，不加载对象）
+    func fetchRecordCount(for date: Date) -> Int
     /// 轻量查询：最近一条记录的时间（fetchLimit=1，不遍历全部记录）
     func fetchLatestRecordDate() -> Date?
 }
@@ -163,6 +165,26 @@ class MoodRecordRepository: MoodRecordManaging {
             return max(count, 0)
         } catch {
             Self.logger.error("Count records failed: \(error.localizedDescription)")
+            return 0
+        }
+    }
+
+    func fetchRecordCount(for date: Date) -> Int {
+        let calendar = Calendar.current
+        let startDate = calendar.startOfDay(for: date)
+        guard let endDate = calendar.date(byAdding: .day, value: 1, to: startDate) else { return 0 }
+
+        let request: NSFetchRequest<MoodRecord> = MoodRecord.fetchRequest()
+        request.predicate = NSPredicate(
+            format: "createdAt >= %@ AND createdAt < %@",
+            startDate as CVarArg,
+            endDate as CVarArg
+        )
+
+        do {
+            return try viewContext.count(for: request)
+        } catch {
+            Self.logger.error("Count records for date failed: \(error.localizedDescription)")
             return 0
         }
     }

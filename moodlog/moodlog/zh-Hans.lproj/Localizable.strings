@@ -38,6 +38,7 @@
 "checkin.edit" = "编辑";
 "checkin.cancel" = "取消";
 "checkin.edit_title" = "编辑记录";
+"checkin.daily_limit_hint" = "今日已达 10 条记录上限，明天再来吧";
 "checkin.update" = "更新记录";
 "checkin.total_records" = "总记录数";
 "checkin.first_record" = "还没有记录";

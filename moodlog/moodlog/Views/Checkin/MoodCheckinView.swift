@@ -45,8 +45,16 @@ struct MoodCheckinView: View {
 
                 // 记录按钮
                 if viewModel.selectedMoodType != nil {
-                    submitButton
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                    VStack(spacing: 10) {
+                        submitButton
+
+                        if viewModel.hasReachedDailyRecordLimit {
+                            Text(L.localized("checkin.daily_limit_hint"))
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
             }
             .padding(.horizontal, 20)
@@ -233,6 +241,8 @@ struct MoodCheckinView: View {
             .cornerRadius(16)
         }
         .padding(.top, 8)
+        .disabled(viewModel.hasReachedDailyRecordLimit)
+        .opacity(viewModel.hasReachedDailyRecordLimit ? 0.55 : 1)
     }
 }
 

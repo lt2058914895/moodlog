@@ -38,6 +38,7 @@
 "checkin.edit" = "Edit";
 "checkin.cancel" = "Cancel";
 "checkin.edit_title" = "Edit Record";
+"checkin.daily_limit_hint" = "Today's 10-record limit reached. See you tomorrow.";
 "checkin.update" = "Update Record";
 "checkin.total_records" = "Total records";
 "checkin.first_record" = "No records yet";
