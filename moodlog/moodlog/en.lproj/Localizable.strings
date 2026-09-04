@@ -5,12 +5,10 @@
 
 // MARK: - Tab Bar
 "tab.checkin" = "Mood";
-"tab.calendar" = "Calendar";
 "tab.records" = "Records";
 "tab.insight" = "Look Back";
 
 // MARK: - Checkin
-"checkin.title" = "How are you feeling?";
 "checkin.subtitle" = "Pick a mood and jot it down";
 "greeting.morning" = "Good morning, how are you feeling?";
 "greeting.forenoon" = "Good forenoon, how's your mood?";
@@ -41,14 +39,6 @@
 "checkin.cancel" = "Cancel";
 "checkin.edit_title" = "Edit Record";
 "checkin.update" = "Update Record";
-"checkin.update_success" = "Updated!";
-"checkin.delete_success" = "Deleted";
-"checkin.streak_days" = "day streak";
-"checkin.streak_start" = "Logging your mood is the first step to self-awareness";
-"checkin.streak_keepgoing" = "%1$d more days to a 7-day streak — start seeing your mood patterns";
-"checkin.streak_7plus" = "One week! Keep going for 30 days to map out your emotional landscape";
-"checkin.streak_30plus" = "A month! Your patterns are emerging — keep observing yourself";
-"checkin.streak_100plus" = "100 days! You know yourself better than 90% of people";
 "checkin.total_records" = "Total records";
 "checkin.first_record" = "No records yet";
 "checkin.recorded_today" = "Recorded today";
@@ -60,7 +50,6 @@
 "calendar.long_press_hint" = "Long press a record to edit or delete";
 "calendar.month_records" = "This Month";
 "calendar.month_days" = "Days Active";
-"calendar.avg_per_day" = "Avg/Day";
 
 // MARK: - Records
 "records.mode.calendar" = "Calendar";
@@ -91,19 +80,10 @@
 "tagcat.lifeEvent" = "Life Events";
 
 // MARK: - Calendar
-"calendar.streak" = "%d Day Record Streak";
 "calendar.today" = "Today";
 "calendar.no_records" = "No records this day";
 "calendar.empty_action" = "Record how you feel";
 "calendar.records_count" = "%d records";
-"calendar.intensity" = "Intensity %d";
-"calendar.weekday_mon" = "Mon";
-"calendar.weekday_tue" = "Tue";
-"calendar.weekday_wed" = "Wed";
-"calendar.weekday_thu" = "Thu";
-"calendar.weekday_fri" = "Fri";
-"calendar.weekday_sat" = "Sat";
-"calendar.weekday_sun" = "Sun";
 
 // MARK: - Insight
 "insight.title" = "Mood Journey";
@@ -120,9 +100,6 @@
 "insight.tag_frequency" = "Top 10 Activity Tags";
 "insight.no_distribution_data" = "No data yet. Record more moods";
 "insight.no_tag_data" = "No tag data yet. Record more to learn about yourself";
-"insight.no_data" = "No data yet. Record more to see patterns";
-"insight.mood_times" = "%@ %d times";
-"insight.separator" = ", ";
 "insight.greeting" = "Lately";
 "insight.greeting_today" = "Today";
 "insight.hero_title" = "Your mood has been dominated by \"%@\"";
@@ -150,11 +127,8 @@
 "custom_tag.add" = "Custom";
 "custom_tag.name_required" = "Please enter a tag name";
 "custom_tag.name_too_long" = "Tag name cannot exceed 10 characters";
-"custom_tag.name_exists" = "This tag already exists";
-"custom_tag.created" = "Tag created";
 "custom_tag.delete_confirm" = "Delete custom tag %@?";
 "custom_tag.delete" = "Delete Tag";
-"custom_tag.my_tags" = "My Custom Tags";
 "custom_tag.preview" = "Preview";
 
 // MARK: - Errors
@@ -183,27 +157,17 @@
 "achievement.summary_desc" = "Keep recording to unlock more badges";
 "achievement.progress" = "%d / %d";
 "achievement.first_record.title" = "First Record";
-"achievement.first_record.desc" = "Log your first mood";
 "achievement.streak_7.title" = "One Week";
-"achievement.streak_7.desc" = "7-day check-in streak";
 "achievement.streak_30.title" = "Monthly Pro";
-"achievement.streak_30.desc" = "30-day check-in streak";
 "achievement.streak_100.title" = "100 Days";
-"achievement.streak_100.desc" = "100-day check-in streak";
 "achievement.records_50.title" = "Collector";
-"achievement.records_50.desc" = "50 total records";
 "achievement.records_200.title" = "Library";
-"achievement.records_200.desc" = "200 total records";
 "share.hero_prefix" = "Lately";
 "share.hero_prefix_today" = "Today";
 "share.hero_title" = "Your mood has been dominated by \"%@\"";
 "share.hero_spread_two" = "Your mood oscillates between \"%@\" and \"%@\"";
-"share.dominant" = "Dominant %d%%";
 "share.records" = "Records";
-"share.streak" = "Streak";
-"share.share_rate" = "Dominant";
 "share.tagline" = "心情猫 · Record every emotion";
-"share.save_share" = "Save & Share";
 "share.nav_title" = "Mood Card";
 "share.close" = "Close";
 "share.save_album" = "Save";
@@ -220,9 +184,7 @@
 "share.period.quarter" = "This Quarter";
 "share.period.year" = "This Year";
 "profile.title" = "Me";
-"profile.records_total" = "%d records";
 "profile.achievements" = "Achievements";
-"profile.export" = "Data Export";
 "profile.export_format" = "Export as %@";
 "profile.export_failed" = "Export failed, please retry";
 "profile.share_card" = "Mood Card";

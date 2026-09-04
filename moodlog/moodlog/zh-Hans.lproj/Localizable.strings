@@ -5,12 +5,10 @@
 
 // MARK: - Tab Bar
 "tab.checkin" = "心情";
-"tab.calendar" = "日历";
 "tab.records" = "记录";
 "tab.insight" = "回顾";
 
 // MARK: - Checkin
-"checkin.title" = "你现在感觉怎么样？";
 "checkin.subtitle" = "选一个心情，轻轻记下来就好";
 "greeting.morning" = "早上好，今天感觉怎么样？";
 "greeting.forenoon" = "上午好，现在心情如何？";
@@ -41,14 +39,6 @@
 "checkin.cancel" = "取消";
 "checkin.edit_title" = "编辑记录";
 "checkin.update" = "更新记录";
-"checkin.update_success" = "更新成功！";
-"checkin.delete_success" = "已删除";
-"checkin.streak_days" = "天连续打卡";
-"checkin.streak_start" = "记录情绪，是自我觉察的第一步";
-"checkin.streak_keepgoing" = "再过%1$d天达成7天连续，开始看见自己的情绪模式";
-"checkin.streak_7plus" = "一周连续记录！持续30天就能画出你的情绪地图";
-"checkin.streak_30plus" = "一个月了！你的情绪规律正逐渐清晰，继续观察自己";
-"checkin.streak_100plus" = "100天！你已经比90%的人更了解自己的内心";
 "checkin.total_records" = "总记录数";
 "checkin.first_record" = "还没有记录";
 "checkin.recorded_today" = "今天已记录";
@@ -60,7 +50,6 @@
 "calendar.long_press_hint" = "长按记录可编辑或删除";
 "calendar.month_records" = "本月记录";
 "calendar.month_days" = "打卡天数";
-"calendar.avg_per_day" = "日均数量";
 
 // MARK: - Records
 "records.mode.calendar" = "日历";
@@ -91,19 +80,10 @@
 "tagcat.lifeEvent" = "生活事件";
 
 // MARK: - Calendar
-"calendar.streak" = "已连续记录 %d 天";
 "calendar.today" = "今天";
 "calendar.no_records" = "这一天还没有记录";
 "calendar.empty_action" = "记下此刻心情";
 "calendar.records_count" = "%d条记录";
-"calendar.intensity" = "强度%d";
-"calendar.weekday_mon" = "一";
-"calendar.weekday_tue" = "二";
-"calendar.weekday_wed" = "三";
-"calendar.weekday_thu" = "四";
-"calendar.weekday_fri" = "五";
-"calendar.weekday_sat" = "六";
-"calendar.weekday_sun" = "日";
 
 // MARK: - Insight
 "insight.title" = "心情轨迹";
@@ -120,9 +100,6 @@
 "insight.tag_frequency" = "活动标签频次 Top10";
 "insight.no_distribution_data" = "还没有分布数据，多记录一些心情来看看吧";
 "insight.no_tag_data" = "还没有标签数据，记录更多来了解自己";
-"insight.no_data" = "还没有数据，记录更多心情来发现规律吧";
-"insight.mood_times" = "%@ %d次";
-"insight.separator" = "、";
 "insight.greeting" = "这段时间";
 "insight.greeting_today" = "今日";
 "insight.hero_title" = "你的心情以「%@」为主";
@@ -150,11 +127,8 @@
 "custom_tag.add" = "自定义";
 "custom_tag.name_required" = "请输入标签名称";
 "custom_tag.name_too_long" = "标签名称不能超过10个字";
-"custom_tag.name_exists" = "该标签已存在";
-"custom_tag.created" = "标签创建成功";
 "custom_tag.delete_confirm" = "确定删除自定义标签 %@ 吗？";
 "custom_tag.delete" = "删除标签";
-"custom_tag.my_tags" = "我的自定义标签";
 "custom_tag.preview" = "预览";
 
 // MARK: - Errors
@@ -183,27 +157,17 @@
 "achievement.summary_desc" = "坚持记录，解锁更多徽章";
 "achievement.progress" = "%d / %d";
 "achievement.first_record.title" = "初次记录";
-"achievement.first_record.desc" = "记录你的第一条情绪";
 "achievement.streak_7.title" = "坚持一周";
-"achievement.streak_7.desc" = "连续打卡 7 天";
 "achievement.streak_30.title" = "月度达人";
-"achievement.streak_30.desc" = "连续打卡 30 天";
 "achievement.streak_100.title" = "百日坚持";
-"achievement.streak_100.desc" = "连续打卡 100 天";
 "achievement.records_50.title" = "情绪收藏家";
-"achievement.records_50.desc" = "累计记录 50 条";
 "achievement.records_200.title" = "情绪图书馆";
-"achievement.records_200.desc" = "累计记录 200 条";
 "share.hero_prefix" = "这段时间";
 "share.hero_prefix_today" = "今日";
 "share.hero_title" = "你的心情以「%@」为主";
 "share.hero_spread_two" = "你的心情在「%@」和「%@」之间波动";
-"share.dominant" = "主导情绪 %d%%";
 "share.records" = "记录";
-"share.streak" = "连续";
-"share.share_rate" = "主导占比";
 "share.tagline" = "心情猫 · 记录每一种情绪";
-"share.save_share" = "保存并分享";
 "share.nav_title" = "情绪卡片";
 "share.close" = "关闭";
 "share.save_album" = "保存相册";
@@ -220,9 +184,7 @@
 "share.period.quarter" = "本季";
 "share.period.year" = "年度";
 "profile.title" = "我的";
-"profile.records_total" = "共 %d 条记录";
 "profile.achievements" = "成就徽章";
-"profile.export" = "数据导出";
 "profile.export_format" = "导出为 %@";
 "profile.export_failed" = "导出失败，请重试";
 "profile.share_card" = "情绪卡片";
