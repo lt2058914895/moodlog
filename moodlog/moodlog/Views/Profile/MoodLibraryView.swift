@@ -325,55 +325,41 @@ private struct MoodBookCover: View {
     }
 
     private var background: some View {
+        Rectangle()
+            .fill(coverColor)
+    }
+
+    private var coverColor: Color {
         switch mood {
         case .happy:
-            return AnyView(LinearGradient(
-                colors: [Color(hex: "8A6D00"), Color(hex: "C79A00"), Color(hex: "FFD93D")],
-                startPoint: .top,
-                endPoint: .bottom
-            ))
+            return Color(hex: "C89431")
         case .sad:
-            return AnyView(LinearGradient(
-                colors: [Color(hex: "2F5875"), Color(hex: "5B8FB9"), Color(hex: "8AB5D6")],
-                startPoint: .top,
-                endPoint: .bottom
-            ))
+            return Color(hex: "5277A8")
         case .angry:
-            return AnyView(LinearGradient(
-                colors: [Color(hex: "7A1F2B"), Color(hex: "FF4757"), Color(hex: "FF7A85")],
-                startPoint: .top,
-                endPoint: .bottom
-            ))
+            return Color(hex: "C25A4D")
         case .anxious:
-            return AnyView(LinearGradient(
-                colors: [Color(hex: "8C5408"), Color(hex: "F39C12"), Color(hex: "FFC46B")],
-                startPoint: .top,
-                endPoint: .bottom
-            ))
+            return Color(hex: "C27536")
         case .neutral:
-            return AnyView(LinearGradient(
-                colors: [Color(hex: "5E6A6B"), Color(hex: "95A5A6"), Color(hex: "BFC9C9")],
-                startPoint: .top,
-                endPoint: .bottom
-            ))
+            return Color(hex: "818781")
         case .afraid:
-            return AnyView(LinearGradient(
-                colors: [Color(hex: "4A2468"), Color(hex: "8E44AD"), Color(hex: "B67BD3")],
-                startPoint: .top,
-                endPoint: .bottom
-            ))
+            return Color(hex: "6F59A1")
         case .tired:
-            return AnyView(LinearGradient(
-                colors: [Color(hex: "5D443B"), Color(hex: "8D6E63"), Color(hex: "B79A8D")],
-                startPoint: .top,
-                endPoint: .bottom
-            ))
+            return Color(hex: "8A6350")
         case .relaxed:
-            return AnyView(LinearGradient(
-                colors: [Color(hex: "1B7A45"), Color(hex: "2ECC71"), Color(hex: "7BE5A5")],
-                startPoint: .top,
-                endPoint: .bottom
-            ))
+            return Color(hex: "529570")
+        }
+    }
+
+    private var spineColor: Color {
+        switch mood {
+        case .happy: return Color(hex: "B2862F")
+        case .sad: return Color(hex: "4E719F")
+        case .angry: return Color(hex: "B35449")
+        case .anxious: return Color(hex: "AF6B2F")
+        case .neutral: return Color(hex: "747B74")
+        case .afraid: return Color(hex: "654E91")
+        case .tired: return Color(hex: "7B5947")
+        case .relaxed: return Color(hex: "488A65")
         }
     }
 
@@ -393,8 +379,9 @@ private struct MoodBookCover: View {
                             .frame(width: proxy.size.width, height: proxy.size.height)
                             .clipped()
                             .opacity(coverMotifOpacity)
-                        coverVignette
-                        coverSheen
+                        mysticMarks
+                            .frame(width: proxy.size.width, height: proxy.size.height)
+                            .clipped()
                         coverTexture
                             .opacity(usesDeepCover ? 0 : 0.8)
 
@@ -418,7 +405,7 @@ private struct MoodBookCover: View {
     private var coverMotifOpacity: Double {
         switch mood {
         case .happy: return 0.75
-        case .sad: return 0.70
+        case .sad: return 0.84
         default: return 1
         }
     }
@@ -432,31 +419,6 @@ private struct MoodBookCover: View {
             ],
             startPoint: .topLeading,
             endPoint: .bottomTrailing
-        )
-    }
-
-    private var coverSheen: some View {
-        LinearGradient(
-            colors: [
-                usesDeepCover ? Color.clear : Color.white.opacity(0.06),
-                .clear,
-                Color.black.opacity(0.13)
-            ],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-        .opacity(usesDeepCover ? 0.55 : 1)
-    }
-
-    private var coverContrast: LinearGradient {
-        LinearGradient(
-            colors: [
-                .black.opacity(0.17),
-                .black.opacity(0.09),
-                .black.opacity(0.34)
-            ],
-            startPoint: .top,
-            endPoint: .bottom
         )
     }
 
@@ -487,9 +449,7 @@ private struct MoodBookCover: View {
 
     private func bookSpine(width: CGFloat) -> some View {
         ZStack {
-            usesDeepCover
-                ? (mood == .happy ? Color(hex: "8A6D00") : Color(hex: "2F5875"))
-                : mood.color.opacity(0.55)
+            spineColor
 
             LinearGradient(
                 colors: [
@@ -533,10 +493,6 @@ private struct MoodBookCover: View {
             }
             .padding(.vertical, 10)
         }
-    }
-
-    private var coverVignette: some View {
-        coverContrast
     }
 
     @ViewBuilder
@@ -790,6 +746,18 @@ private struct MoodBookCover: View {
             Circle()
                 .stroke(goldFoil.opacity(0.58), lineWidth: 1)
 
+            Circle()
+                .stroke(goldFoil.opacity(0.22), lineWidth: 1)
+                .frame(width: size * 0.72, height: size * 0.72)
+
+            ForEach(0..<12, id: \.self) { index in
+                Capsule()
+                    .fill(goldFoil.opacity(index.isMultiple(of: 3) ? 0.56 : 0.26))
+                    .frame(width: 1, height: size * 0.055)
+                    .rotationEffect(.degrees(Double(index) * 30))
+                    .offset(y: -size * 0.44)
+            }
+
             Image(mood.imageName)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
@@ -798,6 +766,79 @@ private struct MoodBookCover: View {
         }
         .frame(width: size, height: size)
         .shadow(color: .black.opacity(0.08), radius: 8, y: 4)
+    }
+
+    private var mysticMarks: some View {
+        Canvas { context, size in
+            let center = CGPoint(x: size.width / 2, y: size.height * 0.47)
+            let radius = min(size.width, size.height)
+
+            for (multiplier, opacity, dash) in [
+                (0.36, 0.10, true),
+                (0.52, 0.07, false),
+                (0.66, 0.05, true)
+            ] {
+                var ring = Path()
+                ring.addEllipse(in: CGRect(
+                    x: center.x - radius * multiplier,
+                    y: center.y - radius * multiplier,
+                    width: radius * multiplier * 2,
+                    height: radius * multiplier * 2
+                ))
+                context.stroke(
+                    ring,
+                    with: .color(.white.opacity(opacity)),
+                    style: StrokeStyle(lineWidth: 1, dash: dash ? [2, 4] : [])
+                )
+            }
+
+            let constellations = [
+                [
+                    CGPoint(x: size.width * 0.16, y: size.height * 0.21),
+                    CGPoint(x: size.width * 0.25, y: size.height * 0.15),
+                    CGPoint(x: size.width * 0.36, y: size.height * 0.22),
+                    CGPoint(x: size.width * 0.29, y: size.height * 0.33)
+                ],
+                [
+                    CGPoint(x: size.width * 0.70, y: size.height * 0.69),
+                    CGPoint(x: size.width * 0.78, y: size.height * 0.76),
+                    CGPoint(x: size.width * 0.72, y: size.height * 0.86)
+                ]
+            ]
+
+            for constellation in constellations {
+                var lines = Path()
+                lines.addLines(constellation)
+                context.stroke(lines, with: .color(.white.opacity(0.09)), lineWidth: 1)
+
+                for point in constellation {
+                    let dot = CGRect(x: point.x - 1.5, y: point.y - 1.5, width: 3, height: 3)
+                    context.fill(Path(ellipseIn: dot), with: .color(.white.opacity(0.20)))
+                }
+            }
+
+            let stars: [CGPoint] = [
+                CGPoint(x: size.width * 0.79, y: size.height * 0.18),
+                CGPoint(x: size.width * 0.20, y: size.height * 0.68),
+                CGPoint(x: size.width * 0.82, y: size.height * 0.47)
+            ]
+
+            for star in stars {
+                var spark = Path()
+                spark.move(to: CGPoint(x: star.x, y: star.y - 5))
+                spark.addLine(to: CGPoint(x: star.x + 1.5, y: star.y - 1.5))
+                spark.addLine(to: CGPoint(x: star.x + 5, y: star.y))
+                spark.addLine(to: CGPoint(x: star.x + 1.5, y: star.y + 1.5))
+                spark.addLine(to: CGPoint(x: star.x, y: star.y + 5))
+                spark.addLine(to: CGPoint(x: star.x - 1.5, y: star.y + 1.5))
+                spark.addLine(to: CGPoint(x: star.x - 5, y: star.y))
+                spark.addLine(to: CGPoint(x: star.x - 1.5, y: star.y - 1.5))
+                spark.closeSubpath()
+                context.fill(spark, with: .color(.white.opacity(0.20)))
+            }
+        }
+        .allowsHitTesting(false)
+        .opacity(0.72)
     }
 }
 
