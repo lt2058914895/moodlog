@@ -88,6 +88,8 @@ class StatisticsService: StatisticsProviding {
         return result
     }
 
+    // MARK: - 情绪图书馆
+
     private func fetchMoodDistributionFallback(from startDate: Date, to endDate: Date) -> [MoodType: Int] {
         let request: NSFetchRequest<MoodRecord> = MoodRecord.fetchRequest()
         request.predicate = NSPredicate(

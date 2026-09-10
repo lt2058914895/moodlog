@@ -81,6 +81,18 @@ enum MoodType: String, CaseIterable, Codable {
     }
 }
 
+// MARK: - 情绪图书馆聚合模型
+
+/// 一本情绪集的轻量统计信息
+struct MoodBookStats: Identifiable, Hashable, Codable {
+    let mood: MoodType
+    let count: Int
+    let averageIntensity: Double
+    let latestDate: Date?
+
+    var id: MoodType { mood }
+}
+
 // MARK: - 活动标签分类
 enum TagCategory: String, CaseIterable, Codable {
     case relationship = "relationship"   // 💔 情感关系

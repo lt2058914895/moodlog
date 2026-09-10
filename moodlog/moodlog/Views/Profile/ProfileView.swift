@@ -23,6 +23,7 @@ struct ProfileView: View {
     @Environment(\.openURL) private var openURL
 
     @State private var showShareSheet = false
+    @State private var showLibrary = false
     @State private var exportFormat: ExportFormat?
     @State private var exportToast: String?
     @State private var libraryToast: String?
@@ -42,6 +43,9 @@ struct ProfileView: View {
                 VStack(spacing: 20) {
                     moodCard
                     emotionLibraryCard
+                    #if DEBUG
+                    debugLibraryEntry
+                    #endif
                     dataSection
                     supportSection
                     footerView
@@ -52,6 +56,9 @@ struct ProfileView: View {
             .background(Color(UIColor.systemGroupedBackground))
             .navigationTitle(L.localized("profile.title"))
             .navigationBarTitleDisplayMode(.inline)
+            .navigationDestination(isPresented: $showLibrary) {
+                MoodLibraryView()
+            }
             .sheet(isPresented: $showShareSheet) { MoodShareSheet() }
             .overlay(alignment: .top) {
                 if let toast = exportToast {
@@ -230,8 +237,6 @@ struct ProfileView: View {
                     GeometryReader { proxy in
                         ZStack(alignment: .leading) {
                             Capsule()
-                                .fill(Color("AccentColor").opacity(0.12))
-                            Capsule()
                                 .fill(Color("AccentColor"))
                                 .frame(width: max(6, proxy.size.width * libraryProgress))
                         }
@@ -257,12 +262,15 @@ struct ProfileView: View {
         )
         .contentShape(Rectangle())
         .onTapGesture {
-            guard !libraryIsComplete else { return }
-            libraryToast = String(
-                format: L.localized("profile.library_not_open_hint"),
-                libraryGoal - libraryRecordCount
-            )
-            clearLibraryToast()
+            if libraryIsComplete {
+                showLibrary = true
+            } else {
+                libraryToast = String(
+                    format: L.localized("profile.library_not_open_hint"),
+                    libraryGoal - libraryRecordCount
+                )
+                clearLibraryToast()
+            }
         }
         .task { loadLibraryData() }
         .onReceive(NotificationCenter.default.publisher(for: .moodDataDidChange)) { _ in
@@ -317,6 +325,30 @@ struct ProfileView: View {
         libraryRecordCount = manager.fetchRecordCount()
         libraryMoodCounts = manager.fetchMoodDistribution(from: .distantPast, to: Date())
     }
+
+    #if DEBUG
+    private var debugLibraryEntry: some View {
+        Button {
+            showLibrary = true
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: "hammer")
+                Text("调试：进入情绪图书馆")
+                Spacer()
+                Image(systemName: "chevron.right")
+            }
+            .font(.footnote.weight(.semibold))
+            .foregroundColor(.secondary)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .background(
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .stroke(Color.secondary.opacity(0.3), lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+    #endif
 
     // MARK: - 数据管理
 
