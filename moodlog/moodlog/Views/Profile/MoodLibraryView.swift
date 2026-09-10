@@ -17,6 +17,7 @@ struct MoodLibraryView: View {
         MoodBookStats(mood: $0, count: 0, averageIntensity: 0, latestDate: nil)
     }
     @State private var selectedBook: MoodBookStats?
+    @State private var welcomeTitleWidth: CGFloat = 104
 
     private var recordCount: Int {
         books.reduce(0) { $0 + $1.count }
@@ -93,6 +94,10 @@ struct MoodLibraryView: View {
         .ignoresSafeArea()
     }
 
+    private var archiveGoldColor: Color {
+        Color(hex: "A17625")
+    }
+
     private var archiveHeader: some View {
         VStack(alignment: .leading, spacing: 20) {
             HStack(alignment: .top) {
@@ -105,9 +110,38 @@ struct MoodLibraryView: View {
                         .overlay(Circle().stroke(Color("AccentColor").opacity(0.18)))
 
                     VStack(alignment: .leading, spacing: 7) {
-                    Text(L.localized("profile.library_page_subtitle"))
-                        .font(.headline)
-                        .foregroundColor(.primary)
+                        Text(L.localized("profile.library_page_subtitle"))
+                            .font(.system(.title3, design: .serif).weight(.semibold))
+                            .foregroundColor(archiveGoldColor)
+                            .tracking(1.6)
+                            .shadow(color: Color(hex: "6B4A1C").opacity(0.14), radius: 1, x: 0, y: 1)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.72)
+                            .background {
+                                GeometryReader { proxy in
+                                    Color.clear
+                                        .onAppear { welcomeTitleWidth = proxy.size.width }
+                                        .onChange(of: proxy.size.width) { newWidth in
+                                            welcomeTitleWidth = newWidth
+                                        }
+                                }
+                            }
+
+                        HStack(spacing: 7) {
+                            Rectangle()
+                                .fill(archiveGoldColor.opacity(0.36))
+                                .frame(height: 1)
+
+                            RoundedRectangle(cornerRadius: 1)
+                                .fill(archiveGoldColor.opacity(0.48))
+                                .frame(width: 5, height: 5)
+                                .rotationEffect(.degrees(45))
+
+                            Rectangle()
+                                .fill(archiveGoldColor.opacity(0.36))
+                                .frame(height: 1)
+                        }
+                        .frame(width: max(72, welcomeTitleWidth), alignment: .center)
 
                         Text(L.localized("profile.library_archive_intro"))
                             .font(.footnote)

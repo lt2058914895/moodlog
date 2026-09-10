@@ -186,7 +186,7 @@
 "profile.library_shelf_title" = "My Shelf";
 "profile.library_shelf_subtitle" = "8 journals";
 "profile.library_dominant" = "\"%@\" appeared most often recently";
-"profile.library_page_subtitle" = "Eight moods, eight journals";
+"profile.library_page_subtitle" = "Welcome to your mood library";
 "profile.library_total" = "Records";
 "profile.library_book_count" = "Entries";
 "profile.library_book_average" = "Avg %.1f";

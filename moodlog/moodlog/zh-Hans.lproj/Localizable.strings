@@ -186,7 +186,7 @@
 "profile.library_shelf_title" = "我的书架";
 "profile.library_shelf_subtitle" = "8 本情绪集";
 "profile.library_dominant" = "这段时间最常出现「%@」";
-"profile.library_page_subtitle" = "八种情绪，八本情绪集";
+"profile.library_page_subtitle" = "欢迎来到你的情绪图书馆";
 "profile.library_total" = "总记录";
 "profile.library_book_count" = "收录次数";
 "profile.library_book_average" = "平均强度 %.1f";
