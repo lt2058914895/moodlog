@@ -16,7 +16,6 @@ struct MoodLibraryView: View {
     @State private var books: [MoodBookStats] = MoodType.allCases.map {
         MoodBookStats(mood: $0, count: 0, averageIntensity: 0, latestDate: nil)
     }
-    @State private var selectedBook: MoodBookStats?
     @State private var welcomeTitleWidth: CGFloat = 104
 
     private var recordCount: Int {
@@ -61,9 +60,6 @@ struct MoodLibraryView: View {
                         .contentShape(Rectangle())
                 }
             }
-        }
-        .sheet(item: $selectedBook) { book in
-            MoodBookDetailView(stats: book)
         }
         .task { loadBookStats() }
         .onReceive(NotificationCenter.default.publisher(for: .moodDataDidChange)) { _ in
@@ -309,8 +305,8 @@ struct MoodLibraryView: View {
     }
 
     private func bookButton(_ book: MoodBookStats) -> some View {
-        Button {
-            selectedBook = book
+        NavigationLink {
+            MoodBookDetailView(stats: book)
         } label: {
             MoodBookCover(stats: book)
         }
@@ -874,270 +870,6 @@ private struct MoodBookCover: View {
         .allowsHitTesting(false)
         .opacity(0.72)
     }
-}
-
-// MARK: - 单本情绪集详情
-
-private struct MoodBookDetailView: View {
-    let stats: MoodBookStats
-
-    @Environment(\.dismiss) private var dismiss
-    @State private var records: [MoodRecord] = []
-
-    private var mood: MoodType { stats.mood }
-
-    private var groupedRecords: [(date: Date, records: [MoodRecord])] {
-        Dictionary(grouping: records) { record in
-            Calendar.current.startOfDay(for: record.createdAt ?? Date())
-        }
-        .map { date, records in (date: date, records: records.sorted { $0.createdAt ?? Date() > $1.createdAt ?? Date() }) }
-        .sorted { $0.date > $1.date }
-    }
-
-    private var summaryText: String {
-        guard !records.isEmpty else {
-            return L.localized("profile.library_summary_empty")
-        }
-
-        return String(
-            format: L.localized("profile.library_summary_filled"),
-            mood.displayName,
-            stats.count,
-            stats.averageIntensity,
-            Self.dateFormatter.string(from: stats.latestDate ?? Date())
-        )
-    }
-
-    var body: some View {
-        NavigationStack {
-            ZStack {
-                Color(UIColor.systemGroupedBackground).ignoresSafeArea()
-
-                ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 18) {
-                        summaryCard
-                        recordTimeline
-                    }
-                    .padding(18)
-                    .padding(.bottom, 28)
-                }
-            }
-            .navigationTitle(mood.displayName)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(L.localized("share.close")) {
-                        dismiss()
-                    }
-                }
-            }
-            .task { loadRecords() }
-        }
-    }
-
-    private var summaryCard: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            HStack(spacing: 16) {
-                Image(mood.imageName)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 44, height: 44)
-                    .padding(12)
-                    .background(Circle().fill(mood.color.opacity(0.20)))
-
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(L.localized("profile.library_detail_title"))
-                        .font(.caption.weight(.semibold))
-                        .foregroundColor(mood.color)
-
-                    Text(mood.displayName)
-                        .font(.title2.bold())
-                }
-
-                Spacer()
-            }
-
-            Text(summaryText)
-                .font(.footnote)
-                .foregroundColor(.secondary)
-                .lineSpacing(4)
-
-            HStack(spacing: 10) {
-                detailStat(title: L.localized("profile.library_book_count"), value: "\(stats.count)")
-                detailStat(title: L.localized("profile.library_detail_intensity"), value: stats.count == 0 ? "-" : String(format: "%.1f/10", stats.averageIntensity))
-                detailStat(title: L.localized("profile.library_book_latest"), value: stats.latestDate.map { Self.compactDateFormatter.string(from: $0) } ?? "-")
-            }
-        }
-        .padding(18)
-        .background(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .fill(Color(UIColor.secondarySystemGroupedBackground))
-        )
-    }
-
-    private var recordTimeline: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(L.localized("profile.library_timeline_title"))
-                .font(.headline)
-                .padding(.leading, 4)
-
-            if groupedRecords.isEmpty {
-                Text(L.localized("profile.library_timeline_empty"))
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 28)
-                    .background(
-                        RoundedRectangle(cornerRadius: 22, style: .continuous)
-                            .fill(Color(UIColor.secondarySystemGroupedBackground))
-                    )
-            } else {
-                ForEach(groupedRecords, id: \.date) { group in
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text(Self.dayFormatter.string(from: group.date))
-                            .font(.footnote.bold())
-                            .foregroundColor(.secondary)
-                            .padding(.leading, 4)
-
-                        ForEach(Array(group.records.enumerated()), id: \.element.objectID) { index, record in
-                            archiveRecordRow(record)
-
-                            if index < group.records.count - 1 {
-                                Divider()
-                                    .padding(.leading, 22)
-                            }
-                        }
-                    }
-                    .padding(16)
-                    .background(
-                        RoundedRectangle(cornerRadius: 22, style: .continuous)
-                            .fill(Color(UIColor.secondarySystemGroupedBackground))
-                    )
-                }
-            }
-        }
-    }
-
-    private func archiveRecordRow(_ record: MoodRecord) -> some View {
-        let tags = MoodDataManager.tagNamesFromRecord(record)
-
-        return HStack(alignment: .top, spacing: 13) {
-            VStack(spacing: 0) {
-                Text(record.createdAt.map { Self.timeFormatter.string(from: $0) } ?? "-")
-                    .font(.caption2.weight(.semibold).monospacedDigit())
-                    .foregroundColor(.secondary)
-
-                Circle()
-                    .fill(mood.color.opacity(0.9))
-                    .frame(width: 8, height: 8)
-                    .padding(.top, 5)
-            }
-            .frame(width: 36)
-
-            VStack(alignment: .leading, spacing: 10) {
-                HStack(spacing: 10) {
-                    Text(String(format: L.localized("profile.library_intensity_format"), Int(record.intensity)))
-                        .font(.caption.weight(.bold))
-                        .foregroundColor(mood.color)
-
-                    Spacer()
-
-                    GeometryReader { proxy in
-                        ZStack(alignment: .leading) {
-                            Capsule().fill(mood.color.opacity(0.15))
-                            Capsule().fill(mood.color)
-                                .frame(width: max(4, proxy.size.width * Double(record.intensity) / 10))
-                        }
-                    }
-                    .frame(height: 5)
-                    .frame(maxWidth: 74)
-                }
-
-                if !tags.isEmpty {
-                    FlowLayout(data: tags, spacing: 7) { tag in
-                        HStack(spacing: 4) {
-                            Text(MoodDataManager.emojiForTagName(tag))
-                            Text(tag)
-                                .font(.caption2.weight(.medium))
-                                .foregroundColor(.secondary)
-                        }
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Capsule().fill(mood.color.opacity(0.10)))
-                    }
-                } else {
-                    Text(L.localized("profile.library_no_tags"))
-                        .font(.caption2)
-                        .foregroundColor(.secondary.opacity(0.7))
-                }
-
-                if let note = record.note, !note.isEmpty {
-                    Text(note)
-                        .font(.subheadline)
-                        .foregroundColor(.primary.opacity(0.86))
-                        .lineSpacing(4)
-                } else {
-                    Text(L.localized("profile.library_no_note"))
-                        .font(.caption2)
-                        .foregroundColor(.secondary.opacity(0.7))
-                }
-            }
-        }
-    }
-
-    private func detailStat(title: String, value: String) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(title)
-                .font(.caption2)
-                .foregroundColor(.secondary)
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
-
-            Text(value)
-                .font(.subheadline.bold().monospacedDigit())
-                .foregroundColor(.primary)
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 11)
-        .padding(.vertical, 10)
-        .background(RoundedRectangle(cornerRadius: 15, style: .continuous).fill(Color(UIColor.systemGroupedBackground)))
-    }
-
-    private func loadRecords() {
-        records = MoodDataManager.shared
-            .fetchAllRecords()
-            .filter { $0.createdAt != nil && MoodType.from(rawValue: $0.moodType) == mood }
-    }
-
-    private static let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-        return formatter
-    }()
-
-    private static let compactDateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .short
-        formatter.timeStyle = .none
-        return formatter
-    }()
-
-    private static let dayFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .none
-        return formatter
-    }()
-
-    private static let timeFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .none
-        formatter.timeStyle = .short
-        return formatter
-    }()
 }
 
 private extension Color {

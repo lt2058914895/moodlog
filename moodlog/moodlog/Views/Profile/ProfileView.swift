@@ -43,9 +43,6 @@ struct ProfileView: View {
                 VStack(spacing: 20) {
                     moodCard
                     emotionLibraryCard
-                    #if DEBUG
-                    debugLibraryEntry
-                    #endif
                     dataSection
                     supportSection
                     footerView
@@ -325,30 +322,6 @@ struct ProfileView: View {
         libraryRecordCount = manager.fetchRecordCount()
         libraryMoodCounts = manager.fetchMoodDistribution(from: .distantPast, to: Date())
     }
-
-    #if DEBUG
-    private var debugLibraryEntry: some View {
-        Button {
-            showLibrary = true
-        } label: {
-            HStack(spacing: 8) {
-                Image(systemName: "hammer")
-                Text("调试：进入情绪图书馆")
-                Spacer()
-                Image(systemName: "chevron.right")
-            }
-            .font(.footnote.weight(.semibold))
-            .foregroundColor(.secondary)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 10)
-            .background(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .stroke(Color.secondary.opacity(0.3), lineWidth: 1)
-            )
-        }
-        .buttonStyle(.plain)
-    }
-    #endif
 
     // MARK: - 数据管理
 
