@@ -127,7 +127,6 @@
 "custom_tag.create" = "Create";
 "custom_tag.add" = "Custom";
 "custom_tag.name_required" = "Please enter a tag name";
-"custom_tag.name_too_long" = "Tag name cannot exceed 10 characters";
 "custom_tag.delete_confirm" = "Delete custom tag %@?";
 "custom_tag.delete" = "Delete Tag";
 "custom_tag.preview" = "Preview";

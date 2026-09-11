@@ -141,6 +141,7 @@ struct MoodShareCardView: View {
                 VStack(spacing: 6) {
                     Text(data.dateRangeText)
                         .font(.system(size: 22, weight: .bold))
+                        .minimumScaleFactor(0.6)
                         .multilineTextAlignment(.center)
                         .foregroundColor(.white)
                     Text(periodPrefix)
@@ -148,6 +149,7 @@ struct MoodShareCardView: View {
                         .foregroundColor(.white.opacity(0.82))
                     Text(narrativeTitle)
                         .font(.system(size: 19, weight: .bold))
+                        .minimumScaleFactor(0.6)
                         .multilineTextAlignment(.center)
                         .foregroundColor(.white)
                 }

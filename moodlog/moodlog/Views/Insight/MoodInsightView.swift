@@ -459,8 +459,10 @@ struct TagBarRow: View {
             // 标签名
             Text(MoodDataManager.displayName(forTagName: data.name))
                 .font(.system(size: 13, weight: .medium))
-                .frame(width: 72, alignment: .leading)
-                .lineLimit(1)
+                .lineLimit(nil)
+                .multilineTextAlignment(.leading)
+                .frame(width: 88, alignment: .leading)
+                .fixedSize(horizontal: false, vertical: true)
 
             // 条形图
             GeometryReader { geometry in

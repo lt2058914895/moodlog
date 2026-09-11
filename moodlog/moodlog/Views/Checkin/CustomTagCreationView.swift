@@ -124,16 +124,6 @@ struct CustomTagCreationView: View {
                 .padding(12)
                 .background(Color(UIColor.tertiarySystemGroupedBackground))
                 .cornerRadius(10)
-                .onChange(of: tagName) { newValue in
-                    if newValue.count > 10 {
-                        tagName = String(newValue.prefix(10))
-                    }
-                }
-
-            Text("\(tagName.count)/10")
-                .font(.caption2)
-                .foregroundColor(.secondary)
-                .frame(maxWidth: .infinity, alignment: .trailing)
         }
         .padding(16)
         .background(Color(UIColor.secondarySystemGroupedBackground))
@@ -270,11 +260,6 @@ struct CustomTagCreationView: View {
         // 验证
         guard !trimmedName.isEmpty else {
             errorMessage = L.localized("custom_tag.name_required")
-            return
-        }
-
-        guard trimmedName.count <= 10 else {
-            errorMessage = L.localized("custom_tag.name_too_long")
             return
         }
 

@@ -127,7 +127,6 @@
 "custom_tag.create" = "创建";
 "custom_tag.add" = "自定义";
 "custom_tag.name_required" = "请输入标签名称";
-"custom_tag.name_too_long" = "标签名称不能超过10个字";
 "custom_tag.delete_confirm" = "确定删除自定义标签 %@ 吗？";
 "custom_tag.delete" = "删除标签";
 "custom_tag.preview" = "预览";
