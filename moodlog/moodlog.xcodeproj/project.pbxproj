@@ -29,6 +29,7 @@
 		C22D1EA92FED4D98001B6443 /* moodlog.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = C22D1EA72FED4D98001B6443 /* moodlog.xcdatamodeld */; };
 		C22D1EB02FED4E1F001B6443 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C22D1EAF2FED4E1F001B6443 /* Launch Screen.storyboard */; };
 		C2C65F312FEE4B2F006AD954 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C2C65F332FEE4B2F006AD954 /* Localizable.strings */; };
+		JJ0000012FEE1B500001B6443 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = JJ0000022FEE1B500001B6443 /* InfoPlist.strings */; };
 		DD0000012FED4D95001B6443 /* CustomTagCreationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0000022FED4D95001B6443 /* CustomTagCreationView.swift */; };
 		EE0000022FED4D95001B6443 /* MoodRecordsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0000012FED4D95001B6443 /* MoodRecordsView.swift */; };
 		FF0000012FED4D95001B6443 /* MoodSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0000022FED4D95001B6443 /* MoodSelectorView.swift */; };
@@ -70,6 +71,7 @@
 		C22D1EAF2FED4E1F001B6443 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		C2C65F322FEE4B2F006AD954 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		C2C65F342FEE4B31006AD954 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		JJ0000032FEE1B500001B6443 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		DD0000022FED4D95001B6443 /* CustomTagCreationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTagCreationView.swift; sourceTree = "<group>"; };
 		EE0000012FED4D95001B6443 /* MoodRecordsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodRecordsView.swift; sourceTree = "<group>"; };
 		FF0000022FED4D95001B6443 /* MoodSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodSelectorView.swift; sourceTree = "<group>"; };
@@ -213,6 +215,7 @@
 				C22D1EA22FED4D98001B6443 /* Preview Content */,
 				C22D1EAF2FED4E1F001B6443 /* Launch Screen.storyboard */,
 				C2C65F332FEE4B2F006AD954 /* Localizable.strings */,
+				JJ0000022FEE1B500001B6443 /* InfoPlist.strings */,
 			);
 			path = moodlog;
 			sourceTree = "<group>";
@@ -321,6 +324,7 @@
 			files = (
 				C22D1EB02FED4E1F001B6443 /* Launch Screen.storyboard in Resources */,
 				C2C65F312FEE4B2F006AD954 /* Localizable.strings in Resources */,
+				JJ0000012FEE1B500001B6443 /* InfoPlist.strings in Resources */,
 				C22D1EA42FED4D98001B6443 /* Preview Assets.xcassets in Resources */,
 				C22D1EA12FED4D98001B6443 /* Assets.xcassets in Resources */,
 			);
@@ -378,6 +382,14 @@
 				C2C65F342FEE4B31006AD954 /* en */,
 			);
 			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		JJ0000022FEE1B500001B6443 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				JJ0000032FEE1B500001B6443 /* en */,
+			);
+			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
