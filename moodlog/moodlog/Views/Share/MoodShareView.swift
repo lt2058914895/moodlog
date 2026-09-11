@@ -298,13 +298,7 @@ struct MoodShareSheet: View {
         NavigationStack {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 24) {
-                    Picker("", selection: $period) {
-                        ForEach(MoodSharePeriod.allCases) { period in
-                            Text(L.localized(period.titleKey)).tag(period)
-                        }
-                    }
-                    .pickerStyle(.segmented)
-                    .onChange(of: period) { _ in buildData() }
+                    periodPicker
 
                     if let data = shareData {
                         MoodShareCardView(data: data)
@@ -426,6 +420,54 @@ struct MoodShareSheet: View {
                 toast = nil
             }
         }
+    }
+
+    // MARK: - 时间段选择（与回顾页样式一致：横向滑动胶囊）
+    private var periodPicker: some View {
+        ScrollViewReader { proxy in
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(MoodSharePeriod.allCases) { item in
+                        Button(action: {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                period = item
+                            }
+                        }) {
+                            Text(L.localized(item.titleKey))
+                                .font(.subheadline.weight(period == item ? .bold : .medium))
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 8)
+                                .background(
+                                    Capsule().fill(
+                                        period == item
+                                            ? Color("AccentColor")
+                                            : Color(UIColor.secondarySystemGroupedBackground)
+                                    )
+                                )
+                                .overlay(
+                                    Capsule()
+                                        .stroke(
+                                            period == item
+                                                ? Color.clear
+                                                : Color(UIColor.separator).opacity(0.3),
+                                            lineWidth: 1
+                                        )
+                                )
+                                .foregroundColor(period == item ? .white : .primary)
+                        }
+                        .id(item)
+                    }
+                }
+                .padding(.horizontal, 2)
+                .padding(.vertical, 2)
+            }
+            .onChange(of: period) { newPeriod in
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    proxy.scrollTo(newPeriod, anchor: .center)
+                }
+            }
+        }
+        .onChange(of: period) { _ in buildData() }
     }
 
     private func buildData() {
