@@ -335,6 +335,15 @@ class MoodDataManager: MoodDataManaging {
         return "📋"
     }
 
+    /// 根据标签名获取用于展示的本地化名称。
+    /// 预设标签会按当前语言翻译，自定义标签与未知标签原样返回。
+    /// 存储层仍使用原始名称，保证数据兼容。
+    static func displayName(forTagName name: String) -> String {
+        guard let key = PresetTag.localizationKeys[name] else { return name }
+        let localized = L.localized(key)
+        return localized == key ? name : localized
+    }
+
     /// 发送数据变更通知（统一走 NotificationCenter）
     private func notifyDataChange() {
         DispatchQueue.main.async {

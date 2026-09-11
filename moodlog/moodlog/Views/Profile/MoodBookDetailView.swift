@@ -377,7 +377,7 @@ struct MoodBookDetailView: View {
 
                             Text(MoodDataManager.emojiForTagName(tag))
 
-                            Text(tag)
+                            Text(MoodDataManager.displayName(forTagName: tag))
                                 .font(.system(.caption2, design: .serif).weight(.medium))
                                 .foregroundColor(Color(hex: "5E4A2F"))
                         }

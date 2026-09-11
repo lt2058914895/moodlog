@@ -231,6 +231,18 @@ struct PresetTag: Hashable {
     let name: String
     let emoji: String
 
+    /// 本地化 key（用于 UI 展示；存储仍使用中文 name，保证数据兼容）
+    var localizationKey: String? {
+        Self.localizationKeys[name]
+    }
+
+    /// 展示名称：有翻译时显示翻译，否则回退到原名（自定义标签保持原样）
+    var localizedName: String {
+        guard let key = localizationKey else { return name }
+        let localized = L.localized(key)
+        return localized == key ? name : localized
+    }
+
     /// 根据标签名查找对应emoji（遍历所有分类的预设标签）
     static func emoji(for name: String) -> String? {
         allPresetTags[name]
@@ -262,6 +274,91 @@ struct PresetTag: Hashable {
         }
         return map
     }()
+
+    /// 预设标签 名称→本地化key 映射
+    static let localizationKeys: [String: String] = [
+        // 恋爱关系
+        "热恋": "tag.preset.passionateLove",
+        "结婚": "tag.preset.marriage",
+        "纪念日": "tag.preset.anniversary",
+        "约会": "tag.preset.date",
+        "复合": "tag.preset.reconciliation",
+        "表白": "tag.preset.confession",
+        "暗恋": "tag.preset.crush",
+        "异地恋": "tag.preset.longDistance",
+        "冷战": "tag.preset.coldWar",
+        "吵架了": "tag.preset.argument",
+        "被分手": "tag.preset.brokenUp",
+        "想分手": "tag.preset.wantToBreakUp",
+        "想离婚": "tag.preset.wantDivorce",
+
+
+        // 工作职场
+        "升职加薪": "tag.preset.promotion",
+        "入职": "tag.preset.newJob",
+        "团队协作": "tag.preset.teamwork",
+        "摸鱼": "tag.preset.slackingOff",
+        "面试": "tag.preset.interview",
+        "离职": "tag.preset.resignation",
+        "绩效考核": "tag.preset.performanceReview",
+        "加班": "tag.preset.overtime",
+        "项目压力": "tag.preset.projectPressure",
+        "同事冲突": "tag.preset.coworkerConflict",
+        "被批评": "tag.preset.criticized",
+
+        // 家庭关系
+        "陪伴家人": "tag.preset.familyTime",
+        "家人支持": "tag.preset.familySupport",
+        "家庭聚会": "tag.preset.familyGathering",
+        "父母催婚": "tag.preset.parentalPressure",
+        "家人生病": "tag.preset.familyIllness",
+        "亲子冲突": "tag.preset.parentChildConflict",
+
+        // 学业成长
+        "获奖": "tag.preset.award",
+        "毕业": "tag.preset.graduation",
+        "学习突破": "tag.preset.learningBreakthrough",
+        "通过考试": "tag.preset.passedExam",
+        "考试焦虑": "tag.preset.examAnxiety",
+        "挂科": "tag.preset.failedExam",
+
+        // 身体健康
+        "运动后": "tag.preset.afterExercise",
+        "养生": "tag.preset.wellness",
+        "体检": "tag.preset.healthCheckup",
+        "生理期": "tag.preset.period",
+        "失眠": "tag.preset.insomnia",
+        "生病": "tag.preset.illness",
+        "身体疼痛": "tag.preset.bodyPain",
+
+        // 社交生活
+        "朋友聚会": "tag.preset.friendsGathering",
+        "朋友出行": "tag.preset.friendsTrip",
+        "新朋友": "tag.preset.newFriend",
+        "被误解": "tag.preset.misunderstood",
+        "社交恐惧": "tag.preset.socialAnxiety",
+        "被孤立": "tag.preset.isolated",
+
+        // 财务状况
+        "财务自由": "tag.preset.financialFreedom",
+        "发工资": "tag.preset.payday",
+        "理财": "tag.preset.investing",
+        "还贷压力": "tag.preset.loanPressure",
+        "投资亏损": "tag.preset.investmentLoss",
+        "缺钱": "tag.preset.shortOnMoney",
+
+        // 生活事件
+        "旅行": "tag.preset.travel",
+        "冥想": "tag.preset.meditation",
+        "阅读": "tag.preset.reading",
+        "散步": "tag.preset.walk",
+        "听音乐": "tag.preset.music",
+        "看电影": "tag.preset.movie",
+        "写日记": "tag.preset.journaling",
+        "独处": "tag.preset.solitude",
+        "搬家": "tag.preset.moving",
+        "天气季节": "tag.preset.weather",
+    ]
 }
 
 // MARK: - 情绪记录UI模型

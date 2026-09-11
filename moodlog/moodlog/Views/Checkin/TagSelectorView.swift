@@ -73,7 +73,7 @@ struct TagSelectorView: View {
         FlowLayout(data: frequentTags, spacing: 8) { tag in
             TagChip(
                 emoji: tag.emoji ?? "📋",
-                name: tag.name ?? "",
+                name: MoodDataManager.displayName(forTagName: tag.name ?? ""),
                 isSelected: viewModel.isTagSelected(tag.name ?? ""),
                 color: Color("AccentColor"),
                 onTap: { viewModel.toggleTag(tag.name ?? "") }
@@ -120,7 +120,7 @@ struct TagSelectorView: View {
                 FlowLayout(data: selectedCategory.presetTags, spacing: 8) { preset in
                     TagChip(
                         emoji: preset.emoji,
-                        name: preset.name,
+                        name: preset.localizedName,
                         isSelected: viewModel.isTagSelected(preset.name),
                         color: Color("AccentColor"),
                         onTap: { viewModel.toggleTag(preset.name) }
@@ -297,7 +297,7 @@ struct SelectedTagChip: View {
         HStack(spacing: 4) {
             Text(MoodDataManager.emojiForTagName(name))
                 .font(.caption2)
-            Text(name)
+            Text(MoodDataManager.displayName(forTagName: name))
                 .font(.caption2)
             Button(action: onRemove) {
                 Image(systemName: "xmark.circle.fill")

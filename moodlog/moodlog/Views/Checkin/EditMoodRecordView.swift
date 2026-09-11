@@ -296,7 +296,7 @@ struct EditMoodRecordView: View {
                 FlowLayout(data: editSelectedCategory.presetTags, spacing: 8) { preset in
                     TagChip(
                         emoji: preset.emoji,
-                        name: preset.name,
+                        name: preset.localizedName,
                         isSelected: selectedTagNames.contains(preset.name),
                         color: Color("AccentColor"),
                         onTap: { toggleTag(preset.name) }
@@ -370,7 +370,7 @@ struct EditMoodRecordView: View {
         FlowLayout(data: frequentTags, spacing: 8) { tag in
             TagChip(
                 emoji: tag.emoji ?? "📋",
-                name: tag.name ?? "",
+                name: MoodDataManager.displayName(forTagName: tag.name ?? ""),
                 isSelected: selectedTagNames.contains(tag.name ?? ""),
                 color: Color("AccentColor"),
                 onTap: { toggleTag(tag.name ?? "") }

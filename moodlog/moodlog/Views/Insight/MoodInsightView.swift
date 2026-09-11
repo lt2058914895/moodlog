@@ -457,7 +457,7 @@ struct TagBarRow: View {
             }
 
             // 标签名
-            Text(data.name)
+            Text(MoodDataManager.displayName(forTagName: data.name))
                 .font(.system(size: 13, weight: .medium))
                 .frame(width: 72, alignment: .leading)
                 .lineLimit(1)

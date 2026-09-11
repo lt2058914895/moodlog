@@ -373,7 +373,7 @@ struct MoodRecordRow: View {
                         HStack(spacing: 4) {
                             Text(MoodDataManager.emojiForTagName(tagName))
                                 .font(.system(size: 11))
-                            Text(tagName)
+                            Text(MoodDataManager.displayName(forTagName: tagName))
                                 .font(.caption)
                         }
                         .padding(.horizontal, 10)
@@ -485,7 +485,7 @@ struct MoodRecordListRow: View {
                         HStack(spacing: 4) {
                             Text(MoodDataManager.emojiForTagName(tagName))
                                 .font(.system(size: 11))
-                            Text(tagName)
+                            Text(MoodDataManager.displayName(forTagName: tagName))
                                 .font(.caption)
                         }
                         .padding(.horizontal, 10)
