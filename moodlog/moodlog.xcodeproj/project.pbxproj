@@ -81,9 +81,9 @@
 		GG0000082FED4D95001B6443 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		GG00000C2FED4D95001B6443 /* MoodShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodShareView.swift; sourceTree = "<group>"; };
 		GG00000E2FED4D95001B6443 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		HH00000B2FED4D95001B6443 /* SupportPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportPageView.swift; sourceTree = "<group>"; };
 		II0000012FEE1B500001B6443 /* MoodLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodLibraryView.swift; sourceTree = "<group>"; };
 		II0000032FEE1B500001B6443 /* MoodBookDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodBookDetailView.swift; sourceTree = "<group>"; };
-		HH00000B2FED4D95001B6443 /* SupportPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportPageView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -508,7 +508,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_ASSET_PATHS = "\"moodlog/Preview Content\"";
 				DEVELOPMENT_TEAM = CV7ZT772HQ;
 				ENABLE_PREVIEWS = YES;
@@ -528,7 +528,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = lt.moodlog;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -543,7 +543,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_ASSET_PATHS = "\"moodlog/Preview Content\"";
 				DEVELOPMENT_TEAM = CV7ZT772HQ;
 				ENABLE_PREVIEWS = YES;
@@ -563,7 +563,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = lt.moodlog;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
