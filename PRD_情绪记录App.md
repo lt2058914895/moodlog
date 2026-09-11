@@ -82,8 +82,8 @@ MoodLog（情绪猫）是一款本地优先的情绪记录 App。用户可以快
 | 问题反馈 | 内置二级页面加载技术支持网页 |
 | 隐私协议 | 内置二级页面加载公开隐私协议网页 |
 
-技术支持地址：`https://lt2058914895.github.io/moodlog/support.html`。
-隐私协议地址：`https://lt2058914895.github.io/moodlog/privacy.html`。
+技术支持地址：`https://lt2058914895.github.io/moodlog/support.html`（英文：`support-en.html`，App 按系统语言自动选择）。
+隐私协议地址：`https://lt2058914895.github.io/moodlog/privacy.html`（英文：`privacy-en.html`）。
 
 ## 4. 数据与隐私
 

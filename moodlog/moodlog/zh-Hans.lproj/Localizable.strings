@@ -216,6 +216,7 @@
 "profile.library_intensity_format" = "强度 %d";
 "profile.export_format" = "导出为 %@";
 "profile.export_failed" = "导出失败，请重试";
+"export.csv_header" = "时间,情绪,强度,标签,备注";
 "profile.share_card" = "情绪卡片";
 "profile.share_card_desc" = "把情绪做成精美的分享海报";
 "profile.share_card_cta" = "点击生成";

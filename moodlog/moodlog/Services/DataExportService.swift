@@ -43,14 +43,16 @@ class DataExportService: ObservableObject {
 
     private func toCSV(_ records: [MoodRecord]) -> String {
         var rows: [String] = []
-        rows.append("\u{FEFF}时间,情绪,强度,标签,备注")  // BOM 头，兼容 Excel 中文
+        rows.append("\u{FEFF}" + L.localized("export.csv_header"))  // BOM 头，兼容 Excel
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime]
         for r in records {
             let time = formatter.string(from: r.createdAt ?? Date())
-            let mood = r.moodType ?? "unknown"
+            let mood = MoodType.from(rawValue: r.moodType).displayName
             let intensity = String(r.intensity)
-            let tags = MoodDataManager.tagNamesFromRecord(r).joined(separator: " | ")
+            let tags = MoodDataManager.tagNamesFromRecord(r)
+                .map { MoodDataManager.displayName(forTagName: $0) }
+                .joined(separator: " | ")
             let note = (r.note ?? "").replacingOccurrences(of: "\n", with: " ")
             rows.append(csvRow(time, mood, intensity, tags, note))
         }

@@ -9,8 +9,12 @@ import SwiftUI
 
 /// App 对外链接常量
 private enum AppLinks {
-    /// 技术支持页面地址
-    static let support = URL(string: "https://lt2058914895.github.io/moodlog/support.html")!
+    /// 技术支持页面地址（按系统语言选择中文/英文版本）
+    static var support: URL {
+        let prefersChinese = Locale.preferredLanguages.first?.hasPrefix("zh") ?? true
+        let page = prefersChinese ? "support.html" : "support-en.html"
+        return URL(string: "https://lt2058914895.github.io/moodlog/\(page)")!
+    }
     /// App Store 地址
     static let appStore = URL(string: "https://apps.apple.com/app/id6791829175")!
     /// App Store 评分页（直接跳转撰写评价）

@@ -216,6 +216,7 @@
 "profile.library_intensity_format" = "Intensity %d";
 "profile.export_format" = "Export as %@";
 "profile.export_failed" = "Export failed, please retry";
+"export.csv_header" = "Time,Mood,Intensity,Tags,Note";
 "profile.share_card" = "Mood Card";
 "profile.share_card_desc" = "Turn your moods into beautiful share posters";
 "profile.share_card_cta" = "Tap to Create";

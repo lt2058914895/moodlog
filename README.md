@@ -12,8 +12,8 @@
 
 ## 公开页面
 
-- 隐私协议：https://lt2058914895.github.io/moodlog/privacy.html
-- 技术支持：https://lt2058914895.github.io/moodlog/support.html
+- 隐私协议：https://lt2058914895.github.io/moodlog/privacy.html （英文：`privacy-en.html`）
+- 技术支持：https://lt2058914895.github.io/moodlog/support.html （英文：`support-en.html`）
 
 ## 系统要求
 

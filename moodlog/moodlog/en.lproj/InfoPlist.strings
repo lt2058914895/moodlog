@@ -5,3 +5,5 @@
 
 "CFBundleDisplayName" = "Mood Cat";
 "CFBundleName" = "Mood Cat";
+
+"NSPhotoLibraryAddUsageDescription" = "Mood Cat needs permission to save your mood cards to Photos.";
