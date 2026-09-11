@@ -95,59 +95,47 @@ struct MoodLibraryView: View {
     }
 
     private var archiveHeader: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            HStack(alignment: .top) {
-                HStack(alignment: .top, spacing: 14) {
-                    Image(systemName: "books.vertical.fill")
-                        .font(.headline)
-                        .foregroundColor(Color("AccentColor"))
-                        .frame(width: 42, height: 42)
-                        .background(Circle().fill(Color("AccentColor").opacity(0.12)))
-                        .overlay(Circle().stroke(Color("AccentColor").opacity(0.18)))
-
-                    VStack(alignment: .leading, spacing: 7) {
-                        Text(L.localized("profile.library_page_subtitle"))
-                            .font(.system(.title3, design: .serif).weight(.semibold))
-                            .foregroundColor(archiveGoldColor)
-                            .tracking(1.6)
-                            .shadow(color: Color(hex: "6B4A1C").opacity(0.14), radius: 1, x: 0, y: 1)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.72)
-                            .background {
-                                GeometryReader { proxy in
-                                    Color.clear
-                                        .onAppear { welcomeTitleWidth = proxy.size.width }
-                                        .onChange(of: proxy.size.width) { newWidth in
-                                            welcomeTitleWidth = newWidth
-                                        }
+        VStack(spacing: 20) {
+            VStack(spacing: 7) {
+                Text(L.localized("profile.library_page_subtitle"))
+                    .font(.system(.title3, design: .serif).weight(.semibold))
+                    .foregroundColor(archiveGoldColor)
+                    .tracking(1.6)
+                    .shadow(color: Color(hex: "6B4A1C").opacity(0.14), radius: 1, x: 0, y: 1)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .background {
+                        GeometryReader { proxy in
+                            Color.clear
+                                .onAppear { welcomeTitleWidth = proxy.size.width }
+                                .onChange(of: proxy.size.width) { newWidth in
+                                    welcomeTitleWidth = newWidth
                                 }
-                            }
-
-                        HStack(spacing: 7) {
-                            Rectangle()
-                                .fill(archiveGoldColor.opacity(0.36))
-                                .frame(height: 1)
-
-                            RoundedRectangle(cornerRadius: 1)
-                                .fill(archiveGoldColor.opacity(0.48))
-                                .frame(width: 5, height: 5)
-                                .rotationEffect(.degrees(45))
-
-                            Rectangle()
-                                .fill(archiveGoldColor.opacity(0.36))
-                                .frame(height: 1)
                         }
-                        .frame(width: max(72, welcomeTitleWidth), alignment: .center)
-
-                        Text(L.localized("profile.library_archive_intro"))
-                            .font(.footnote)
-                            .foregroundColor(.secondary)
-                            .lineSpacing(4)
-                            .fixedSize(horizontal: false, vertical: true)
                     }
-                }
 
-                Spacer()
+                HStack(spacing: 7) {
+                    Rectangle()
+                        .fill(archiveGoldColor.opacity(0.36))
+                        .frame(height: 1)
+
+                    RoundedRectangle(cornerRadius: 1)
+                        .fill(archiveGoldColor.opacity(0.48))
+                        .frame(width: 5, height: 5)
+                        .rotationEffect(.degrees(45))
+
+                    Rectangle()
+                        .fill(archiveGoldColor.opacity(0.36))
+                        .frame(height: 1)
+                }
+                .frame(width: max(72, welcomeTitleWidth), alignment: .center)
+
+                Text(L.localized("profile.library_archive_intro"))
+                    .font(.footnote)
+                    .foregroundColor(.secondary)
+                    .lineSpacing(4)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
             }
 
             HStack(spacing: 10) {
@@ -169,9 +157,20 @@ struct MoodLibraryView: View {
         }
         .padding(22)
         .background(
-            ZStack {
-                RoundedRectangle(cornerRadius: 30, style: .continuous)
-                    .fill(Color(UIColor.secondarySystemGroupedBackground))
+            GeometryReader { geo in
+                ZStack(alignment: .topLeading) {
+                    RoundedRectangle(cornerRadius: 30, style: .continuous)
+                        .fill(Color(UIColor.secondarySystemGroupedBackground))
+
+                    Image(systemName: "books.vertical.fill")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .foregroundColor(Color("AccentColor").opacity(0.16))
+                        .frame(width: geo.size.width / 5)
+                        .padding(.top, 12)
+                        .padding(.leading, 12)
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
             }
         )
         .overlay(
@@ -192,15 +191,16 @@ struct MoodLibraryView: View {
             Text(title)
                 .font(.caption2.weight(.semibold))
                 .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
 
             Text(value)
                 .font(.subheadline.weight(.bold))
                 .foregroundColor(.primary)
-                .lineLimit(1)
+                .multilineTextAlignment(.center)
                 .minimumScaleFactor(0.7)
                 .monospacedDigit()
         }
-        .frame(maxWidth: .infinity, alignment: .center)
+        .frame(maxWidth: .infinity)
         .padding(.horizontal, 13)
         .padding(.vertical, 11)
         .background(Capsule().fill(Color(UIColor.systemGroupedBackground)))

@@ -297,3 +297,6 @@
 
 // MARK: - App Name
 "app.name" = "情绪猫";
+
+// MARK: - Debug
+"debug.library_entry" = "调试：进入情绪图书馆";

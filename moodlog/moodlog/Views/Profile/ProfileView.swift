@@ -47,6 +47,9 @@ struct ProfileView: View {
                 VStack(spacing: 20) {
                     moodCard
                     emotionLibraryCard
+                    #if DEBUG
+                    debugLibraryEntry
+                    #endif
                     dataSection
                     supportSection
                     footerView
@@ -282,6 +285,31 @@ struct ProfileView: View {
     private var libraryIsComplete: Bool {
         libraryRecordCount >= libraryGoal
     }
+
+    #if DEBUG
+    /// 调试入口：跳过 200 条开馆门槛，直接进入情绪图书馆
+    private var debugLibraryEntry: some View {
+        Button {
+            showLibrary = true
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: "hammer")
+                Text(L.localized("debug.library_entry"))
+                Spacer()
+                Image(systemName: "chevron.right")
+            }
+            .font(.footnote.weight(.semibold))
+            .foregroundColor(.secondary)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .background(
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .stroke(Color.secondary.opacity(0.3), lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+    #endif
 
     private var libraryStatusLabel: String {
         L.localized(libraryIsComplete ? "profile.library_status_complete" : "profile.library_status_building")

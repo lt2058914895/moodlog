@@ -297,3 +297,6 @@
 
 // MARK: - App Name
 "app.name" = "Mood Cat";
+
+// MARK: - Debug
+"debug.library_entry" = "Debug: Open Mood Library";
