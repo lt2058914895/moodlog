@@ -11,7 +11,7 @@ import SwiftUI
 private enum AppLinks {
     /// 技术支持页面地址（按系统语言选择中文/英文版本）
     static var support: URL {
-        let prefersChinese = Locale.preferredLanguages.first?.hasPrefix("zh") ?? true
+        let prefersChinese = Bundle.main.preferredLocalizations.first == "zh-Hans"
         let page = prefersChinese ? "support.html" : "support-en.html"
         return URL(string: "https://lt2058914895.github.io/moodlog/\(page)")!
     }
