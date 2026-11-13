@@ -99,7 +99,6 @@ struct EditMoodRecordView: View {
                 GridItem(.flexible()),
                 GridItem(.flexible()),
                 GridItem(.flexible()),
-                GridItem(.flexible()),
             ]
 
             LazyVGrid(columns: columns, spacing: 16) {

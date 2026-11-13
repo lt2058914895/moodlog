@@ -64,6 +64,7 @@
 "mood.happy" = "开心";
 "mood.sad" = "难过";
 "mood.angry" = "生气";
+"mood.irritated" = "烦躁";
 "mood.anxious" = "焦虑";
 "mood.neutral" = "平淡";
 "mood.afraid" = "害怕";
@@ -175,7 +176,7 @@
 "share.period.year" = "年度";
 "profile.title" = "我的";
 "profile.library_title" = "情绪图书馆";
-"profile.library_subtitle" = "八本情绪集，收录每一种感受";
+"profile.library_subtitle" = "九本情绪集，收录每一种感受";
 "profile.library_status_building" = "收录中";
 "profile.library_status_complete" = "已开馆";
 "profile.library_goal_building" = "满 %1$d 本正式开馆，还需收录 %2$d 本";
@@ -183,7 +184,7 @@
 "profile.library_not_open_hint" = "您的情绪图书馆还未开馆，还需收录%d本";
 "profile.library_nav_title" = "情绪图书馆";
 "profile.library_shelf_title" = "我的书架";
-"profile.library_shelf_subtitle" = "8 本情绪集";
+"profile.library_shelf_subtitle" = "9 本情绪集";
 "profile.library_dominant" = "这段时间最常出现「%@」";
 "profile.library_page_subtitle" = "欢迎来到你的情绪图书馆";
 "profile.library_total" = "总记录";
@@ -203,7 +204,7 @@
 "profile.library_no_note" = "这一页还没有写文字";
 "profile.library_empty" = "书架暂时是空的";
 "profile.library_archive_name" = "THE MOOD ARCHIVE";
-"profile.library_archive_intro" = "这里收藏着你的情绪痕迹。八本情绪集各守一种感受：有的页数密集，有的仍被封存。轻触书脊，就能翻开属于它的记忆。";
+"profile.library_archive_intro" = "这里收藏着你的情绪痕迹。九本情绪集各守一种感受：有的页数密集，有的仍被封存。轻触书脊，就能翻开属于它的记忆。";
 "profile.library_stat_opened" = "已开启情绪集";
 "profile.library_stat_dominant" = "主导情绪";
 "profile.library_unopened" = "未开启";

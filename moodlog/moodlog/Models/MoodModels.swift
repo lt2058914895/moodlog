@@ -3,16 +3,17 @@
 //  moodlog
 //
 //  Created by deppon on 2026/6/26.
-//  重构于 2026/7/29 — 删除二级情绪，精简一级情绪为8个核心大类（爱合并到开心）
+//  重构于 2026/7/29 — 删除二级情绪，精简一级情绪为核心大类（爱合并到开心）
 //
 
 import SwiftUI
 
-// MARK: - 情绪类型（精简为8个核心大类）
+// MARK: - 情绪类型
 enum MoodType: String, CaseIterable, Codable {
     case happy = "happy"       // 😊 开心
     case sad = "sad"           // 😢 难过
     case angry = "angry"       // 😠 生气
+    case irritated = "irritated" // 😤 烦躁
     case anxious = "anxious"   // 😰 焦虑
     case neutral = "neutral"   // 😐 平淡
     case afraid = "afraid"     // 😨 害怕
@@ -32,6 +33,7 @@ enum MoodType: String, CaseIterable, Codable {
         case .happy: return "😊"
         case .sad: return "😢"
         case .angry: return "😠"
+        case .irritated: return "😤"
         case .anxious: return "😰"
         case .neutral: return "😐"
         case .afraid: return "😨"
@@ -45,6 +47,7 @@ enum MoodType: String, CaseIterable, Codable {
         case .happy: return L.localized("mood.happy")
         case .sad: return L.localized("mood.sad")
         case .angry: return L.localized("mood.angry")
+        case .irritated: return L.localized("mood.irritated")
         case .anxious: return L.localized("mood.anxious")
         case .neutral: return L.localized("mood.neutral")
         case .afraid: return L.localized("mood.afraid")
@@ -58,6 +61,7 @@ enum MoodType: String, CaseIterable, Codable {
         case .happy: return Color(hex: "FFD93D").colorSchemeAdapted
         case .sad: return Color(hex: "5B8FB9").colorSchemeAdapted
         case .angry: return Color(hex: "FF4757").colorSchemeAdapted
+        case .irritated: return Color(hex: "FF7A45").colorSchemeAdapted
         case .anxious: return Color(hex: "F39C12").colorSchemeAdapted
         case .neutral: return Color(hex: "95A5A6").colorSchemeAdapted
         case .afraid: return Color(hex: "8E44AD").colorSchemeAdapted
@@ -72,6 +76,7 @@ enum MoodType: String, CaseIterable, Codable {
         case .happy: return "happy"
         case .sad: return "sad"
         case .angry: return "angry"
+        case .irritated: return "irritated"
         case .anxious: return "anxious"
         case .neutral: return "indifferent"
         case .afraid: return "scared"

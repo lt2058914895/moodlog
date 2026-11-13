@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// 情绪图书馆：八本情绪集组成一座私人的情绪档案馆
+/// 情绪图书馆：九本情绪集组成一座私人的情绪档案馆
 struct MoodLibraryView: View {
     private let manager = MoodDataManager.shared
 
@@ -146,7 +146,7 @@ struct MoodLibraryView: View {
 
                 archiveStat(
                     title: L.localized("profile.library_stat_opened"),
-                    value: "\(openedBookCount)/8"
+                    value: "\(openedBookCount)/\(MoodType.allCases.count)"
                 )
 
                 archiveStat(
@@ -367,6 +367,8 @@ private struct MoodBookCover: View {
             return Color(hex: "5277A8")
         case .angry:
             return Color(hex: "C25A4D")
+        case .irritated:
+            return Color(hex: "C96B3F")
         case .anxious:
             return Color(hex: "C27536")
         case .neutral:
@@ -385,6 +387,7 @@ private struct MoodBookCover: View {
         case .happy: return Color(hex: "B2862F")
         case .sad: return Color(hex: "4E719F")
         case .angry: return Color(hex: "B35449")
+        case .irritated: return Color(hex: "B55B34")
         case .anxious: return Color(hex: "AF6B2F")
         case .neutral: return Color(hex: "747B74")
         case .afraid: return Color(hex: "654E91")
@@ -531,6 +534,7 @@ private struct MoodBookCover: View {
         case .happy: sunRays
         case .sad: rainDrops
         case .angry: sharpShards
+        case .irritated: tangledLines
         case .anxious: restlessRings
         case .neutral: quietBands
         case .afraid: starBurst
@@ -590,6 +594,29 @@ private struct MoodBookCover: View {
                 Circle()
                     .stroke(Color.white.opacity(0.15), lineWidth: 1.4)
                     .frame(width: 60 + CGFloat(index) * 27, height: 60 + CGFloat(index) * 27)
+            }
+        }
+    }
+
+    private var tangledLines: some View {
+        Canvas { context, size in
+            for row in 0..<5 {
+                var path = Path()
+                let y = size.height * (0.20 + CGFloat(row) * 0.15)
+                let amplitude: CGFloat = row.isMultiple(of: 2) ? 15 : 10
+
+                path.move(to: CGPoint(x: -12, y: y))
+                for step in 0...12 {
+                    let x = size.width * CGFloat(step) / 12
+                    let offset = step.isMultiple(of: 2) ? -amplitude : amplitude
+                    path.addLine(to: CGPoint(x: x, y: y + offset))
+                }
+
+                context.stroke(
+                    path,
+                    with: .color(.white.opacity(row.isMultiple(of: 2) ? 0.15 : 0.09)),
+                    style: StrokeStyle(lineWidth: 2.4, lineCap: .round, lineJoin: .round)
+                )
             }
         }
     }

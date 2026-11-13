@@ -64,6 +64,7 @@
 "mood.happy" = "Happy";
 "mood.sad" = "Sad";
 "mood.angry" = "Angry";
+"mood.irritated" = "Irritable";
 "mood.anxious" = "Anxious";
 "mood.neutral" = "Neutral";
 "mood.afraid" = "Afraid";
@@ -175,7 +176,7 @@
 "share.period.year" = "This Year";
 "profile.title" = "Me";
 "profile.library_title" = "Mood Library";
-"profile.library_subtitle" = "Eight collections, one for every feeling";
+"profile.library_subtitle" = "Nine collections, one for every feeling";
 "profile.library_status_building" = "Collecting";
 "profile.library_status_complete" = "Open";
 "profile.library_goal_building" = "Opens at %1$d — %2$d more to go";
@@ -183,7 +184,7 @@
 "profile.library_not_open_hint" = "Your mood library isn't open yet. %d more records needed";
 "profile.library_nav_title" = "Mood Library";
 "profile.library_shelf_title" = "My Shelf";
-"profile.library_shelf_subtitle" = "8 collections";
+"profile.library_shelf_subtitle" = "9 collections";
 "profile.library_dominant" = "\"%@\" appeared most often recently";
 "profile.library_page_subtitle" = "Welcome to your mood library";
 "profile.library_total" = "Records";
@@ -203,7 +204,7 @@
 "profile.library_no_note" = "No words were written on this page";
 "profile.library_empty" = "The shelf is empty";
 "profile.library_archive_name" = "THE MOOD ARCHIVE";
-"profile.library_archive_intro" = "This archive preserves traces of your feelings. Eight collections each hold one kind of emotion: some are dense with pages, while others remain sealed. Tap a spine to open its memory.";
+"profile.library_archive_intro" = "This archive preserves traces of your feelings. Nine collections each hold one kind of emotion: some are dense with pages, while others remain sealed. Tap a spine to open its memory.";
 "profile.library_stat_opened" = "Opened Collections";
 "profile.library_stat_dominant" = "Dominant Mood";
 "profile.library_unopened" = "Sealed";
