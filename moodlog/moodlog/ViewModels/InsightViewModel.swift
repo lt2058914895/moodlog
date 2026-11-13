@@ -9,8 +9,7 @@ import Foundation
 
 /// 数据洞察ViewModel
 class InsightViewModel: ObservableObject {
-    @Published var selectedRange: InsightTimeRange = .week
-    @Published var selectedYear: Int = Calendar.current.component(.year, from: Date())
+    @Published var selectedRange: InsightTimeRange = .sevenDays
     @Published var moodDistribution: [MoodType: Int] = [:]
     @Published var topTags: [(name: String, count: Int)] = []
     @Published var totalRecords: Int = 0
@@ -19,11 +18,7 @@ class InsightViewModel: ObservableObject {
     @Published var dominantMoodPercentage: Double = 0
     @Published var isMoodSpread: Bool = false
     @Published var topTwoMoods: [MoodType] = []
-    @Published var availableYears: [Int] = []
-
     private let dataManager: any MoodDataManaging
-    private let calendar = InsightTimeRange.sharedCalendar
-
     private var cancellable: Any?
 
     /// 防抖定时器
@@ -31,11 +26,9 @@ class InsightViewModel: ObservableObject {
 
     init(dataManager: any MoodDataManaging = MoodDataManager.shared) {
         self.dataManager = dataManager
-        loadAvailableYears()
         loadData()
         // 监听数据变更通知
         cancellable = NotificationCenter.default.addObserver(forName: .moodDataDidChange, object: nil, queue: .main) { [weak self] _ in
-            self?.loadAvailableYears()
             self?.debouncedLoadData()
         }
     }
@@ -55,37 +48,10 @@ class InsightViewModel: ObservableObject {
         }
     }
 
-    // MARK: - 年份管理
-
-    /// 最早可选年份
-    private let minYear = 2020
-
-    /// 当前年份
-    var currentYear: Int {
-        calendar.component(.year, from: Date())
-    }
-
-    func loadAvailableYears() {
-        availableYears = dataManager.fetchAvailableYears()
-        if selectedYear > currentYear || selectedYear < minYear {
-            selectedYear = currentYear
-        }
-    }
-
-    /// 是否可以切换到更早的年份
-    var canGoPreviousYear: Bool {
-        selectedYear > minYear
-    }
-
-    /// 是否可以切换到更近的年份
-    var canGoNextYear: Bool {
-        selectedYear < currentYear
-    }
-
     // MARK: - 时间范围
 
     var dateRange: (start: Date, end: Date) {
-        selectedRange.dateRange(at: Date(), year: selectedYear)
+        selectedRange.dateRange()
     }
 
     // MARK: - 日期范围标题
@@ -96,25 +62,8 @@ class InsightViewModel: ObservableObject {
         let now = Date()
         let today = formatter.string(from: now)
         let todayLabel = L.localized("insight.range_today")
-
-        switch selectedRange {
-        case .today:
-            // 今日：只显示当天，如 "8.6"
-            return today
-        case .week, .month, .quarter:
-            // 本周/本月/本季：起始日 - 今日(日期)，如 "8.4 - 今日(8.6)"
-            let start = formatter.string(from: dateRange.start)
-            return "\(start) - \(todayLabel)(\(today))"
-        case .year:
-            if selectedYear == currentYear {
-                // 今年：1.1 - 今日(日期)，如 "1.1 - 今日(8.6)"
-                let start = formatter.string(from: dateRange.start)
-                return "\(start) - \(todayLabel)(\(today))"
-            } else {
-                // 往年：只显示年份，如 "2025"
-                return "\(selectedYear)"
-            }
-        }
+        let start = formatter.string(from: dateRange.start)
+        return "\(start) - \(todayLabel)(\(today))"
     }
 
     // MARK: - 数据加载
@@ -196,30 +145,19 @@ class InsightViewModel: ObservableObject {
 
 // MARK: - 枚举与数据模型
 
-enum InsightTimeRange: Hashable, CaseIterable {
-    case today
-    case week
-    case month
-    case quarter
-    case year
+struct InsightTimeRange: Hashable, Identifiable {
+    let weeks: Int
 
-    static var allCases: [InsightTimeRange] {
-        [.today, .week, .month, .quarter, .year]
-    }
+    var id: Int { weeks }
+
+    static let sevenDays = InsightTimeRange(weeks: 1)
+    static let allCases: [InsightTimeRange] = (1...52).map { InsightTimeRange(weeks: $0) }
 
     var displayName: String {
-        switch self {
-        case .today:
-            return L.localized("insight.range_today")
-        case .week:
-            return L.localized("insight.range_week")
-        case .month:
-            return L.localized("insight.range_month")
-        case .quarter:
-            return L.localized("insight.range_quarter")
-        case .year:
-            return L.localized("insight.range_year")
+        if weeks == 1 {
+            return L.localized("insight.range_7_days")
         }
+        return String(format: L.localized("insight.range_weeks_format"), weeks)
     }
 }
 
@@ -240,60 +178,13 @@ struct TagBarData: Identifiable {
 // MARK: - 时间区间（回顾页与分享卡片共用的单一实现）
 
 extension InsightTimeRange {
-    /// 按用户地区设置每周第一天（周一起始是 ISO 8601 标准及全球多数国家的惯例，
-    /// 仅少数地区（北美、日本、中东等）以周日为一周起始）
-    static let sharedCalendar: Calendar = {
-        var cal = Calendar.current
-        let region = Locale.current.region?.identifier ?? ""
-        let sundayFirstRegions: Set<String> = [
-            "US", "CA", "MX",     // 北美
-            "JP", "KR",           // 东亚
-            "IN", "PH", "TH", "PK", "BD", "LK", "MM", "KH", // 南亚/东南亚
-            "IL", "SA", "AE", "KW", "BH", "QA", "OM", "EG", "JO", "LB", "IQ" // 中东
-        ]
-        cal.firstWeekday = sundayFirstRegions.contains(region) ? 1 : 2
-        return cal
-    }()
-
-    /// 日期区间口径：今年各时段均取起点到今日；往年整年
-    func dateRange(at date: Date = Date(), year: Int? = nil) -> (start: Date, end: Date) {
-        let calendar = Self.sharedCalendar
-        let now = date
-        let end = now.endOfDay
-        switch self {
-        case .today:
-            return (calendar.startOfDay(for: now), end)
-        case .week:
-            if let weekInterval = calendar.dateInterval(of: .weekOfYear, for: now) {
-                return (weekInterval.start, end)
-            }
-            return (calendar.startOfDay(for: now), end)
-        case .month:
-            let components = calendar.dateComponents([.year, .month], from: now)
-            let start = calendar.date(from: components)!
-            return (start, end)
-        case .quarter:
-            let month = calendar.component(.month, from: now)
-            let quarterStartMonth = ((month - 1) / 3) * 3 + 1
-            var components = calendar.dateComponents([.year], from: now)
-            components.month = quarterStartMonth
-            components.day = 1
-            let start = calendar.date(from: components)!
-            return (start, end)
-        case .year:
-            let selectedYear = year ?? calendar.component(.year, from: now)
-            var components = DateComponents()
-            components.year = selectedYear
-            components.month = 1
-            components.day = 1
-            let start = calendar.date(from: components)!
-            if selectedYear == calendar.component(.year, from: now) {
-                return (start, end)
-            } else {
-                components.year = selectedYear + 1
-                let endOfYear = calendar.date(from: components)!
-                return (start, endOfYear)
-            }
-        }
+    /// 日期区间口径：截至今天的连续周区间，1 周等于 7 天
+    func dateRange(at date: Date = Date()) -> (start: Date, end: Date) {
+        let calendar = Calendar.current
+        let end = date.endOfDay
+        let totalDays = max(weeks, 1) * 7
+        let startOfToday = calendar.startOfDay(for: date)
+        let start = calendar.date(byAdding: .day, value: -(totalDays - 1), to: startOfToday)!
+        return (start, end)
     }
 }

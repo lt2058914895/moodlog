@@ -71,47 +71,11 @@ struct MoodShareMoodEntry {
 
 struct MoodShareData {
     let dateRangeText: String
+    let periodLabel: String
     let totalRecords: Int
     let dominantMood: MoodType
     let isMoodSpread: Bool
-    let isToday: Bool
     let moodEntries: [MoodShareMoodEntry]
-}
-
-// MARK: - 分享时段（与回顾页 InsightTimeRange 的日期口径保持一致）
-
-enum MoodSharePeriod: String, CaseIterable, Identifiable {
-    case today
-    case week
-    case month
-    case quarter
-    case year
-
-    var id: String { rawValue }
-
-    var titleKey: String {
-        switch self {
-        case .today: return "share.period.today"
-        case .week: return "share.period.week"
-        case .month: return "share.period.month"
-        case .quarter: return "share.period.quarter"
-        case .year: return "share.period.year"
-        }
-    }
-
-    func dateRange(now: Date = Date()) -> (start: Date, end: Date) {
-        insightRange.dateRange(at: now)
-    }
-
-    private var insightRange: InsightTimeRange {
-        switch self {
-        case .today: return .today
-        case .week: return .week
-        case .month: return .month
-        case .quarter: return .quarter
-        case .year: return .year
-        }
-    }
 }
 
 // MARK: - 分享卡片视图（去敏感化：仅 emoji + 聚合统计，无原始备注/具体时间）
@@ -144,7 +108,7 @@ struct MoodShareCardView: View {
                         .minimumScaleFactor(0.6)
                         .multilineTextAlignment(.center)
                         .foregroundColor(.white)
-                    Text(periodPrefix)
+                    Text(data.periodLabel)
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundColor(.white.opacity(0.82))
                     Text(narrativeTitle)
@@ -251,12 +215,6 @@ struct MoodShareCardView: View {
         return String(format: L.localized("share.hero_title"), data.dominantMood.displayName)
     }
 
-    private var periodPrefix: String {
-        data.isToday
-            ? L.localized("share.hero_prefix_today")
-            : L.localized("share.hero_prefix")
-    }
-
     private func moodBar(_ entry: MoodShareMoodEntry) -> some View {
         HStack(spacing: 10) {
             Image(entry.mood.imageName)
@@ -289,7 +247,7 @@ struct MoodShareCardView: View {
 
 struct MoodShareSheet: View {
     @StateObject private var dataManager = MoodDataManager.shared
-    @State private var period: MoodSharePeriod = .week
+    @State private var period: InsightTimeRange = .sevenDays
     @State private var shareData: MoodShareData?
     @State private var toast: String?
     @State private var saveCoordinator: PhotoSaveCoordinator?
@@ -429,13 +387,13 @@ struct MoodShareSheet: View {
         ScrollViewReader { proxy in
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
-                    ForEach(MoodSharePeriod.allCases) { item in
+                    ForEach(InsightTimeRange.allCases, id: \.self) { item in
                         Button(action: {
                             withAnimation(.easeInOut(duration: 0.2)) {
                                 period = item
                             }
                         }) {
-                            Text(L.localized(item.titleKey))
+                            Text(item.displayName)
                                 .font(.subheadline.weight(period == item ? .bold : .medium))
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 8)
@@ -474,22 +432,19 @@ struct MoodShareSheet: View {
 
     private func buildData() {
         let now = Date()
-        let range = period.dateRange(now: now)
+        let range = period.dateRange(at: now)
         let dist = dataManager.fetchMoodDistribution(from: range.start, to: range.end)
         let total = dist.values.reduce(0, +)
-
-        let entries: [MoodShareMoodEntry] = dist
-            .filter { $0.value > 0 }
-            .sorted { $0.value > $1.value }
-            .prefix(3)
-            .map { mood, count in
-                let pct = total > 0 ? Int(round(Double(count) / Double(total) * 100)) : 0
-                return MoodShareMoodEntry(mood: mood, percentage: pct)
-            }
-
         let sortedMoods = dist
             .filter { $0.value > 0 }
             .sorted { $0.value > $1.value }
+
+        let entries: [MoodShareMoodEntry] = sortedMoods.prefix(3).map { item in
+            let (mood, count) = item
+            let pct = total > 0 ? Int(round(Double(count) / Double(total) * 100)) : 0
+            return MoodShareMoodEntry(mood: mood, percentage: pct)
+        }
+
         let dominantPercentage: Double
         if total > 0, let topMoodCount = sortedMoods.first?.value {
             dominantPercentage = Double(topMoodCount) / Double(total) * 100
@@ -504,24 +459,17 @@ struct MoodShareSheet: View {
             isMoodSpread = false
         }
 
-        let isToday = period == .today
-
         let fmt = DateFormatter()
         fmt.locale = Locale.current
         fmt.dateFormat = DateFormatter.dateFormat(fromTemplate: "MMMMdd", options: 0, locale: Locale.current)
-        let rangeText: String
-        if period == .today {
-            rangeText = fmt.string(from: now)
-        } else {
-            rangeText = "\(fmt.string(from: range.start)) - \(fmt.string(from: now))"
-        }
+        let rangeText = "\(fmt.string(from: range.start)) - \(fmt.string(from: now))"
 
         shareData = MoodShareData(
             dateRangeText: rangeText,
+            periodLabel: period.displayName,
             totalRecords: total,
             dominantMood: entries.first?.mood ?? .happy,
             isMoodSpread: isMoodSpread,
-            isToday: isToday,
             moodEntries: entries
         )
     }

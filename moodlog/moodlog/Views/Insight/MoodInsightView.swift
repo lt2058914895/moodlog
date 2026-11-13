@@ -102,9 +102,7 @@ struct MoodInsightView: View {
         guard viewModel.totalRecords > 0 else {
             return L.localized("insight.empty_greeting")
         }
-        return viewModel.selectedRange == .today
-            ? L.localized("insight.greeting_today")
-            : L.localized("insight.greeting")
+        return L.localized("insight.greeting")
     }
 
     private var heroTitle: String {
@@ -172,48 +170,8 @@ struct MoodInsightView: View {
                 }
             }
 
-            if case .year = viewModel.selectedRange {
-                yearPicker
-            }
         }
         .padding(.top, 4)
-    }
-
-    // MARK: - 年份选择器
-    private var yearPicker: some View {
-        HStack(spacing: 12) {
-            Button(action: {
-                viewModel.selectedYear -= 1
-                viewModel.loadData()
-            }) {
-                Image(systemName: "chevron.left")
-                    .font(.body.weight(.semibold))
-                    .foregroundColor(viewModel.canGoPreviousYear ? Color("AccentColor") : Color.gray.opacity(0.3))
-            }
-            .disabled(!viewModel.canGoPreviousYear)
-
-            Spacer()
-
-            Text("\(viewModel.selectedYear)\(L.localized("insight.year_unit"))")
-                .font(.headline)
-                .foregroundColor(.primary)
-
-            Spacer()
-
-            Button(action: {
-                viewModel.selectedYear += 1
-                viewModel.loadData()
-            }) {
-                Image(systemName: "chevron.right")
-                    .font(.body.weight(.semibold))
-                    .foregroundColor(viewModel.canGoNextYear ? Color("AccentColor") : Color.gray.opacity(0.3))
-            }
-            .disabled(!viewModel.canGoNextYear)
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-        .background(Color(UIColor.secondarySystemGroupedBackground))
-        .cornerRadius(10)
     }
 
     // MARK: - 统计概览（紧凑信息条）

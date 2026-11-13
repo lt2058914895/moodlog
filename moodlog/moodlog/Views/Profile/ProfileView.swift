@@ -145,7 +145,7 @@ struct ProfileView: View {
         .cornerRadius(20)
         .shadow(color: Color("AccentColor").opacity(0.3), radius: 12, y: 6)
         .task {
-            let range = InsightTimeRange.week.dateRange()
+            let range = InsightTimeRange.sevenDays.dateRange()
             let distribution = MoodDataManager.shared.fetchMoodDistribution(from: range.start, to: range.end)
             if let top = distribution.max(by: { $0.value < $1.value }), top.value > 0 {
                 heroMood = top.key

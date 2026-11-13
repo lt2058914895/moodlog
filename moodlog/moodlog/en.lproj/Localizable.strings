@@ -90,11 +90,8 @@
 // MARK: - Insight
 "insight.title" = "Mood Journey";
 "insight.range_today" = "Today";
-"insight.range_week" = "This Week";
-"insight.range_month" = "This Month";
-"insight.range_quarter" = "This Quarter";
-"insight.range_year" = "This Year";
-"insight.year_unit" = "";
+"insight.range_7_days" = "7 days";
+"insight.range_weeks_format" = "%d weeks";
 "insight.record_count" = "Total Records";
 "insight.avg_intensity" = "Avg Intensity";
 "insight.most_mood" = "Top Mood";
@@ -103,7 +100,6 @@
 "insight.no_distribution_data" = "No data yet — record more moods to see patterns";
 "insight.no_tag_data" = "No tag data yet. Record more to learn about yourself";
 "insight.greeting" = "Lately";
-"insight.greeting_today" = "Today";
 "insight.hero_title" = "Your mood has been mostly \"%@\"";
 "insight.hero_spread_two" = "Your mood has been swinging between \"%@\" and \"%@\"";
 "insight.hero_spread" = "Your emotions have been quite varied";
@@ -153,8 +149,6 @@
 "onboarding.next" = "Next";
 "onboarding.skip" = "Skip";
 "onboarding.start" = "Get Started";
-"share.hero_prefix" = "Lately";
-"share.hero_prefix_today" = "Today";
 "share.hero_title" = "Your mood has been mostly \"%@\"";
 "share.hero_spread_two" = "Your mood has been swinging between \"%@\" and \"%@\"";
 "share.records" = "Records";
@@ -169,11 +163,6 @@
 "share.permission_alert_message" = "Please allow %@ to access your Photos in Settings to save mood cards.";
 "share.permission_go_settings" = "Open Settings";
 "share.permission_cancel" = "Cancel";
-"share.period.today" = "Today";
-"share.period.week" = "This Week";
-"share.period.month" = "This Month";
-"share.period.quarter" = "This Quarter";
-"share.period.year" = "This Year";
 "profile.title" = "Me";
 "profile.library_title" = "Mood Library";
 "profile.library_subtitle" = "Nine collections, one for every feeling";

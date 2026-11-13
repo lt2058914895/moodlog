@@ -90,11 +90,8 @@
 // MARK: - Insight
 "insight.title" = "心情轨迹";
 "insight.range_today" = "今日";
-"insight.range_week" = "本周";
-"insight.range_month" = "本月";
-"insight.range_quarter" = "本季";
-"insight.range_year" = "年度";
-"insight.year_unit" = "年";
+"insight.range_7_days" = "7天";
+"insight.range_weeks_format" = "%d周";
 "insight.record_count" = "总记录";
 "insight.avg_intensity" = "平均强度";
 "insight.most_mood" = "最多情绪";
@@ -103,7 +100,6 @@
 "insight.no_distribution_data" = "还没有分布数据，多记录一些心情来看看吧";
 "insight.no_tag_data" = "还没有标签数据，记录更多来了解自己";
 "insight.greeting" = "这段时间";
-"insight.greeting_today" = "今日";
 "insight.hero_title" = "你的心情以「%@」为主";
 "insight.hero_spread_two" = "你的心情在「%@」和「%@」之间波动";
 "insight.hero_spread" = "你的情绪状态较为多元";
@@ -153,8 +149,6 @@
 "onboarding.next" = "下一步";
 "onboarding.skip" = "跳过";
 "onboarding.start" = "立即开始";
-"share.hero_prefix" = "这段时间";
-"share.hero_prefix_today" = "今日";
 "share.hero_title" = "你的心情以「%@」为主";
 "share.hero_spread_two" = "你的心情在「%@」和「%@」之间波动";
 "share.records" = "记录";
@@ -169,11 +163,6 @@
 "share.permission_alert_message" = "请在系统设置中允许「%@」访问相册，才能保存情绪卡片。";
 "share.permission_go_settings" = "去设置";
 "share.permission_cancel" = "取消";
-"share.period.today" = "今日";
-"share.period.week" = "本周";
-"share.period.month" = "本月";
-"share.period.quarter" = "本季";
-"share.period.year" = "年度";
 "profile.title" = "我的";
 "profile.library_title" = "情绪图书馆";
 "profile.library_subtitle" = "九本情绪集，收录每一种感受";
