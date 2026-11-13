@@ -9,12 +9,6 @@ import SwiftUI
 
 /// App 对外链接常量
 private enum AppLinks {
-    /// 技术支持页面地址（按系统语言选择中文/英文版本）
-    static var support: URL {
-        let prefersChinese = Bundle.main.preferredLocalizations.first == "zh-Hans"
-        let page = prefersChinese ? "support.html" : "support-en.html"
-        return URL(string: "https://lt2058914895.github.io/moodlog/\(page)")!
-    }
     /// App Store 地址
     static let appStore = URL(string: "https://apps.apple.com/app/id6791829175")!
     /// App Store 评分页（直接跳转撰写评价）
@@ -381,6 +375,16 @@ struct ProfileView: View {
     private var supportSection: some View {
         sectionContainer(title: L.localized("profile.section_support")) {
             VStack(spacing: 0) {
+                NavigationLink {
+                    SupportPageView()
+                } label: {
+                    settingRow(icon: "envelope",
+                               iconColor: Color("SuccessColor"),
+                               title: L.localized("profile.feedback"),
+                               showChevron: true)
+                }
+                .buttonStyle(.plain)
+                rowDivider
                 Button {
                     presentShareSheet(items: [appShareText])
                 } label: {
@@ -397,16 +401,6 @@ struct ProfileView: View {
                     settingRow(icon: "star.bubble",
                                iconColor: Color("WarningColor"),
                                title: L.localized("profile.rate_app"),
-                               showChevron: true)
-                }
-                .buttonStyle(.plain)
-                rowDivider
-                NavigationLink {
-                    SupportPageView(url: AppLinks.support)
-                } label: {
-                    settingRow(icon: "envelope",
-                               iconColor: Color("SuccessColor"),
-                               title: L.localized("profile.feedback"),
                                showChevron: true)
                 }
                 .buttonStyle(.plain)

@@ -226,7 +226,12 @@
 "profile.section_support" = "支持与反馈";
 "profile.share_app" = "分享 App";
 "profile.rate_app" = "去 App Store 评分";
-"profile.feedback" = "问题反馈";
+"profile.feedback" = "联系我们";
+"feedback.help_title" = "有什么可以帮你？";
+"feedback.help_message" = "遇到问题、发现 Bug，或有功能建议，欢迎通过邮件联系我。通常会在 1–2 个工作日内回复。";
+"feedback.contact_title" = "联系邮箱";
+"feedback.copy_email" = "复制邮箱";
+"feedback.copied" = "邮箱已复制";
 "profile.share_app_text" = "推荐给你「情绪猫」——一款情绪记录 App，帮你把感受变成清晰的自我认知：%@";
 
 // MARK: - 活动标签（预设）

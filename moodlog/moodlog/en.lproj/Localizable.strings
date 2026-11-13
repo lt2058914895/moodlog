@@ -226,7 +226,12 @@
 "profile.section_support" = "Support & Feedback";
 "profile.share_app" = "Share App";
 "profile.rate_app" = "Rate on App Store";
-"profile.feedback" = "Send Feedback";
+"profile.feedback" = "Contact Us";
+"feedback.help_title" = "How can I help?";
+"feedback.help_message" = "Found a problem or bug, or have a feature suggestion? Email me and I'll usually reply within 1–2 business days.";
+"feedback.contact_title" = "Contact email";
+"feedback.copy_email" = "Copy email";
+"feedback.copied" = "Email copied";
 "profile.share_app_text" = "Check out Mood Cat, a mood-tracking app that turns your feelings into clear self-awareness: %@";
 
 // MARK: - Activity Tags (Preset)
