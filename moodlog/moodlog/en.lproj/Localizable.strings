@@ -60,7 +60,7 @@
 "records.today" = "Today";
 "records.yesterday" = "Yesterday";
 
-// MARK: - Mood Types (8 core categories)
+// MARK: - Mood Types (9 core categories)
 "mood.happy" = "Happy";
 "mood.sad" = "Sad";
 "mood.angry" = "Angry";
@@ -143,7 +143,7 @@
 // MARK: - Stage 2: Onboarding / Share / Profile
 "tab.profile" = "Me";
 "onboarding.page1_title" = "Record Every Emotion";
-"onboarding.page1_desc" = "8 emotions, one tap, a 10-second check-in — begin self-awareness";
+"onboarding.page1_desc" = "9 emotions, one tap, a 10-second check-in — begin self-awareness";
 "onboarding.page2_title" = "Rich Activity Tags";
 "onboarding.page2_desc" = "Tag the events behind your emotions to understand the why";
 "onboarding.page3_title" = "Data Insights";
