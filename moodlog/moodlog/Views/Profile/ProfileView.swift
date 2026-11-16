@@ -375,16 +375,6 @@ struct ProfileView: View {
     private var supportSection: some View {
         sectionContainer(title: L.localized("profile.section_support")) {
             VStack(spacing: 0) {
-                NavigationLink {
-                    SupportPageView()
-                } label: {
-                    settingRow(icon: "envelope",
-                               iconColor: Color("SuccessColor"),
-                               title: L.localized("profile.feedback"),
-                               showChevron: true)
-                }
-                .buttonStyle(.plain)
-                rowDivider
                 Button {
                     presentShareSheet(items: [appShareText])
                 } label: {
@@ -401,6 +391,16 @@ struct ProfileView: View {
                     settingRow(icon: "star.bubble",
                                iconColor: Color("WarningColor"),
                                title: L.localized("profile.rate_app"),
+                               showChevron: true)
+                }
+                .buttonStyle(.plain)
+                rowDivider
+                NavigationLink {
+                    SupportPageView()
+                } label: {
+                    settingRow(icon: "envelope",
+                               iconColor: Color("SuccessColor"),
+                               title: L.localized("profile.feedback"),
                                showChevron: true)
                 }
                 .buttonStyle(.plain)

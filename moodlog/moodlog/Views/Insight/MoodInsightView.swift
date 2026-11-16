@@ -86,6 +86,9 @@ struct MoodInsightView: View {
     }
 
     private var heroGradientColors: [Color] {
+        guard viewModel.totalRecords > 0 else {
+            return [Color("AccentColor").opacity(0.85), Color("AccentLightColor").opacity(0.7)]
+        }
         if viewModel.isMoodSpread && viewModel.topTwoMoods.count >= 2 {
             let m1 = viewModel.topTwoMoods[0].color
             let m2 = viewModel.topTwoMoods[1].color

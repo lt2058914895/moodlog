@@ -19,6 +19,7 @@ protocol StatisticsProviding {
     func fetchDayRecordCounts(year: Int, month: Int) -> [Date: Int]
     func fetchDayPrimaryMoods(year: Int, month: Int) -> [Date: MoodType]
     func fetchDayAverageIntensities(year: Int, month: Int) -> [Date: Double]
+    func fetchCalendarMonthSnapshot(year: Int, month: Int, completion: @escaping (CalendarMonthSnapshot) -> Void)
     func performQuery<T>(on queue: DispatchQueue, query: @escaping (NSManagedObjectContext) -> T, completion: @escaping (T) -> Void)
 }
 
@@ -361,6 +362,117 @@ class StatisticsService: StatisticsProviding {
     }
 
     // MARK: - 日历轻量查询
+
+    /// 在后台上下文一次性聚合整月数据，避免主线程执行多次查询。
+    func fetchCalendarMonthSnapshot(year: Int, month: Int,
+                                    completion: @escaping (CalendarMonthSnapshot) -> Void) {
+        let calendar = Calendar.current
+        var components = DateComponents()
+        components.year = year
+        components.month = month
+        components.day = 1
+        guard let monthStart = calendar.date(from: components),
+              let monthEnd = calendar.date(byAdding: .month, value: 1, to: monthStart) else {
+            DispatchQueue.main.async {
+                completion(CalendarMonthSnapshot())
+            }
+            return
+        }
+
+        backgroundContext.perform {
+            let request: NSFetchRequest<NSDictionary> = NSFetchRequest(entityName: "MoodRecord")
+            request.predicate = NSPredicate(
+                format: "createdAt >= %@ AND createdAt < %@",
+                monthStart as CVarArg,
+                monthEnd as CVarArg
+            )
+            request.resultType = .dictionaryResultType
+
+            let dateDesc = NSExpressionDescription()
+            dateDesc.name = "createdDate"
+            dateDesc.expression = NSExpression(forKeyPath: "createdAt")
+            dateDesc.expressionResultType = .dateAttributeType
+
+            let moodDesc = NSExpressionDescription()
+            moodDesc.name = "moodTypeValue"
+            moodDesc.expression = NSExpression(forKeyPath: "moodType")
+            moodDesc.expressionResultType = .stringAttributeType
+
+            let intensityDesc = NSExpressionDescription()
+            intensityDesc.name = "intensityValue"
+            intensityDesc.expression = NSExpression(forKeyPath: "intensity")
+            intensityDesc.expressionResultType = .integer16AttributeType
+
+            request.propertiesToFetch = [dateDesc, moodDesc, intensityDesc]
+            request.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: false)]
+
+            var dayRecordCounts: [Date: Int] = [:]
+            var dayPrimaryMoods: [Date: MoodType] = [:]
+            var dayLatestMoodDates: [Date: Date] = [:]
+            var dayIntensityTotals: [Date: Int] = [:]
+            var moodCounts: [MoodType: Int] = [:]
+            var moodIntensityTotals: [MoodType: Int] = [:]
+            var moodLatestDates: [MoodType: Date] = [:]
+
+            do {
+                let results = try self.backgroundContext.fetch(request) as? [[String: Any]] ?? []
+                for dict in results {
+                    guard let date = dict["createdDate"] as? Date else { continue }
+                    let dayStart = calendar.startOfDay(for: date)
+                    dayRecordCounts[dayStart, default: 0] += 1
+
+                    if let intensity = dict["intensityValue"] as? Int {
+                        dayIntensityTotals[dayStart, default: 0] += intensity
+                    }
+
+                    guard let moodString = dict["moodTypeValue"] as? String,
+                          let mood = MoodType(rawValue: moodString) else { continue }
+
+                    if dayLatestMoodDates[dayStart] == nil || date > dayLatestMoodDates[dayStart]! {
+                        dayLatestMoodDates[dayStart] = date
+                        dayPrimaryMoods[dayStart] = mood
+                    }
+
+                    moodCounts[mood, default: 0] += 1
+                    if let intensity = dict["intensityValue"] as? Int {
+                        moodIntensityTotals[mood, default: 0] += intensity
+                    }
+                    if date > (moodLatestDates[mood] ?? .distantPast) {
+                        moodLatestDates[mood] = date
+                    }
+                }
+            } catch {
+                Self.logger.error("Fetch calendar month snapshot failed: \(error.localizedDescription)")
+            }
+
+            let dayAverageIntensities = dayRecordCounts.reduce(into: [Date: Double]()) { result, entry in
+                let total = dayIntensityTotals[entry.key] ?? 0
+                result[entry.key] = entry.value > 0 ? Double(total) / Double(entry.value) : 0
+            }
+
+            let moodDistributionDetails = moodCounts.reduce(into: [MoodType: MoodDistributionDetail]()) { result, entry in
+                let count = entry.value
+                result[entry.key] = MoodDistributionDetail(
+                    count: count,
+                    latestDate: moodLatestDates[entry.key] ?? .distantPast,
+                    averageIntensity: count > 0
+                        ? Double(moodIntensityTotals[entry.key] ?? 0) / Double(count)
+                        : 0
+                )
+            }
+
+            let snapshot = CalendarMonthSnapshot(
+                dayRecordCounts: dayRecordCounts,
+                dayPrimaryMoods: dayPrimaryMoods,
+                dayAverageIntensities: dayAverageIntensities,
+                moodDistributionDetails: moodDistributionDetails
+            )
+
+            DispatchQueue.main.async {
+                completion(snapshot)
+            }
+        }
+    }
 
     func fetchDayRecordCounts(year: Int, month: Int) -> [Date: Int] {
         let calendar = Calendar.current

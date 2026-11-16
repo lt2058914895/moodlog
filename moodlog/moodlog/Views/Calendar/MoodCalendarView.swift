@@ -40,6 +40,9 @@ struct MoodCalendarView: View {
             }
         }
         .background(Color(UIColor.systemGroupedBackground))
+        .onAppear {
+            viewModel.loadMonthlyDataIfNeeded()
+        }
         .navigationDestination(isPresented: Binding(
             get: { recordToEdit != nil },
             set: { if !$0 { recordToEdit = nil } }

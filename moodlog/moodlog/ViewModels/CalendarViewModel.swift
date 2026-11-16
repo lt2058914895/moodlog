@@ -21,6 +21,7 @@ class CalendarViewModel: ObservableObject {
     @Published var dayAverageIntensities: [Date: Double] = [:]
     @Published var monthlyMoodDistributionDetails: [MoodType: MoodDistributionDetail] = [:]
     @Published var monthlyAverageIntensity: Double = 0
+    @Published var isLoadingMonthlyData: Bool = false
 
     /// 记录列表数据（按天分组）
     @Published var groupedRecords: [(date: Date, records: [MoodRecord])] = []
@@ -30,6 +31,9 @@ class CalendarViewModel: ObservableObject {
 
     /// 是否正在加载更多记录
     @Published var isLoadingMore: Bool = false
+
+    /// 是否正在首次加载记录列表
+    @Published var isLoadingInitialRecords: Bool = false
 
     private let dataManager: any MoodDataManaging
     private let calendar = Calendar.current
@@ -43,15 +47,18 @@ class CalendarViewModel: ObservableObject {
     private let pageSize: Int = 50
     private var currentOffset: Int = 0
 
+    private var hasLoadedMonthlyData = false
+    private var hasLoadedRecords = false
+    private var monthlySnapshotRequestID = UUID()
+    private var recordsLoadTask: Task<Void, Never>?
+
     init(dataManager: any MoodDataManaging = MoodDataManager.shared) {
         self.dataManager = dataManager
-        loadMonthlyData()
-        loadGroupedRecordsInitial()
         // 监听数据变更通知（防抖）
         cancellable = NotificationCenter.default.addObserver(forName: .moodDataDidChange, object: nil, queue: .main) { [weak self] _ in
             Task { @MainActor [weak self] in
-                self?.debouncedLoadMonthlyData()
-                self?.loadGroupedRecordsInitial()
+                self?.reloadMonthlyDataIfLoaded()
+                self?.reloadRecordsIfLoaded()
             }
         }
     }
@@ -71,6 +78,16 @@ class CalendarViewModel: ObservableObject {
                 self?.loadMonthlyData()
             }
         }
+    }
+
+    private func reloadMonthlyDataIfLoaded() {
+        guard hasLoadedMonthlyData else { return }
+        debouncedLoadMonthlyData()
+    }
+
+    private func reloadRecordsIfLoaded() {
+        guard hasLoadedRecords else { return }
+        loadGroupedRecordsInitial()
     }
 
     // MARK: - 月份导航
@@ -110,33 +127,43 @@ class CalendarViewModel: ObservableObject {
 
     // MARK: - 数据加载
 
+    /// 日历首次显示时加载月度数据
+    func loadMonthlyDataIfNeeded() {
+        guard !hasLoadedMonthlyData else { return }
+        loadMonthlyData()
+    }
+
     func loadMonthlyData() {
+        hasLoadedMonthlyData = true
+        isLoadingMonthlyData = true
+
         let year = calendar.component(.year, from: currentMonth)
         let month = calendar.component(.month, from: currentMonth)
+        let requestID = UUID()
+        monthlySnapshotRequestID = requestID
 
-        // 使用轻量查询获取日历网格数据（不加载完整记录）
-        dayRecordCounts = dataManager.fetchDayRecordCounts(year: year, month: month)
-        dayPrimaryMoods = dataManager.fetchDayPrimaryMoods(year: year, month: month)
-        dayAverageIntensities = dataManager.fetchDayAverageIntensities(year: year, month: month)
+        // 整月数据在后台上下文一次聚合，避免主线程阻塞
+        dataManager.fetchCalendarMonthSnapshot(year: year, month: month) { [weak self] snapshot in
+            Task { @MainActor [weak self] in
+                guard let self, self.monthlySnapshotRequestID == requestID else { return }
 
-        var monthComponents = DateComponents()
-        monthComponents.year = year
-        monthComponents.month = month
-        monthComponents.day = 1
-        let monthStart = calendar.date(from: monthComponents)!
-        let monthEnd = calendar.date(byAdding: .month, value: 1, to: monthStart)!
-        monthlyMoodDistributionDetails = dataManager.fetchMoodDistributionDetails(from: monthStart, to: monthEnd)
+                self.dayRecordCounts = snapshot.dayRecordCounts
+                self.dayPrimaryMoods = snapshot.dayPrimaryMoods
+                self.dayAverageIntensities = snapshot.dayAverageIntensities
+                self.monthlyMoodDistributionDetails = snapshot.moodDistributionDetails
 
-        let totalRecords = dayRecordCounts.values.reduce(0, +)
-        let weightedIntensity = dayRecordCounts.reduce(0.0) { result, entry in
-            result + (dayAverageIntensities[entry.key] ?? 0) * Double(entry.value)
+                let totalRecords = snapshot.dayRecordCounts.values.reduce(0, +)
+                let weightedIntensity = snapshot.dayRecordCounts.reduce(0.0) { result, entry in
+                    result + (snapshot.dayAverageIntensities[entry.key] ?? 0) * Double(entry.value)
+                }
+                self.monthlyAverageIntensity = totalRecords > 0
+                    ? weightedIntensity / Double(totalRecords)
+                    : 0
+
+                self.isLoadingMonthlyData = false
+                self.loadRecordsForSelectedDate()
+            }
         }
-        monthlyAverageIntensity = totalRecords > 0
-            ? weightedIntensity / Double(totalRecords)
-            : 0
-
-        // 仅在需要时加载完整记录（选中日期的记录）
-        loadRecordsForSelectedDate()
     }
 
     func loadRecordsForSelectedDate() {
@@ -299,8 +326,8 @@ class CalendarViewModel: ObservableObject {
             do {
                 try await dataManager.deleteRecordAsync(record)
                 // 删除后重新加载当前页数据
-                loadGroupedRecordsInitial()
-                loadMonthlyData()
+                reloadRecordsIfLoaded()
+                reloadMonthlyDataIfLoaded()
             } catch {
                 // 删除失败静默处理，UI 已有错误提示
             }
@@ -309,14 +336,32 @@ class CalendarViewModel: ObservableObject {
 
     // MARK: - 记录列表（按天分组，分页加载）
 
+    /// 切换到记录列表时再加载，避免默认进入日历时执行无用的列表查询
+    func loadGroupedRecordsIfNeeded() {
+        guard !hasLoadedRecords else { return }
+        loadGroupedRecordsInitial()
+    }
+
     /// 初始加载记录列表（第一页）
     func loadGroupedRecordsInitial() {
-        currentOffset = 0
-        let records = dataManager.fetchRecords(limit: pageSize, offset: 0)
-        currentOffset = records.count
-        // 如果返回的记录数等于页大小，说明可能还有更多
-        hasMoreRecords = records.count == pageSize
-        groupedRecords = groupRecordsByDate(records)
+        hasLoadedRecords = true
+        recordsLoadTask?.cancel()
+        isLoadingInitialRecords = true
+
+        recordsLoadTask = Task { @MainActor [weak self] in
+            // 先让页面完成首帧渲染，再执行读取
+            await Task.yield()
+            guard !Task.isCancelled, let self else { return }
+
+            let records = self.dataManager.fetchRecords(limit: self.pageSize, offset: 0)
+            guard !Task.isCancelled else { return }
+
+            self.currentOffset = records.count
+            // 如果返回的记录数等于页大小，说明可能还有更多
+            self.hasMoreRecords = records.count == self.pageSize
+            self.groupedRecords = self.groupRecordsByDate(records)
+            self.isLoadingInitialRecords = false
+        }
     }
 
     /// 加载更多记录（下一页）

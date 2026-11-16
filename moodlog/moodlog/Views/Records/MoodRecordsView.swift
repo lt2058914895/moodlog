@@ -10,7 +10,7 @@ import SwiftUI
 /// 记录/日历视图（合并页）
 struct MoodRecordsView: View {
     @StateObject private var viewModel = CalendarViewModel()
-    @State private var viewMode: ViewMode = .list
+    @State private var viewMode: ViewMode = .calendar
     @State private var recordToEdit: MoodRecord?
     @State private var recordToDelete: MoodRecord?
     @State private var showDeleteConfirmation = false
@@ -18,7 +18,7 @@ struct MoodRecordsView: View {
     var onNavigateToCheckin: (() -> Void)? = nil
 
     enum ViewMode: Int, CaseIterable {
-        case list, calendar
+        case calendar, list
 
         var title: String {
             switch self {
@@ -44,6 +44,12 @@ struct MoodRecordsView: View {
             }
         }
         .background(Color(UIColor.systemGroupedBackground))
+        .onAppear {
+            loadDataForCurrentMode()
+        }
+        .onChange(of: viewMode) { _ in
+            loadDataForCurrentMode()
+        }
         .navigationDestination(isPresented: Binding(
             get: { recordToEdit != nil },
             set: { if !$0 { recordToEdit = nil } }
@@ -102,7 +108,10 @@ struct MoodRecordsView: View {
     // MARK: - 列表模式
     private var listContent: some View {
         VStack(spacing: 0) {
-            if viewModel.groupedRecords.isEmpty {
+            if viewModel.isLoadingInitialRecords && viewModel.groupedRecords.isEmpty {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if viewModel.groupedRecords.isEmpty {
                 emptyStateView
             } else {
                 Text(L.localized("calendar.long_press_hint"))
@@ -155,6 +164,15 @@ struct MoodRecordsView: View {
     private func triggerLoadMoreIfNeeded() {
         guard viewModel.hasMoreRecords, !viewModel.isLoadingMore else { return }
         viewModel.loadMoreRecords()
+    }
+
+    private func loadDataForCurrentMode() {
+        switch viewMode {
+        case .calendar:
+            viewModel.loadMonthlyDataIfNeeded()
+        case .list:
+            viewModel.loadGroupedRecordsIfNeeded()
+        }
     }
 
     // MARK: - 日历模式

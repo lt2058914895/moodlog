@@ -93,6 +93,26 @@ struct MoodDistributionDetail: Equatable {
     let averageIntensity: Double
 }
 
+/// 日历页一次后台查询返回的整月快照
+struct CalendarMonthSnapshot {
+    let dayRecordCounts: [Date: Int]
+    let dayPrimaryMoods: [Date: MoodType]
+    let dayAverageIntensities: [Date: Double]
+    let moodDistributionDetails: [MoodType: MoodDistributionDetail]
+
+    init(
+        dayRecordCounts: [Date: Int] = [:],
+        dayPrimaryMoods: [Date: MoodType] = [:],
+        dayAverageIntensities: [Date: Double] = [:],
+        moodDistributionDetails: [MoodType: MoodDistributionDetail] = [:]
+    ) {
+        self.dayRecordCounts = dayRecordCounts
+        self.dayPrimaryMoods = dayPrimaryMoods
+        self.dayAverageIntensities = dayAverageIntensities
+        self.moodDistributionDetails = moodDistributionDetails
+    }
+}
+
 /// 情绪分布判定的共用规则
 enum MoodDistributionRule {
     /// 主情绪占比达到该阈值

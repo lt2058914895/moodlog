@@ -82,6 +82,7 @@ protocol MoodDataManaging: ObservableObject {
     func fetchDayRecordCounts(year: Int, month: Int) -> [Date: Int]
     func fetchDayPrimaryMoods(year: Int, month: Int) -> [Date: MoodType]
     func fetchDayAverageIntensities(year: Int, month: Int) -> [Date: Double]
+    func fetchCalendarMonthSnapshot(year: Int, month: Int, completion: @escaping (CalendarMonthSnapshot) -> Void)
     func performQuery<T>(on queue: DispatchQueue, query: @escaping (NSManagedObjectContext) -> T, completion: @escaping (T) -> Void)
 
     // 辅助
@@ -314,6 +315,9 @@ class MoodDataManager: MoodDataManaging {
     func fetchDayRecordCounts(year: Int, month: Int) -> [Date: Int] { statisticsService.fetchDayRecordCounts(year: year, month: month) }
     func fetchDayPrimaryMoods(year: Int, month: Int) -> [Date: MoodType] { statisticsService.fetchDayPrimaryMoods(year: year, month: month) }
     func fetchDayAverageIntensities(year: Int, month: Int) -> [Date: Double] { statisticsService.fetchDayAverageIntensities(year: year, month: month) }
+    func fetchCalendarMonthSnapshot(year: Int, month: Int, completion: @escaping (CalendarMonthSnapshot) -> Void) {
+        statisticsService.fetchCalendarMonthSnapshot(year: year, month: month, completion: completion)
+    }
 
     func performQuery<T>(on queue: DispatchQueue = .global(qos: .userInitiated),
                          query: @escaping (NSManagedObjectContext) -> T,
