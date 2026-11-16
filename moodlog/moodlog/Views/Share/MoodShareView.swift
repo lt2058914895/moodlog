@@ -433,31 +433,20 @@ struct MoodShareSheet: View {
     private func buildData() {
         let now = Date()
         let range = period.dateRange(at: now)
-        let dist = dataManager.fetchMoodDistribution(from: range.start, to: range.end)
-        let total = dist.values.reduce(0, +)
-        let sortedMoods = dist
-            .filter { $0.value > 0 }
-            .sorted { $0.value > $1.value }
+        let details = dataManager.fetchMoodDistributionDetails(from: range.start, to: range.end)
+        let rankedStats = MoodDistributionRanker.rank(details)
+        let total = rankedStats.reduce(0) { $0 + $1.count }
 
-        let entries: [MoodShareMoodEntry] = sortedMoods.prefix(3).map { item in
-            let (mood, count) = item
-            let pct = total > 0 ? Int(round(Double(count) / Double(total) * 100)) : 0
-            return MoodShareMoodEntry(mood: mood, percentage: pct)
+        let entries: [MoodShareMoodEntry] = rankedStats.prefix(3).map { stat in
+            MoodShareMoodEntry(mood: stat.mood, percentage: Int(stat.percentage.rounded()))
         }
 
-        let dominantPercentage: Double
-        if total > 0, let topMoodCount = sortedMoods.first?.value {
-            dominantPercentage = Double(topMoodCount) / Double(total) * 100
-        } else {
-            dominantPercentage = 0
-        }
-        let isMoodSpread: Bool
-        if sortedMoods.count >= 2 {
-            let gap = Double(sortedMoods[0].value - sortedMoods[1].value) / Double(total) * 100
-            isMoodSpread = dominantPercentage < 40 || gap < 10
-        } else {
-            isMoodSpread = false
-        }
+        let dominantPercentage = rankedStats.first?.percentage ?? 0
+        let secondPercentage = rankedStats.dropFirst().first?.percentage
+        let isMoodSpread = MoodDistributionRule.isSpread(
+            topPercentage: dominantPercentage,
+            secondPercentage: secondPercentage
+        )
 
         let fmt = DateFormatter()
         fmt.locale = Locale.current

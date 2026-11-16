@@ -19,6 +19,8 @@ class CalendarViewModel: ObservableObject {
     @Published var dayRecordCounts: [Date: Int] = [:]
     @Published var dayPrimaryMoods: [Date: MoodType] = [:]
     @Published var dayAverageIntensities: [Date: Double] = [:]
+    @Published var monthlyMoodDistributionDetails: [MoodType: MoodDistributionDetail] = [:]
+    @Published var monthlyAverageIntensity: Double = 0
 
     /// 记录列表数据（按天分组）
     @Published var groupedRecords: [(date: Date, records: [MoodRecord])] = []
@@ -116,6 +118,22 @@ class CalendarViewModel: ObservableObject {
         dayRecordCounts = dataManager.fetchDayRecordCounts(year: year, month: month)
         dayPrimaryMoods = dataManager.fetchDayPrimaryMoods(year: year, month: month)
         dayAverageIntensities = dataManager.fetchDayAverageIntensities(year: year, month: month)
+
+        var monthComponents = DateComponents()
+        monthComponents.year = year
+        monthComponents.month = month
+        monthComponents.day = 1
+        let monthStart = calendar.date(from: monthComponents)!
+        let monthEnd = calendar.date(byAdding: .month, value: 1, to: monthStart)!
+        monthlyMoodDistributionDetails = dataManager.fetchMoodDistributionDetails(from: monthStart, to: monthEnd)
+
+        let totalRecords = dayRecordCounts.values.reduce(0, +)
+        let weightedIntensity = dayRecordCounts.reduce(0.0) { result, entry in
+            result + (dayAverageIntensities[entry.key] ?? 0) * Double(entry.value)
+        }
+        monthlyAverageIntensity = totalRecords > 0
+            ? weightedIntensity / Double(totalRecords)
+            : 0
 
         // 仅在需要时加载完整记录（选中日期的记录）
         loadRecordsForSelectedDate()
@@ -249,6 +267,30 @@ class CalendarViewModel: ObservableObject {
     /// 当前月份的打卡天数（有记录的天数）
     var currentMonthActiveDays: Int {
         dayRecordCounts.values.filter { $0 > 0 }.count
+    }
+
+    var monthlyMoodStats: [MoodDistributionStat] {
+        MoodDistributionRanker.rank(monthlyMoodDistributionDetails)
+    }
+
+    var monthlyMoodIsSpread: Bool {
+        isMoodSpread(monthlyMoodStats)
+    }
+
+    /// 月度卡片用于叙述和配图的情绪：主情绪或两种并列情绪
+    var monthlyMoodSummaryMoods: [MoodType] {
+        let stats = monthlyMoodStats
+        guard let primary = stats.first else { return [] }
+        guard stats.count >= 2, isMoodSpread(stats) else { return [primary.mood] }
+        return [stats[0].mood, stats[1].mood]
+    }
+
+    private func isMoodSpread(_ stats: [MoodDistributionStat]) -> Bool {
+        guard let top = stats.first else { return false }
+        return MoodDistributionRule.isSpread(
+            topPercentage: top.percentage,
+            secondPercentage: stats.dropFirst().first?.percentage
+        )
     }
 
     /// 删除记录（异步，不阻塞主线程）

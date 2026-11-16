@@ -12,6 +12,7 @@ import os.log
 /// 统计查询协议
 protocol StatisticsProviding {
     func fetchMoodDistribution(from startDate: Date, to endDate: Date) -> [MoodType: Int]
+    func fetchMoodDistributionDetails(from startDate: Date, to endDate: Date) -> [MoodType: MoodDistributionDetail]
     func fetchTopTags(from startDate: Date, to endDate: Date, limit: Int) -> [(name: String, count: Int)]
     func fetchAvailableYears() -> [Int]
     func fetchStreakDays() -> Int
@@ -88,6 +89,73 @@ class StatisticsService: StatisticsProviding {
         return result
     }
 
+    func fetchMoodDistributionDetails(from startDate: Date, to endDate: Date) -> [MoodType: MoodDistributionDetail] {
+        let request = NSFetchRequest<NSDictionary>(entityName: "MoodRecord")
+        request.predicate = NSPredicate(
+            format: "createdAt >= %@ AND createdAt < %@",
+            startDate as CVarArg,
+            endDate as CVarArg
+        )
+        request.resultType = .dictionaryResultType
+
+        let moodTypeDesc = NSExpressionDescription()
+        moodTypeDesc.name = "moodType"
+        moodTypeDesc.expression = NSExpression(forKeyPath: "moodType")
+        moodTypeDesc.expressionResultType = .stringAttributeType
+
+        let countDesc = NSExpressionDescription()
+        countDesc.name = "count"
+        countDesc.expression = NSExpression(
+            forFunction: "count:",
+            arguments: [NSExpression(forKeyPath: "moodType")]
+        )
+        countDesc.expressionResultType = .integer32AttributeType
+
+        let latestDateDesc = NSExpressionDescription()
+        latestDateDesc.name = "latestDate"
+        latestDateDesc.expression = NSExpression(
+            forFunction: "max:",
+            arguments: [NSExpression(forKeyPath: "createdAt")]
+        )
+        latestDateDesc.expressionResultType = .dateAttributeType
+
+        let averageIntensityDesc = NSExpressionDescription()
+        averageIntensityDesc.name = "averageIntensity"
+        averageIntensityDesc.expression = NSExpression(
+            forFunction: "average:",
+            arguments: [NSExpression(forKeyPath: "intensity")]
+        )
+        averageIntensityDesc.expressionResultType = .doubleAttributeType
+
+        request.propertiesToGroupBy = ["moodType"]
+        request.propertiesToFetch = [moodTypeDesc, countDesc, latestDateDesc, averageIntensityDesc]
+
+        var result: [MoodType: MoodDistributionDetail] = [:]
+        do {
+            let results = try viewContext.fetch(request) as? [[String: Any]] ?? []
+            for dict in results {
+                guard let moodString = dict["moodType"] as? String,
+                      let mood = MoodType(rawValue: moodString),
+                      let count = dict["count"] as? Int else {
+                    continue
+                }
+
+                let latestDate = dict["latestDate"] as? Date ?? .distantPast
+                let averageIntensity = dict["averageIntensity"] as? Double ?? 0
+                result[mood] = MoodDistributionDetail(
+                    count: count,
+                    latestDate: latestDate,
+                    averageIntensity: averageIntensity
+                )
+            }
+        } catch {
+            Self.logger.error("DB aggregation for mood details failed, falling back: \(error.localizedDescription)")
+            return fetchMoodDistributionDetailsFallback(from: startDate, to: endDate)
+        }
+
+        return result
+    }
+
     // MARK: - 情绪图书馆
 
     private func fetchMoodDistributionFallback(from startDate: Date, to endDate: Date) -> [MoodType: Int] {
@@ -109,6 +177,44 @@ class StatisticsService: StatisticsProviding {
             Self.logger.error("Fallback mood distribution query failed: \(error.localizedDescription)")
         }
         return distribution
+    }
+
+    private func fetchMoodDistributionDetailsFallback(from startDate: Date, to endDate: Date) -> [MoodType: MoodDistributionDetail] {
+        let request: NSFetchRequest<MoodRecord> = MoodRecord.fetchRequest()
+        request.predicate = NSPredicate(
+            format: "createdAt >= %@ AND createdAt < %@",
+            startDate as CVarArg,
+            endDate as CVarArg
+        )
+
+        var counts: [MoodType: Int] = [:]
+        var latestDates: [MoodType: Date] = [:]
+        var intensityTotals: [MoodType: Int] = [:]
+
+        do {
+            let records = try viewContext.fetch(request)
+            for record in records {
+                guard let mood = MoodType(rawValue: record.moodType ?? "") else { continue }
+                counts[mood, default: 0] += 1
+                intensityTotals[mood, default: 0] += Int(record.intensity)
+                if let createdAt = record.createdAt {
+                    latestDates[mood] = max(latestDates[mood] ?? .distantPast, createdAt)
+                }
+            }
+        } catch {
+            Self.logger.error("Fallback mood detail query failed: \(error.localizedDescription)")
+        }
+
+        return counts.reduce(into: [:]) { result, entry in
+            let count = entry.value
+            result[entry.key] = MoodDistributionDetail(
+                count: count,
+                latestDate: latestDates[entry.key] ?? .distantPast,
+                averageIntensity: count > 0
+                    ? Double(intensityTotals[entry.key] ?? 0) / Double(count)
+                    : 0
+            )
+        }
     }
 
     // MARK: - 标签频次

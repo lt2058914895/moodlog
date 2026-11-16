@@ -167,6 +167,17 @@ struct MoodRecordsView: View {
                     monthStatsBanner
 
                     calendarGrid
+
+                    MonthMoodSummaryCard(
+                        stats: viewModel.monthlyMoodStats,
+                        summaryMoods: viewModel.monthlyMoodSummaryMoods,
+                        averageIntensity: viewModel.monthlyAverageIntensity,
+                        monthTitle: viewModel.monthTitle
+                    )
+                    .padding(.horizontal, 16)
+                    .padding(.top, 12)
+                    .padding(.bottom, 16)
+                    .background(Color(UIColor.systemGroupedBackground))
                 }
 
                 if viewModel.selectedDate != nil {
@@ -475,6 +486,183 @@ struct MoodRecordsView: View {
 
     private func deleteRecord(_ record: MoodRecord) {
         viewModel.deleteRecord(record)
+    }
+}
+
+// MARK: - 月度心情总结卡片
+private struct MonthMoodSummaryCard: View {
+    let stats: [MoodDistributionStat]
+    let summaryMoods: [MoodType]
+    let averageIntensity: Double
+    let monthTitle: String
+
+    private var topStats: [MoodDistributionStat] {
+        Array(stats.prefix(2))
+    }
+
+    private var summaryTitle: String {
+        switch summaryMoods.count {
+        case 0:
+            return L.localized("calendar.month_summary_empty_title")
+        case 1:
+            return L.localized("insight.hero_title", args: summaryMoods[0].displayName)
+        default:
+            return L.localized(
+                "insight.hero_spread_two",
+                args: summaryMoods[0].displayName,
+                summaryMoods[1].displayName
+            )
+        }
+    }
+
+    private var gradientColors: [Color] {
+        guard let primary = summaryMoods.first else {
+            return [Color("AccentColor").opacity(0.85), Color("AccentLightColor").opacity(0.7)]
+        }
+        if summaryMoods.count >= 2 {
+            return [primary.color.opacity(0.85), summaryMoods[1].color.opacity(0.7)]
+        }
+        return [primary.color.opacity(0.85), primary.color.opacity(0.65)]
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            header
+
+            HStack(alignment: .center, spacing: 16) {
+                moodArtwork
+
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(summaryTitle)
+                        .font(.system(size: 22, weight: .bold))
+                        .foregroundColor(.white)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    if stats.isEmpty {
+                        Text(L.localized("calendar.month_summary_empty_hint"))
+                            .font(.caption)
+                            .foregroundColor(.white.opacity(0.75))
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+            }
+
+            if !topStats.isEmpty {
+                distribution
+            }
+        }
+        .padding(18)
+        .background(
+            LinearGradient(
+                colors: gradientColors,
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        )
+        .cornerRadius(20)
+        .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 6)
+        .accessibilityElement(children: .contain)
+    }
+
+    private var header: some View {
+        HStack(spacing: 7) {
+            Image(systemName: "sparkles")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundColor(.white.opacity(0.9))
+
+            Text(L.localized("calendar.month_summary_title"))
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundColor(.white.opacity(0.85))
+
+            Spacer()
+
+            Text(monthTitle)
+                .font(.caption2)
+                .foregroundColor(.white.opacity(0.75))
+        }
+    }
+
+    @ViewBuilder
+    private var moodArtwork: some View {
+        if stats.isEmpty {
+            ZStack {
+                Circle()
+                    .fill(Color.white.opacity(0.18))
+                Image(systemName: "moon.stars.fill")
+                    .font(.system(size: 28))
+                    .foregroundColor(.white.opacity(0.9))
+            }
+            .frame(width: 74, height: 74)
+        } else if summaryMoods.count == 2 {
+            HStack(spacing: -12) {
+                Image(summaryMoods[1].imageName)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 48, height: 48)
+                    .shadow(color: .black.opacity(0.10), radius: 5, x: 0, y: 3)
+
+                Image(summaryMoods[0].imageName)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 62, height: 62)
+                    .shadow(color: .black.opacity(0.12), radius: 6, x: 0, y: 3)
+            }
+            .frame(width: 74, height: 74)
+        } else if let mood = summaryMoods.first {
+            Image(mood.imageName)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 72, height: 72)
+                .shadow(color: .black.opacity(0.12), radius: 7, x: 0, y: 4)
+                .frame(width: 74, height: 74)
+        }
+    }
+
+    private var distribution: some View {
+        VStack(alignment: .leading, spacing: 9) {
+            HStack {
+                Text(L.localized("calendar.month_summary_distribution"))
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundColor(.white.opacity(0.8))
+
+                Spacer()
+
+                Text(L.localized("calendar.month_summary_avg_intensity", args: averageIntensity))
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundColor(.white.opacity(0.8))
+            }
+
+            HStack(spacing: 8) {
+                ForEach(topStats) { stat in
+                    VStack(alignment: .leading, spacing: 5) {
+                        HStack(spacing: 4) {
+                            Image(stat.mood.imageName)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 18, height: 18)
+
+                            Text(stat.mood.displayName)
+                                .font(.system(size: 11, weight: .medium))
+                                .foregroundColor(.white)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.75)
+                        }
+
+                        Text("\(Int(stat.percentage.rounded()))%")
+                            .font(.system(size: 15, weight: .bold, design: .rounded))
+                            .foregroundColor(.white)
+                            .monospacedDigit()
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 9)
+                    .padding(.vertical, 8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .fill(Color.white.opacity(0.14))
+                    )
+                }
+            }
+        }
     }
 }
 

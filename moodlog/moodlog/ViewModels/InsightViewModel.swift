@@ -10,7 +10,6 @@ import Foundation
 /// 数据洞察ViewModel
 class InsightViewModel: ObservableObject {
     @Published var selectedRange: InsightTimeRange = .sevenDays
-    @Published var moodDistribution: [MoodType: Int] = [:]
     @Published var topTags: [(name: String, count: Int)] = []
     @Published var totalRecords: Int = 0
     @Published var averageIntensity: Double = 0
@@ -18,6 +17,7 @@ class InsightViewModel: ObservableObject {
     @Published var dominantMoodPercentage: Double = 0
     @Published var isMoodSpread: Bool = false
     @Published var topTwoMoods: [MoodType] = []
+    private var rankedMoodStats: [MoodDistributionStat] = []
     private let dataManager: any MoodDataManaging
     private var cancellable: Any?
 
@@ -82,29 +82,28 @@ class InsightViewModel: ObservableObject {
             averageIntensity = 0
         }
 
-        // 情绪分布
-        moodDistribution = dataManager.fetchMoodDistribution(from: range.start, to: range.end)
+        // 情绪分布（与月度卡片共用同一聚合数据与排序）
+        let details = dataManager.fetchMoodDistributionDetails(from: range.start, to: range.end)
+        rankedMoodStats = MoodDistributionRanker.rank(details)
 
         // 最频繁情绪 + 分布分析
-        let totalCount = moodDistribution.values.reduce(0, +)
+        let totalCount = rankedMoodStats.reduce(0) { $0 + $1.count }
         if totalCount > 0 {
-            let sortedMoods = moodDistribution.sorted { $0.value > $1.value }
-            mostFrequentMood = sortedMoods[0].key
-            dominantMoodPercentage = Double(sortedMoods[0].value) / Double(totalCount) * 100
+            mostFrequentMood = rankedMoodStats[0].mood
+            dominantMoodPercentage = rankedMoodStats[0].percentage
             // 取前两个情绪用于对比
-            topTwoMoods = Array(sortedMoods.prefix(2).map { $0.key })
-            // 如果占比低于 40%，或前两名占比差值小于 10%，认为情绪分布较分散
-            if sortedMoods.count >= 2 {
-                let gap = Double(sortedMoods[0].value - sortedMoods[1].value) / Double(totalCount) * 100
-                isMoodSpread = dominantMoodPercentage < 40 || gap < 10
-            } else {
-                isMoodSpread = false
-            }
+            topTwoMoods = Array(rankedMoodStats.prefix(2).map(\.mood))
+            let secondPercentage = rankedMoodStats.dropFirst().first?.percentage
+            isMoodSpread = MoodDistributionRule.isSpread(
+                topPercentage: dominantMoodPercentage,
+                secondPercentage: secondPercentage
+            )
         } else {
             mostFrequentMood = .happy
             dominantMoodPercentage = 0
             isMoodSpread = false
             topTwoMoods = []
+            rankedMoodStats = []
         }
 
         // 标签频次
@@ -113,16 +112,13 @@ class InsightViewModel: ObservableObject {
 
     /// 饼图数据
     var pieChartData: [PieChartData] {
-        let total = moodDistribution.values.reduce(0, +)
-        guard total > 0 else { return [] }
-
-        return moodDistribution.map { mood, count in
+        rankedMoodStats.map { stat in
             PieChartData(
-                moodType: mood,
-                value: count,
-                percentage: Double(count) / Double(total) * 100
+                moodType: stat.mood,
+                value: stat.count,
+                percentage: stat.percentage
             )
-        }.sorted { $0.value > $1.value }
+        }
     }
 
     /// 标签柱状图数据

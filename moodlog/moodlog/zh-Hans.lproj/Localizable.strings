@@ -51,6 +51,11 @@
 "calendar.long_press_hint" = "长按记录可编辑或删除";
 "calendar.month_records" = "本月记录";
 "calendar.month_days" = "打卡天数";
+"calendar.month_summary_title" = "月度心情";
+"calendar.month_summary_empty_title" = "这个月还没有心情记录";
+"calendar.month_summary_empty_hint" = "记录几天后，这里会出现你的月度情绪画像";
+"calendar.month_summary_distribution" = "情绪占比";
+"calendar.month_summary_avg_intensity" = "平均强度 %.1f";
 
 // MARK: - Records
 "records.mode.calendar" = "日历";

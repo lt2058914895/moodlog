@@ -75,6 +75,7 @@ protocol MoodDataManaging: ObservableObject {
 
     // Statistics
     func fetchMoodDistribution(from startDate: Date, to endDate: Date) -> [MoodType: Int]
+    func fetchMoodDistributionDetails(from startDate: Date, to endDate: Date) -> [MoodType: MoodDistributionDetail]
     func fetchTopTags(from startDate: Date, to endDate: Date, limit: Int) -> [(name: String, count: Int)]
     func fetchAvailableYears() -> [Int]
     func fetchStreakDays() -> Int
@@ -298,6 +299,10 @@ class MoodDataManager: MoodDataManaging {
 
     func fetchMoodDistribution(from startDate: Date, to endDate: Date) -> [MoodType: Int] {
         statisticsService.fetchMoodDistribution(from: startDate, to: endDate)
+    }
+
+    func fetchMoodDistributionDetails(from startDate: Date, to endDate: Date) -> [MoodType: MoodDistributionDetail] {
+        statisticsService.fetchMoodDistributionDetails(from: startDate, to: endDate)
     }
 
     func fetchTopTags(from startDate: Date, to endDate: Date, limit: Int = 10) -> [(name: String, count: Int)] {

@@ -51,6 +51,11 @@
 "calendar.long_press_hint" = "Long press a record to edit or delete";
 "calendar.month_records" = "This Month";
 "calendar.month_days" = "Days Active";
+"calendar.month_summary_title" = "Monthly Mood";
+"calendar.month_summary_empty_title" = "No moods recorded this month";
+"calendar.month_summary_empty_hint" = "Check in for a few days and your monthly mood portrait will appear here";
+"calendar.month_summary_distribution" = "Mood Mix";
+"calendar.month_summary_avg_intensity" = "Avg intensity %.1f";
 
 // MARK: - Records
 "records.mode.calendar" = "Calendar";

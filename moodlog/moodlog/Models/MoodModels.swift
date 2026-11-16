@@ -86,6 +86,79 @@ enum MoodType: String, CaseIterable, Codable {
     }
 }
 
+/// 某类情绪在指定区间内的聚合信息
+struct MoodDistributionDetail: Equatable {
+    let count: Int
+    let latestDate: Date
+    let averageIntensity: Double
+}
+
+/// 情绪分布判定的共用规则
+enum MoodDistributionRule {
+    /// 主情绪占比达到该阈值
+    static let dominantShareThreshold: Double = 40
+    /// 主情绪领先第二名的占比差值达到该阈值
+    static let dominantLeadThreshold: Double = 10
+
+    /// 是否存在明确主导情绪：主情绪占比 ≥ 40%，且领先第二名 ≥ 10 个百分点
+    static func isClearlyDominant(topPercentage: Double, secondPercentage: Double?) -> Bool {
+        guard let secondPercentage else { return true }
+        return topPercentage >= dominantShareThreshold
+            && topPercentage - secondPercentage >= dominantLeadThreshold
+    }
+
+    /// 是否属于情绪波动：没有明确主导情绪
+    static func isSpread(topPercentage: Double, secondPercentage: Double?) -> Bool {
+        !isClearlyDominant(topPercentage: topPercentage, secondPercentage: secondPercentage)
+    }
+}
+
+/// 统一排序后的情绪分布统计
+struct MoodDistributionStat: Identifiable, Hashable {
+    let mood: MoodType
+    let count: Int
+    let percentage: Double
+    let latestDate: Date
+    let averageIntensity: Double
+
+    var id: MoodType { mood }
+}
+
+/// 月度卡片、回顾页与分享卡片共用的情绪排序实现
+enum MoodDistributionRanker {
+    static func rank(_ details: [MoodType: MoodDistributionDetail]) -> [MoodDistributionStat] {
+        let total = details.values.reduce(0) { $0 + $1.count }
+        guard total > 0 else { return [] }
+
+        return details
+            .map { mood, detail in
+                MoodDistributionStat(
+                    mood: mood,
+                    count: detail.count,
+                    percentage: Double(detail.count) / Double(total) * 100,
+                    latestDate: detail.latestDate,
+                    averageIntensity: detail.averageIntensity
+                )
+            }
+            .sorted { lhs, rhs in
+                if lhs.count != rhs.count {
+                    return lhs.count > rhs.count
+                }
+                if lhs.latestDate != rhs.latestDate {
+                    return lhs.latestDate > rhs.latestDate
+                }
+                if lhs.averageIntensity != rhs.averageIntensity {
+                    return lhs.averageIntensity > rhs.averageIntensity
+                }
+                return moodOrder(lhs.mood) < moodOrder(rhs.mood)
+            }
+    }
+
+    private static func moodOrder(_ mood: MoodType) -> Int {
+        MoodType.allCases.firstIndex(of: mood) ?? MoodType.allCases.count
+    }
+}
+
 // MARK: - 情绪图书馆聚合模型
 
 /// 一本情绪集的轻量统计信息
